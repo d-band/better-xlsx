@@ -1,5 +1,7 @@
 better-xlsx
-===
+===========
+
+(in development ...)
 
 > A better xlsx lib for read / write / toTable / from Table
 
@@ -20,6 +22,13 @@ $ npm install better-xlsx
 ```
 const xlsx = require('better-xlsx');
 ```
+
+## Todo
+
+- [ ] xlsx parser
+- [ ] read write excel file
+- [ ] parse v-dom from html table
+- [ ] excel to v-dom
 
 ## Report a issue
 
