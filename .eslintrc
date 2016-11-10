@@ -1,0 +1,11 @@
+extends: standard
+
+env:
+  node: true
+  mocha: true
+
+rules:
+  camelcase: 0
+  semi: [2, always]
+  object-curly-spacing: [2, always]
+  
