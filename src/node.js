@@ -25,11 +25,11 @@ export function props (...attrs) {
 }
 
 export class Node {
-  constructor (attributes, children) {
+  constructor (attributes = {}, children = []) {
     for (const key of Object.keys(attributes)) {
       this[key] = attributes[key];
     }
-    this.children = children || [];
+    this.children = children;
   }
   _xmlName () {
     return this.constructor.name.substring(3);
@@ -37,17 +37,20 @@ export class Node {
   render () {
     function walk (tree) {
       const name = tree._xmlName();
+
       let tokens = [];
       tokens.push(`<${name}`);
+
       const keys = tree.attributes && Object.keys(tree.attributes);
       if (keys && keys.length) {
-        for (let i = 0; i < keys.length; i++) {
-          const v = tree.attributes[keys[i]];
-          tokens.push(` ${keys[i]}="${v}"`);
+        for (const key of keys) {
+          const v = tree.attributes[key];
+          tokens.push(` ${key}="${v}"`);
         }
       }
+
       const children = tree.children;
-      if (!(children && children.length)) {
+      if (!children.length) {
         tokens.push('/>');
         return tokens;
       }
