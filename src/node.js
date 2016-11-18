@@ -30,7 +30,7 @@ export class Node {
       this[key] = attributes[key];
     }
     this.children = children;
-    this._xmlName = xmlName || this.constructor.name.substring(3);
+    this._xmlName = xmlName || this.constructor.name.substring(1);
   }
   render () {
     function walk (tree) {
