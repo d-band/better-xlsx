@@ -11,7 +11,7 @@ export function props (...attrs) {
         },
         set (value) {
           if (this.attributes === undefined) {
-            this.attributes = new Map();
+            this.attributes = {};
           }
           this.attributes[name] = value;
         },
@@ -25,18 +25,16 @@ export function props (...attrs) {
 }
 
 export class Node {
-  constructor (attributes = {}, children = []) {
+  constructor (attributes = {}, children = [], xmlName) {
     for (const key of Object.keys(attributes)) {
       this[key] = attributes[key];
     }
     this.children = children;
-  }
-  _xmlName () {
-    return this.constructor.name.substring(3);
+    this._xmlName = xmlName || this.constructor.name.substring(3);
   }
   render () {
     function walk (tree) {
-      const name = tree._xmlName();
+      const name = tree._xmlName;
 
       let tokens = [];
       tokens.push(`<${name}`);
