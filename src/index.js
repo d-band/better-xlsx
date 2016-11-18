@@ -1,5 +1,6 @@
-import { makeTypes } from './xmlContentTypes';
+import { makeXmlTypes } from './xmlContentTypes';
 
-const types = makeTypes();
+const types = makeXmlTypes();
 
 console.log(types);
+

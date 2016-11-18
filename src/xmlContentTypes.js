@@ -1,24 +1,24 @@
 import { props, Node } from './node';
 
 @props('xmlns')
-export class Types extends Node {
+export class XmlTypes extends Node {
   constructor ({ xmlns = 'http://schemas.openxmlformats.org/package/2006/content-types' }, children) {
     super({ xmlns }, children);
   }
 }
 
 @props('Extension', 'ContentType')
-export class Default extends Node {}
+export class XmlDefault extends Node {}
 
 @props('PartName', 'ContentType')
-export class Override extends Node {}
+export class XmlOverride extends Node {}
 
-export function makeTypes (types = new Types({})) {
-  types.children.push(new Default({
+export function makeXmlTypes (types = new XmlTypes({})) {
+  types.children.push(new XmlDefault({
     Extension: 'rels',
     ContentType: 'application/vnd.openxmlformats-package.relationships+xml'
   }));
-  types.children.push(new Default({
+  types.children.push(new XmlDefault({
     Extension: 'xml',
     ContentType: 'application/xml'
   }));
