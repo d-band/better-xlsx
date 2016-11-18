@@ -35,6 +35,11 @@ const xlsx = require('better-xlsx');
 * [All issues](https://github.com/d-band/better-xlsx/issues)
 * [New issue](https://github.com/d-band/better-xlsx/issues/new)
 
+## Reference
+
+- http://www.ecma-international.org/publications/standards/Ecma-376.htm
+- https://github.com/tealeg/xlsx
+
 ## License
 
 better-xlsx is available under the terms of the MIT License.

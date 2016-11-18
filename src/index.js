@@ -1,9 +1,5 @@
-'use strict';
+import { makeTypes } from './xmlContentTypes';
 
-export function add (a, b) {
-  return a + b;
-}
+const types = makeTypes();
 
-export function syncRun () {
-  return Promise.resolve(1);
-}
+console.log(types);
