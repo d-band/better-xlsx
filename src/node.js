@@ -31,7 +31,33 @@ export class Node {
     }
     this.children = children || [];
   }
+  _xmlName () {
+    return this.constructor.name.substring(3);
+  }
   render () {
-    return `<${this.constructor.name} />`;
+    function walk (tree) {
+      const name = tree._xmlName();
+      let tokens = [];
+      tokens.push(`<${name}`);
+      const keys = tree.attributes && Object.keys(tree.attributes);
+      if (keys && keys.length) {
+        for (let i = 0; i < keys.length; i++) {
+          const v = tree.attributes[keys[i]];
+          tokens.push(` ${keys[i]}="${v}"`);
+        }
+      }
+      const children = tree.children;
+      if (!(children && children.length)) {
+        tokens.push('/>');
+        return tokens;
+      }
+      tokens.push('>');
+      for (const child of tree.children) {
+        tokens = tokens.concat(walk(child));
+      }
+      tokens.push(`</${name}>`);
+      return tokens;
+    }
+    return walk(this).join('');
   }
 }
