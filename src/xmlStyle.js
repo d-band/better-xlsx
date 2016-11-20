@@ -71,3 +71,72 @@ export class Xfont extends Node {
     return str + '</font>';
   }
 }
+
+@props('count')
+export class Xfills extends Node {}
+
+@props('patternFill')
+export class Xfill extends Node {
+  render () {
+    return `<fill>${this.patternFill.render()}</fill>`;
+  }
+}
+
+@props('patternType', 'fgColor', 'bgColor')
+export class XpatternFill extends Node {
+  render () {
+    let str = `<patternFill patternType="${this.patternType}">`;
+    if (this.fgColor) str += `<fgColor rgb="${this.fgColor}"/>`;
+    if (this.bgColor) str += `<bgColor rgb="${this.bgColor}"/>`;
+    return str + '</patternFill>';
+  }
+}
+
+@props('count')
+export class Xborders extends Node {}
+
+@props('left', 'right', 'top', 'bottom')
+export class Xborder extends Node {
+  _renderLine (pos) {
+    const posVal = this[pos];
+    if (!posVal) return '';
+
+    let str = `<${pos} style="${posVal.style}">`;
+    if (posVal.color) str += `<color rgb="${posVal.color}"/>`;
+    return str + `<${pos}>`;
+  }
+  render () {
+    let str = '<border>';
+    str += this._renderLine('left');
+    str += this._renderLine('right');
+    str += this._renderLine('top');
+    str += this._renderLine('bottom');
+    return str + '</border>';
+  }
+}
+
+@props('count')
+export class XcellStyles extends Node {}
+
+@props('builtInId', 'customBuiltIn', 'hidden', 'iLevel', 'name', 'xfId')
+export class XcellStyle extends Node {}
+
+@props('count')
+export class XcellStyleXfs extends Node {}
+
+@props('count')
+export class XcellXfs extends Node {}
+
+@props('applyAlignment', 'applyBorder', 'applyFont', 'applyFill', 'applyNumberFormat', 'applyProtection', 'borderId', 'fillId', 'fontId', 'numFmtId', 'xfId')
+export class Xxf extends Node {
+  alignment = null;
+  render () {
+    if (this.alignment) {
+      this.children = [this.alignment];
+    }
+    return super.render();
+  }
+}
+
+@props('horizontal', 'indent', 'shrinkToFit', 'textRotation', 'vertical', 'wrapText')
+export class Xalignment extends Node {}

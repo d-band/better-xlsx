@@ -13,7 +13,7 @@ export class XDefault extends Node {}
 @props('PartName', 'ContentType')
 export class XOverride extends Node {}
 
-export function makeXmlTypes (types = new XTypes({})) {
+export function makeXTypes (types = new XTypes({})) {
   const defaults = [{
     Extension: 'rels',
     ContentType: 'application/vnd.openxmlformats-package.relationships+xml'

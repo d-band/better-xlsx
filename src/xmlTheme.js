@@ -8,8 +8,6 @@ export class Xsst extends Node {
 }
 
 export class Xsi extends Node {}
-
 @props('xml:space')
 export class Xt extends Node {}
-
 export class Xr extends Node {}
