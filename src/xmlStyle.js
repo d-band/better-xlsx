@@ -40,7 +40,7 @@ for (const k of Object.keys(builtInNumFmt)) {
   builtInNumFmtInv[builtInNumFmt[k]] = k;
 }
 
-@props('xmlns', 'count', 'uniqueCount')
+@props('xmlns')
 export class XstyleSheet extends Node {
   constructor ({ xmlns = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main' }, children) {
     super({ xmlns }, children);

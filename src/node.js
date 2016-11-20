@@ -54,7 +54,7 @@ export class Node {
       }
       tokens.push('>');
       for (const child of tree.children) {
-        tokens = tokens.concat(walk(child));
+        tokens.push(child.render());
       }
       tokens.push(`</${name}>`);
       return tokens;
