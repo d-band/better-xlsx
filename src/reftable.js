@@ -12,7 +12,7 @@ export class RefTable {
       uniqueCount: len
     });
     for (const str of this.strings) {
-      const si = new Xsi({}, [ new Xt({}, [str]) ]);
+      const si = new Xsi({}, [new Xt({}, [str])]);
       sst.children.push(si);
     }
     return sst;

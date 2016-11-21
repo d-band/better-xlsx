@@ -1,7 +1,9 @@
 import { Sheet } from './sheet';
 import * as templates from './templates';
+import { RefTable } from './reftable';
 import { makeXworkbook, Xsheets, Xsheet, makeWorkbookRels } from './xmlWorkbook';
 import { makeXTypes, XOverride } from './xmlContentTypes';
+import { XstyleSheet } from './xmlStyle';
 
 export class File {
   sheet = {};
@@ -10,6 +12,7 @@ export class File {
 
   constructor (name) {
     this.name = name;
+    this.styles = new XstyleSheet({});
   }
   addSheet (name) {
     if (this.sheet[name]) {
@@ -26,13 +29,14 @@ export class File {
   }
   makeParts () {
     const parts = {};
+    const refTable = new RefTable();
     const types = makeXTypes();
     const workbook = makeXworkbook();
 
     let i = 1;
     const sheets = new Xsheets();
     for (const sheet of this.sheets) {
-      const xSheet = sheet.makeXSheet();
+      const xSheet = sheet.makeXSheet(refTable, this.styles);
       types.children.push(new XOverride({
         PartName: `/xl/worksheets/sheet${i}.xml`,
         ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml'
@@ -54,14 +58,11 @@ export class File {
     parts['docProps/core.xml'] = templates.DOCPROPS_CORE;
     parts['xl/theme/theme1.xml'] = templates.XL_THEME_THEME;
 
-    // parts['xl/sharedStrings.xml'] = refTable.makeXsst().render();
+    parts['xl/sharedStrings.xml'] = refTable.makeXsst().render();
     parts['xl/_rels/workbook.xml.rels'] = makeWorkbookRels(this.sheets.length).render();
     parts['[Content_Types].xml'] = types.render();
-    // parts['xl/styles.xml'], err = this.styles.render();
+    parts['xl/styles.xml'] = this.styles.render();
+
     return parts;
   }
-}
-
-export function newFile (name) {
-  return new File(name);
 }
