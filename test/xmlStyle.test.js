@@ -29,10 +29,12 @@ describe('Test: xmlSharedStrings.js', () => {
     fonts.children = [
       new Xfont({ sz: 1, color: 'ff000000', name: 'Avenir Next', b: true, i: true }),
       new Xfont({ sz: 2, color: 'ff000000', name: 'Avenir Next', b: true, u: true }),
-      new Xfont({ sz: 3, color: 'ff000000', name: 'Avenir Next', u: true, i: true })
+      new Xfont({ sz: 3, color: 'ff000000', name: 'Avenir Next', u: true, i: true }),
+      new Xfont({ sz: 3, color: 'ff000000', name: 'Avenir Next', family: '0' }),
+      new Xfont({ sz: 3, color: 'ff000000', name: 'Avenir Next', charset: '0' })
     ];
     fonts.count = 3;
-    expect(fonts.render()).to.equal('<fonts count="3"><font><sz val="1"/><name val="Avenir Next"/><color rgb="ff000000"/><b/><i/></font><font><sz val="2"/><name val="Avenir Next"/><color rgb="ff000000"/><b/><u/></font><font><sz val="3"/><name val="Avenir Next"/><color rgb="ff000000"/><i/><u/></font></fonts>');
+    expect(fonts.render()).to.equal('<fonts count="3"><font><sz val="1"/><name val="Avenir Next"/><color rgb="ff000000"/><b/><i/></font><font><sz val="2"/><name val="Avenir Next"/><color rgb="ff000000"/><b/><u/></font><font><sz val="3"/><name val="Avenir Next"/><color rgb="ff000000"/><i/><u/></font><font><sz val="3"/><name val="Avenir Next"/><family val="0"/><color rgb="ff000000"/></font><font><sz val="3"/><name val="Avenir Next"/><charset val="0"/><color rgb="ff000000"/></font></fonts>');
     // fills
     fills.children = [
       new Xfill({ patternFill: new XpatternFill({ patternType: 'solid', fgColor: 'ff000000', bgColor: 'ff000000' }) })

@@ -72,6 +72,8 @@ export class Node {
           tokens.push(child.render());
         } else if (typeof child === 'string') {
           tokens.push(escape(child));
+        } else {
+          tokens.push(child.toString());
         }
       }
       tokens.push(`</${name}>`);
