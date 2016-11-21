@@ -49,28 +49,25 @@ export class Node {
   render () {
     function walk (tree) {
       const name = tree._xmlName;
+      const { attributes, children } = tree;
+      const tokens = [];
 
-      let tokens = [];
       tokens.push(`<${name}`);
 
-      const keys = tree.attributes && Object.keys(tree.attributes);
-      if (keys && keys.length) {
-        for (const key of keys) {
-          let v = tree.attributes[key];
-          if (typeof v === 'string') {
-            v = attrEscape(v);
-          }
-          tokens.push(` ${key}="${v}"`);
+      for (const key of Object.keys(attributes || {})) {
+        let v = attributes[key];
+        if (typeof v === 'string') {
+          v = attrEscape(v);
         }
+        tokens.push(` ${key}="${v}"`);
       }
 
-      const children = tree.children;
       if (!children.length) {
         tokens.push('/>');
         return tokens;
       }
       tokens.push('>');
-      for (const child of tree.children) {
+      for (const child of children) {
         if (child instanceof Node) {
           tokens.push(child.render());
         } else if (typeof child === 'string') {
