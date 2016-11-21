@@ -39,3 +39,31 @@ export class Xsheet extends Node {}
 
 @props('calcId', 'iterateCount', 'refMode', 'iterate', 'iterateDelta')
 export class XcalcPr extends Node {}
+
+export function makeXworkbook () {
+  const workbook = new Xworkbook();
+  const fileVersion = new XfileVersion({ appName: 'JS XLSX' });
+  const workbookPr = new XworkbookPr({ showObjects: 'all' });
+  const bookViews = new XbookViews({}, [
+    new XworkbookView({
+      showHorizontalScroll: true,
+      showSheetTabs: true,
+      showVerticalScroll: true,
+      tabRatio: 204,
+      windowHeight: 8192,
+      windowWidth: 16384,
+      xWindow: 0,
+      yWindow: 0
+    })
+  ]);
+  const calcPr = new XcalcPr({
+    iterateCount: 100,
+    iterate: false,
+    iterateDelta: 0.001,
+    refMode: 'A1'
+  });
+
+  workbook.children = [fileVersion, workbookPr, bookViews, calcPr];
+
+  return workbook;
+}
