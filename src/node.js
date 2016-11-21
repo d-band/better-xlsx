@@ -1,3 +1,11 @@
+function attrEscape (str) {
+  return str.replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/"/g, '&quot;')
+    .replace(/\t/g, '&#x9;')
+    .replace(/\n/g, '&#xA;')
+    .replace(/\r/g, '&#xD;');
+}
 function escape (str) {
   return str.replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -48,7 +56,10 @@ export class Node {
       const keys = tree.attributes && Object.keys(tree.attributes);
       if (keys && keys.length) {
         for (const key of keys) {
-          const v = tree.attributes[key];
+          let v = tree.attributes[key];
+          if (typeof v === 'string') {
+            v = attrEscape(v);
+          }
           tokens.push(` ${key}="${v}"`);
         }
       }
