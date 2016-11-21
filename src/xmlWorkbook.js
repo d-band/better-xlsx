@@ -8,7 +8,7 @@ export class XRelationships extends Node {
 }
 
 @props('Id', 'Target', 'Type')
-export class Relationship extends Node {}
+export class XRelationship extends Node {}
 
 @props('xmlns', 'xmlns:r')
 export class Xworkbook extends Node {
@@ -39,6 +39,33 @@ export class Xsheet extends Node {}
 
 @props('calcId', 'iterateCount', 'refMode', 'iterate', 'iterateDelta')
 export class XcalcPr extends Node {}
+
+export function makeWorkbookRels (sheetCount) {
+  const rels = new XRelationships({});
+  for (let i = 1; i <= sheetCount; i++) {
+    rels.children.push(new XRelationship({
+      Id: `rId${i}`,
+      Target: `worksheets/sheet${i}.xml`,
+      Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet'
+    }));
+  }
+  rels.children.push(new XRelationship({
+    Id: `rId${sheetCount + 1}`,
+    Target: 'sharedStrings.xml',
+    Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings'
+  }));
+  rels.children.push(new XRelationship({
+    Id: `rId${sheetCount + 2}`,
+    Target: 'theme/theme1.xml',
+    Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme'
+  }));
+  rels.children.push(new XRelationship({
+    Id: `rId${sheetCount + 3}`,
+    Target: 'styles.xml',
+    Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles'
+  }));
+  return rels;
+}
 
 export function makeXworkbook () {
   const workbook = new Xworkbook();
