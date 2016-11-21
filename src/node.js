@@ -1,3 +1,9 @@
+function escape (str) {
+  return str.replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\r/g, '&#xD;');
+}
 export function props (...attrs) {
   return function (clazz) {
     const target = clazz.prototype || clazz;
@@ -54,7 +60,11 @@ export class Node {
       }
       tokens.push('>');
       for (const child of tree.children) {
-        tokens.push(child.render());
+        if (child instanceof Node) {
+          tokens.push(child.render());
+        } else if (typeof child === 'string') {
+          tokens.push(escape(child));
+        }
       }
       tokens.push(`</${name}>`);
       return tokens;

@@ -47,7 +47,6 @@ export class Xc extends Node {
   f = null;
   v = null;
   render () {
-    this.children = [];
     if (this.f) this.children.push(this.f);
     if (this.v) this.children.push(new Node({}, [this.v], 'v'));
     return super.render();
@@ -77,9 +76,80 @@ export class XheaderFooter extends Node {
   oddHeader = null;
   oddFooter = null;
   render () {
-    this.children = [];
     if (this.oddHeader) this.children.push(new Node({}, [this.oddHeader], 'oddHeader'));
     if (this.oddFooter) this.children.push(new Node({}, [this.oddFooter], 'oddFooter'));
     return super.render();
   }
+}
+
+export function makeXworksheet (sheet = new Xworksheet()) {
+  const sheetPr = new XsheetPr({ filterMode: false }, [
+    new XpageSetUpPr({ fitToPage: false })
+  ]);
+  const sheetViews = new XsheetViews({}, [
+    new XsheetView({
+      colorId: 64,
+      defaultGridColor: true,
+      rightToLeft: false,
+      showFormulas: false,
+      showGridLines: true,
+      showOutlineSymbols: true,
+      showRowColHeaders: true,
+      showZeros: true,
+      tabSelected: false,
+      topLeftCell: 'A1',
+      view: 'normal',
+      windowProtection: false,
+      workbookViewId: 0,
+      zoomScale: 100,
+      zoomScaleNormal: 100,
+      zoomScalePageLayoutView: 100
+    }, [
+      new Xselection({
+        activeCell: 'A1',
+        activeCellId: 0,
+        pane: 'topLeft',
+        sqref: 'A1'
+      })
+    ])
+  ]);
+  const sheetFormatPr = new XsheetFormatPr({ defaultRowHeight: '12.85' });
+  const printOptions = new XprintOptions({
+    gridLines: false,
+    gridLinesSet: true,
+    headings: false,
+    horizontalCentered: false,
+    verticalCentered: false
+  });
+  const pageMargins = new XpageMargins({
+    left: 0.7875,
+    right: 0.7875,
+    top: 1.05277777777778,
+    bottom: 1.05277777777778,
+    header: 0.7875,
+    footer: 0.7875
+  });
+  const pageSetup = new XpageSetup({
+    blackAndWhite: false,
+    cellComments: 'none',
+    copies: 1,
+    draft: false,
+    firstPageNumber: 1,
+    fitToHeight: 1,
+    fitToWidth: 1,
+    horizontalDpi: 300,
+    orientation: 'portrait',
+    pageOrder: 'downThenOver',
+    paperSize: 9,
+    scale: 100,
+    useFirstPageNumber: true,
+    usePrinterDefaults: false,
+    verticalDpi: 300
+  });
+  const headerFooter = new XheaderFooter();
+  headerFooter.oddHeader = '&C&"Times New Roman,Regular"&12&A';
+  headerFooter.oddFooter = '&C&"Times New Roman,Regular"&12Page &P';
+
+  sheet.children = [sheetPr, sheetViews, sheetFormatPr, printOptions, pageMargins, pageSetup, headerFooter];
+  return sheet;
 }
