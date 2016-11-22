@@ -1,10 +1,10 @@
-import { props, Node } from './node';
+import { props, Node, HEAD } from './node';
 
 @props('xmlns')
 export class XRelationships extends Node {
-  xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>';
   constructor ({ xmlns = 'http://schemas.openxmlformats.org/package/2006/relationships' }, children) {
     super({ xmlns }, children);
+    this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
   }
 }
 
@@ -13,11 +13,11 @@ export class XRelationship extends Node {}
 
 @props('xmlns', 'xmlns:r')
 export class Xworkbook extends Node {
-  xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>';
   constructor (attrs = {}, children) {
     attrs['xmlns'] = attrs['xmlns'] || 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
     attrs['xmlns:r'] = attrs['xmlns:r'] || 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
     super(attrs, children);
+    this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
   }
 }
 

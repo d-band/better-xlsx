@@ -12,6 +12,9 @@ function escape (str) {
     .replace(/>/g, '&gt;')
     .replace(/\r/g, '&#xD;');
 }
+
+export const HEAD = Symbol('head');
+
 export function props (...attrs) {
   return function (clazz) {
     const target = clazz.prototype || clazz;
@@ -52,8 +55,8 @@ export class Node {
       const { attributes, children } = tree;
       const tokens = [];
 
-      if (tree.xmlHeader) {
-        tokens.push(tree.xmlHeader);
+      if (tree[HEAD]) {
+        tokens.push(tree[HEAD]);
       }
       tokens.push(`<${name}`);
 
