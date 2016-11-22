@@ -11,6 +11,6 @@ describe('Test: xmlSharedStrings.js', () => {
     sst.children = [si1, si2];
     si1.children = [new Xt({ 'xml:space': 'preserve' })];
     si2.children = [new Xr()];
-    expect(sst.render()).to.equal('<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><si><t xml:space="preserve"/></si><si><r/></si></sst>');
+    expect(sst.render()).to.equal('<?xml version="1.0" encoding="UTF-8"?><sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><si><t xml:space="preserve"/></si><si><r/></si></sst>');
   });
 });

@@ -52,6 +52,9 @@ export class Node {
       const { attributes, children } = tree;
       const tokens = [];
 
+      if (tree.xmlHeader) {
+        tokens.push(tree.xmlHeader);
+      }
       tokens.push(`<${name}`);
 
       for (const key of Object.keys(attributes || {})) {

@@ -2,6 +2,7 @@ import { props, Node } from './node';
 
 @props('xmlns', 'xmlns:r')
 export class Xworksheet extends Node {
+  xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>';
   constructor (attrs = {}, children) {
     attrs['xmlns'] = attrs['xmlns'] || 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
     attrs['xmlns:r'] = attrs['xmlns:r'] || 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
