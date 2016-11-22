@@ -85,4 +85,73 @@ describe('Test: xmlSharedStrings.js', () => {
     cellXfs.count = 1;
     expect(cellXfs.render()).to.equal('<cellXfs count="1"><xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="7" fontId="0" numFmtId="0"><alignment horizontal="general" indent="0" shrinkToFit="false" textRotation="0" vertical="top" wrapText="1"/></xf></cellXfs>');
   });
+
+  it('should XstyleSheet add children', () => {
+    const styleSheet = new XstyleSheet({});
+    styleSheet.reset();
+    expect(styleSheet.render()).to.equal('<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts/><fills/><borders count="1"><border><left style="none"><left><right style="none"><right><top style="none"><top><bottom style="none"><bottom></border></borders><cellStyleXfs/><cellXfs count="1"><xf><alignment horizontal="general" indent="0" shrinkToFit="false" textRotation="0" vertical="bottom" wrapText="false"/></xf></cellXfs><numFmts/></styleSheet>');
+
+    const font1 = new Xfont({ sz: 3, color: 'ff000000', name: 'Avenir Next', family: '0' });
+    const font2 = new Xfont({ sz: 3, color: 'ff000000', name: 'Avenir Next', family: '0', b: true });
+    expect(styleSheet.addFont(font1)).to.equal(0);
+    expect(styleSheet.addFont(font2)).to.equal(1);
+    expect(styleSheet.addFont(font1)).to.equal(0);
+    expect(styleSheet.addFont(font2)).to.equal(1);
+
+    const fill1 = new Xfill({ patternFill: new XpatternFill({ patternType: 'solid', fgColor: 'ff000000', bgColor: 'ff000000' }) });
+    const fill2 = new Xfill({ patternFill: new XpatternFill({ patternType: 'solid', fgColor: 'ffffffff', bgColor: 'ff000000' }) });
+    expect(styleSheet.addFill(fill1)).to.equal(0);
+    expect(styleSheet.addFill(fill2)).to.equal(1);
+    expect(styleSheet.addFill(fill1)).to.equal(0);
+    expect(styleSheet.addFill(fill2)).to.equal(1);
+
+    const border1 = new Xborder({
+      left: { style: 'thin', color: 'ff000000' },
+      right: { style: 'thin', color: 'ffffffff' }
+    });
+    const border2 = new Xborder({
+      left: { style: 'thin', color: 'ff000000' },
+      top: { style: 'thin', color: 'ff000000' },
+      bottom: { style: 'thin', color: 'ffffffff' }
+    });
+    expect(styleSheet.addBorder(border1)).to.equal(1);
+    expect(styleSheet.addBorder(border2)).to.equal(2);
+    expect(styleSheet.addBorder(border1)).to.equal(1);
+    expect(styleSheet.addBorder(border2)).to.equal(2);
+
+    const xf1 = new Xxf({
+      applyAlignment: 1,
+      applyBorder: 1,
+      applyFill: 0,
+      applyFont: 1,
+      applyNumberFormat: 1,
+      applyProtection: 0,
+      borderId: 7,
+      fontId: 0,
+      numFmtId: 0
+    });
+    xf1.alignment = new Xalignment({
+      vertical: 'top',
+      wrapText: 1
+    });
+    const xf2 = new Xxf({
+      applyAlignment: 1,
+      applyBorder: 1,
+      applyFill: 0,
+      applyFont: 1,
+      applyNumberFormat: 1,
+      applyProtection: 0,
+      borderId: 7,
+      fontId: 0,
+      numFmtId: 0
+    });
+    xf2.alignment = new Xalignment({
+      vertical: 'bottom',
+      wrapText: 1
+    });
+    expect(styleSheet.addCellXf(xf1)).to.equal(1);
+    expect(styleSheet.addCellXf(xf2)).to.equal(2);
+    expect(styleSheet.addCellXf(xf1)).to.equal(1);
+    expect(styleSheet.addCellXf(xf2)).to.equal(2);
+  });
 });
