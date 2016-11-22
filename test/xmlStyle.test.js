@@ -79,10 +79,10 @@ describe('Test: xmlSharedStrings.js', () => {
     // cellStyleXfs
     cellStyleXfs.children = [xf];
     cellStyleXfs.count = 1;
-    expect(cellStyleXfs.render()).to.equal('<cellStyleXfs count="1"><xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="7" fontId="0" numFmtId="0"><alignment vertical="top" wrapText="1"/></xf></cellStyleXfs>');
+    expect(cellStyleXfs.render()).to.equal('<cellStyleXfs count="1"><xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="7" fontId="0" numFmtId="0"><alignment horizontal="general" indent="0" shrinkToFit="false" textRotation="0" vertical="top" wrapText="1"/></xf></cellStyleXfs>');
     // cellXfs
     cellXfs.children = [xf];
     cellXfs.count = 1;
-    expect(cellXfs.render()).to.equal('<cellXfs count="1"><xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="7" fontId="0" numFmtId="0"><alignment vertical="top" wrapText="1"/></xf></cellXfs>');
+    expect(cellXfs.render()).to.equal('<cellXfs count="1"><xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="7" fontId="0" numFmtId="0"><alignment horizontal="general" indent="0" shrinkToFit="false" textRotation="0" vertical="top" wrapText="1"/></xf></cellXfs>');
   });
 });

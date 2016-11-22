@@ -33,6 +33,8 @@ export class File {
     const types = makeXTypes();
     const workbook = makeXworkbook();
 
+    this.styles.reset();
+
     let i = 1;
     const sheets = new Xsheets();
     for (const sheet of this.sheets) {

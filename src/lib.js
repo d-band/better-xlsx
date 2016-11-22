@@ -1,4 +1,4 @@
-import { Xfill, XpatternFill } from './xmlStyle';
+import { Xfill, XpatternFill, Xxf } from './xmlStyle';
 
 const NumFmt = {
   0: 'general',
@@ -93,12 +93,15 @@ function handleStyle (style, numFmtId, styles) {
   xXf.alignment.vertical = style.align.v;
   xXf.alignment.wrapText = style.align.wrapText;
 
-  const fId = styles.addXxf(xXf);
-  return fId;
+  return styles.addCellXf(xXf);
 }
 
-function handleNumFmtId () {
-
+function handleNumFmtId (numFmtId, styles) {
+  const xf = new Xxf({ numFmtId });
+  if (numFmtId > 0) {
+    xf.applyNumberFormat = true;
+  }
+  return styles.addCellXf(xf);
 }
 
 export { NumFmt, NumFmtInv, col2num, num2col, cid2coord, handleStyle, handleNumFmtId };

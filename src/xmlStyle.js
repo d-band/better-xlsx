@@ -2,23 +2,84 @@ import { props, Node, HEAD } from './node';
 
 @props('xmlns')
 export class XstyleSheet extends Node {
+  fonts = null;
+  fills = null;
+  borders = null;
+  cellStyles = null;
+  cellStyleXfs = null;
+  cellXfs = null;
+  numFmts = null;
+
   constructor ({ xmlns = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main' }, children) {
     super({ xmlns }, children);
     this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
   }
-  addFont () {
-    // TODO
+  render () {
+    if (this.fonts) this.children.push(this.fonts);
+    if (this.fills) this.children.push(this.fills);
+    if (this.borders) this.children.push(this.borders);
+    if (this.cellStyles) this.children.push(this.cellStyles);
+    if (this.cellStyleXfs) this.children.push(this.cellStyleXfs);
+    if (this.cellXfs) this.children.push(this.cellXfs);
+    if (this.numFmts) this.children.push(this.numFmts);
+    return super.render();
   }
-  addFill () {
-    // TODO
+  reset () {
+    this.fonts = new Xfonts();
+    this.fills = new Xfills();
+    this.borders = new Xborders();
+    this.cellStyleXfs = new XcellStyleXfs();
+    this.cellXfs = new XcellXfs({ count: 1 }, [new Xxf()]);
+    this.numFmts = new XnumFmts();
+    this.addBorder(new Xborder({
+      left: { style: 'none' },
+      right: { style: 'none' },
+      top: { style: 'none' },
+      bottom: { style: 'none' }
+    }));
   }
-  addBorder () {
-    // TODO
+  addFont (xFont) {
+    if (!xFont.name) return 0;
+    const list = this.fonts.children;
+    const len = list.length;
+    for (let i = 0; i < list.length; i++) {
+      if (xFont.equals(list[i])) return i;
+    }
+    list.push(xFont);
+    this.fonts.count = list.length;
+    return len;
   }
-  addXxf () {
-    // TODO
+  addFill (xFill) {
+    const list = this.fills.children;
+    const len = list.length;
+    for (let i = 0; i < list.length; i++) {
+      if (xFill.equals(list[i])) return i;
+    }
+    list.push(xFill);
+    this.fills.count = list.length;
+    return len;
   }
-  newNumFmt () {
+  addBorder (xBorder) {
+    const list = this.borders.children;
+    const len = list.length;
+    for (let i = 0; i < list.length; i++) {
+      if (xBorder.equals(list[i])) return i;
+    }
+    list.push(xBorder);
+    this.borders.count = list.length;
+    return len;
+  }
+  addCellXf (xXf) {
+    const list = this.cellXfs.children;
+    const len = list.length;
+    for (let i = 0; i < list.length; i++) {
+      if (xXf.equals(list[i])) return i;
+    }
+    list.push(xXf);
+    this.cellXfs.count = list.length;
+    return len;
+  }
+  newNumFmt (formatCode) {
     // TODO
   }
 }
@@ -46,6 +107,16 @@ export class Xfont extends Node {
     if (this.u) str += `<u/>`;
     return str + '</font>';
   }
+  equals (o) {
+    return this.sz === o.sz &&
+      this.name === o.name &&
+      this.family === o.family &&
+      this.charset === o.charset &&
+      this.color === o.color &&
+      this.b === o.b &&
+      this.i === o.i &&
+      this.u === o.u;
+  }
 }
 
 @props('count')
@@ -55,6 +126,16 @@ export class Xfills extends Node {}
 export class Xfill extends Node {
   render () {
     return `<fill>${this.patternFill.render()}</fill>`;
+  }
+  equals (o) {
+    const pf1 = this.patternFill;
+    const pf2 = o.patternFill;
+    if (pf1 && pf2) {
+      return pf1.patternType === pf2.patternType &&
+        pf1.fgColor === pf2.fgColor &&
+        pf1.bgColor === pf2.bgColor;
+    }
+    return !pf1 && !pf2;
   }
 }
 
@@ -89,6 +170,18 @@ export class Xborder extends Node {
     str += this._renderLine('bottom');
     return str + '</border>';
   }
+  equals (o) {
+    const check = (a, b) => {
+      if (a && b) {
+        return a.style === b.style && a.color === b.color;
+      }
+      return !a && !b;
+    };
+    return check(this.left, o.left) &&
+      check(this.right, o.right) &&
+      check(this.top, o.top) &&
+      check(this.bottom, o.bottom);
+  }
 }
 
 @props('count')
@@ -105,14 +198,47 @@ export class XcellXfs extends Node {}
 
 @props('applyAlignment', 'applyBorder', 'applyFont', 'applyFill', 'applyNumberFormat', 'applyProtection', 'borderId', 'fillId', 'fontId', 'numFmtId', 'xfId')
 export class Xxf extends Node {
-  alignment = null;
+  alignment = new Xalignment();
   render () {
     if (this.alignment) {
       this.children = [this.alignment];
     }
     return super.render();
   }
+  equals (o) {
+    return this.applyAlignment === o.applyAlignment &&
+      this.applyBorder === o.applyBorder &&
+      this.applyFont === o.applyFont &&
+      this.applyFill === o.applyFill &&
+      this.applyProtection === o.applyProtection &&
+      this.borderId === o.borderId &&
+      this.fillId === o.fillId &&
+      this.fontId === o.fontId &&
+      this.numFmtId === o.numFmtId &&
+      this.xfId === o.xfId &&
+      this.alignment.equals(o.alignment);
+  }
 }
 
 @props('horizontal', 'indent', 'shrinkToFit', 'textRotation', 'vertical', 'wrapText')
-export class Xalignment extends Node {}
+export class Xalignment extends Node {
+  constructor (attrs = {}, children = []) {
+    attrs = Object.assign({
+      horizontal: 'general',
+      indent: 0,
+      shrinkToFit: false,
+      textRotation: 0,
+      vertical: 'bottom',
+      wrapText: false
+    }, attrs);
+    super(attrs, children);
+  }
+  equals (o) {
+    return this.horizontal === o.horizontal &&
+      this.indent === o.indent &&
+      this.shrinkToFit === o.shrinkToFit &&
+      this.textRotation === o.textRotation &&
+      this.vertical === o.vertical &&
+      this.wrapText === o.wrapText;
+  }
+}
