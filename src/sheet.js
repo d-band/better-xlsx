@@ -10,10 +10,10 @@ export class Sheet {
   hidden = false;
   sheetViews = [];
   sheetFormat = {
-    defaultColWidth: null,
-    defaultRowHeight: null,
-    outlineLevelCol: null,
-    outlineLevelRow: null
+    defaultColWidth: 0,
+    defaultRowHeight: 0,
+    outlineLevelCol: 0,
+    outlineLevelRow: 0
   };
   constructor ({ name, file, selected }) {
     this.name = name;
