@@ -1,4 +1,5 @@
 import { props, Node, HEAD } from './node';
+import { NumFmtInv, NumFmtsCount } from './lib';
 
 @props('xmlns')
 export class XstyleSheet extends Node {
@@ -9,6 +10,7 @@ export class XstyleSheet extends Node {
   cellStyleXfs = null;
   cellXfs = null;
   numFmts = null;
+  numFmtRefTable = {};
 
   constructor ({ xmlns = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main' }, children) {
     super({ xmlns }, children);
@@ -79,8 +81,34 @@ export class XstyleSheet extends Node {
     this.cellXfs.count = list.length;
     return len;
   }
+  addNumFmt (xNumFmt) {
+    if (xNumFmt.numFmtId <= NumFmtsCount) return;
+    if (this.numFmtRefTable[xNumFmt.numFmtId] === undefined) {
+      this.numFmts.children.push(xNumFmt);
+      this.numFmts.count = this.numFmts.children.length;
+      this.numFmtRefTable[xNumFmt.numFmtId] = xNumFmt;
+    }
+  }
   newNumFmt (formatCode) {
-    // TODO
+    if (!formatCode) return new XnumFmt({ numFmtId: 0, formatCode: 'general' });
+    let numFmtId = NumFmtInv[formatCode];
+    if (numFmtId !== undefined) {
+      return new XnumFmt({ numFmtId, formatCode });
+    }
+    for (const numFmt of this.numFmts.children) {
+      if (formatCode === numFmt.formatCode) return numFmt;
+    }
+
+    numFmtId = NumFmtsCount + 1;
+    do {
+      if (this.numFmtRefTable[numFmtId]) {
+        numFmtId++;
+      } else {
+        this.addNumFmt(new XnumFmt({ numFmtId, formatCode }));
+        break;
+      }
+    } while (1);
+    return new XnumFmt({ numFmtId, formatCode });
   }
 }
 

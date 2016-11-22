@@ -1,5 +1,5 @@
 import { Xfill, XpatternFill, Xxf } from './xmlStyle';
-
+const NumFmtsCount = 163;
 const NumFmt = {
   0: 'general',
   1: '0',
@@ -104,4 +104,4 @@ function handleNumFmtId (numFmtId, styles) {
   return styles.addCellXf(xf);
 }
 
-export { NumFmt, NumFmtInv, col2num, num2col, cid2coord, handleStyle, handleNumFmtId };
+export { NumFmt, NumFmtInv, NumFmtsCount, col2num, num2col, cid2coord, handleStyle, handleNumFmtId };

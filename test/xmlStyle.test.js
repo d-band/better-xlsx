@@ -153,5 +153,9 @@ describe('Test: xmlSharedStrings.js', () => {
     expect(styleSheet.addCellXf(xf2)).to.equal(2);
     expect(styleSheet.addCellXf(xf1)).to.equal(1);
     expect(styleSheet.addCellXf(xf2)).to.equal(2);
+
+    expect(styleSheet.newNumFmt().numFmtId).to.equal(0);
+    expect(styleSheet.newNumFmt('@').numFmtId).to.equal('49');
+    expect(styleSheet.newNumFmt('test').numFmtId).to.equal(164);
   });
 });
