@@ -1,3 +1,5 @@
+import Cell from './cell';
+
 export class Row {
   cells = [];
   hidden = false;
@@ -13,6 +15,9 @@ export class Row {
     this.isCustom = true;
   }
   addCell () {
-    // TODO
+    const cell = new Cell({ row: this });
+    this.cells.push(cell);
+    this.sheet.maybeAddCol(this.cells.length);
+    return cell;
   }
 }
