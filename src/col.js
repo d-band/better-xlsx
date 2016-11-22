@@ -5,7 +5,7 @@ export class Col {
   outlineLevel = 0;
   numFmt = '';
 
-  constructor ({ min, max, hidden = false, collapsed = false, width = 9.5 }) {
+  constructor ({ min, max, hidden = false, collapsed = false, width = 0 }) {
     this.min = min;
     this.max = max;
     this.hidden = hidden;

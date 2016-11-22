@@ -6,6 +6,21 @@ export class XstyleSheet extends Node {
     super({ xmlns }, children);
     this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
   }
+  addFont () {
+    // TODO
+  }
+  addFill () {
+    // TODO
+  }
+  addBorder () {
+    // TODO
+  }
+  addXxf () {
+    // TODO
+  }
+  newNumFmt () {
+    // TODO
+  }
 }
 
 @props('count')

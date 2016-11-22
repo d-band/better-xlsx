@@ -1,3 +1,5 @@
+import { Xfill, XpatternFill } from './xmlStyle';
+
 const NumFmt = {
   0: 'general',
   1: '0',
@@ -37,5 +39,66 @@ const NumFmtInv = {};
 for (const k of Object.keys(NumFmt)) {
   NumFmtInv[NumFmt[k]] = k;
 }
+// AA => 26
+function col2num (colstr) {
+  let d = 0;
+  for (let i = 0; i !== colstr.length; ++i) {
+    d = 26 * d + colstr.charCodeAt(i) - 64;
+  }
+  return d - 1;
+}
+// 26 => AA
+function num2col (col) {
+  let s = '';
+  for (++col; col; col = Math.floor((col - 1) / 26)) {
+    s = String.fromCharCode(((col - 1) % 26) + 65) + s;
+  }
+  return s;
+}
+// B3 => {x: 1, y: 2}
+function cid2coord (cid) {
+  const temp = cid.match(/([A-Z]+)(\d+)/);
+  return {
+    x: col2num(temp[1]),
+    y: parseInt(temp[2], 10) - 1
+  };
+}
 
-export { NumFmt, NumFmtInv };
+function handleStyle (style, numFmtId, styles) {
+  const { xFont, xFill, xBorder, xXf } = style.makeXStyleElements();
+
+  const fontId = styles.addFont(xFont);
+  const fillId = styles.addFill(xFill);
+
+  // HACK - adding light grey fill, as in OO and Google
+  const greyfill = new Xfill({
+    patternFill: new XpatternFill({ patternType: 'lightGray' })
+  });
+  styles.addFill(greyfill);
+
+  const borderId = styles.addBorder(xBorder);
+  xXf.fontId = fontId;
+  xXf.fillId = fillId;
+  xXf.borderId = borderId;
+  xXf.numFmtId = numFmtId;
+  // apply the numFmtId when it is not the default cellxf
+  if (xXf.numFmtId > 0) {
+    xXf.applyNumberFormat = true;
+  }
+
+  xXf.alignment.horizontal = style.align.h;
+  xXf.alignment.indent = style.align.indent;
+  xXf.alignment.shrinkToFit = style.align.shrinkToFit;
+  xXf.alignment.textRotation = style.align.textRotation;
+  xXf.alignment.vertical = style.align.v;
+  xXf.alignment.wrapText = style.align.wrapText;
+
+  const fId = styles.addXxf(xXf);
+  return fId;
+}
+
+function handleNumFmtId () {
+
+}
+
+export { NumFmt, NumFmtInv, col2num, num2col, cid2coord, handleStyle, handleNumFmtId };

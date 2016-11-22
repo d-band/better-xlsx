@@ -2,11 +2,37 @@ import { props, Node, HEAD } from './node';
 
 @props('xmlns', 'xmlns:r')
 export class Xworksheet extends Node {
+  sheetPr = null;
+  sheetViews = null;
+  sheetFormatPr = null;
+  printOptions = null;
+  pageMargins = null;
+  pageSetup = null;
+  headerFooter = null;
+  mergeCells = null;
+  dimension = null;
+  cols = null;
+  sheetData = null;
+
   constructor (attrs = {}, children) {
     attrs['xmlns'] = attrs['xmlns'] || 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
     attrs['xmlns:r'] = attrs['xmlns:r'] || 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
     super(attrs, children);
     this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
+  }
+  render () {
+    if (this.sheetPr) this.children.push(this.sheetPr);
+    if (this.sheetViews) this.children.push(this.sheetViews);
+    if (this.sheetFormatPr) this.children.push(this.sheetFormatPr);
+    if (this.printOptions) this.children.push(this.printOptions);
+    if (this.pageMargins) this.children.push(this.pageMargins);
+    if (this.pageSetup) this.children.push(this.pageSetup);
+    if (this.headerFooter) this.children.push(this.headerFooter);
+    if (this.mergeCells) this.children.push(this.mergeCells);
+    if (this.dimension) this.children.push(this.dimension);
+    if (this.cols) this.children.push(this.cols);
+    if (this.sheetData) this.children.push(this.sheetData);
+    return super.render();
   }
 }
 
@@ -84,10 +110,10 @@ export class XheaderFooter extends Node {
 }
 
 export function makeXworksheet (sheet = new Xworksheet()) {
-  const sheetPr = new XsheetPr({ filterMode: false }, [
+  sheet.sheetPr = new XsheetPr({ filterMode: false }, [
     new XpageSetUpPr({ fitToPage: false })
   ]);
-  const sheetViews = new XsheetViews({}, [
+  sheet.sheetViews = new XsheetViews({}, [
     new XsheetView({
       colorId: 64,
       defaultGridColor: true,
@@ -114,15 +140,15 @@ export function makeXworksheet (sheet = new Xworksheet()) {
       })
     ])
   ]);
-  const sheetFormatPr = new XsheetFormatPr({ defaultRowHeight: '12.85' });
-  const printOptions = new XprintOptions({
+  sheet.sheetFormatPr = new XsheetFormatPr({ defaultRowHeight: '12.85' });
+  sheet.printOptions = new XprintOptions({
     gridLines: false,
     gridLinesSet: true,
     headings: false,
     horizontalCentered: false,
     verticalCentered: false
   });
-  const pageMargins = new XpageMargins({
+  sheet.pageMargins = new XpageMargins({
     left: 0.7875,
     right: 0.7875,
     top: 1.05277777777778,
@@ -130,7 +156,7 @@ export function makeXworksheet (sheet = new Xworksheet()) {
     header: 0.7875,
     footer: 0.7875
   });
-  const pageSetup = new XpageSetup({
+  sheet.pageSetup = new XpageSetup({
     blackAndWhite: false,
     cellComments: 'none',
     copies: 1,
@@ -151,6 +177,6 @@ export function makeXworksheet (sheet = new Xworksheet()) {
   headerFooter.oddHeader = '&C&"Times New Roman,Regular"&12&A';
   headerFooter.oddFooter = '&C&"Times New Roman,Regular"&12Page &P';
 
-  sheet.children = [sheetPr, sheetViews, sheetFormatPr, printOptions, pageMargins, pageSetup, headerFooter];
+  sheet.headerFooter = headerFooter;
   return sheet;
 }
