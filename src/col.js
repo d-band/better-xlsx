@@ -1,9 +1,9 @@
 import { NumFmt } from './lib';
+import { Style } from './style';
 
 export class Col {
   outlineLevel = 0;
-  numFmt = null;
-  style = null;
+  numFmt = '';
 
   constructor ({ min, max, hidden = false, collapsed = false, width = 9.5 }) {
     this.min = min;
@@ -11,8 +11,7 @@ export class Col {
     this.hidden = hidden;
     this.collapsed = collapsed;
     this.width = width;
-    // TODO
-    this.style = null;
+    this.style = new Style();
   }
   setType (cellType) {
     this.numFmt = NumFmt[cellType];
