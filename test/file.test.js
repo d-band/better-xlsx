@@ -9,7 +9,7 @@ import { File } from '../src/file';
 import { Style } from '../src/style';
 import Zip from 'jszip';
 
-Zip.defaults.date = new Date(2016, 10, 23);
+Zip.defaults.date = new Date(Date.UTC(2016, 10, 23, 0, 0, 0));
 
 describe('Test: file.js', () => {
   it('should saveAs buffer', (done) => {
