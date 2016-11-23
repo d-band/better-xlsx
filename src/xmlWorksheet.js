@@ -74,8 +74,8 @@ export class Xc extends Node {
   f = null;
   v = null;
   render () {
-    if (this.f) this.children.push(this.f);
-    if (this.v) this.children.push(new Node({}, [this.v], 'v'));
+    if (this.f !== null) this.children.push(this.f);
+    if (this.v !== null) this.children.push(new Node({}, [this.v], 'v'));
     return super.render();
   }
 }
@@ -103,8 +103,8 @@ export class XheaderFooter extends Node {
   oddHeader = null;
   oddFooter = null;
   render () {
-    if (this.oddHeader) this.children.push(new Node({}, [this.oddHeader], 'oddHeader'));
-    if (this.oddFooter) this.children.push(new Node({}, [this.oddFooter], 'oddFooter'));
+    if (this.oddHeader !== null) this.children.push(new Node({}, [this.oddHeader], 'oddHeader'));
+    if (this.oddFooter !== null) this.children.push(new Node({}, [this.oddFooter], 'oddFooter'));
     return super.render();
   }
 }

@@ -62,6 +62,7 @@ export class Node {
 
       for (const key of Object.keys(attributes || {})) {
         let v = attributes[key];
+        if (v === undefined) continue;
         if (typeof v === 'string') {
           v = attrEscape(v);
         }

@@ -38,7 +38,7 @@ export class Sheet {
         collapsed: false
       });
       this.cols.push(col);
-      this.maxCol = this.cols.length;
+      this.maxCol = cellCount;
     }
   }
   col (idx) {
@@ -93,8 +93,8 @@ export class Sheet {
       cell.style.border.top = 'none';
       cell.style.border.bottom = 'none';
 
-      for (let rownum = 0; rownum < cell.vMerge; rownum++) {
-        for (let colnum = 0; colnum < cell.hMerge; colnum++) {
+      for (let rownum = 0; rownum <= cell.vMerge; rownum++) {
+        for (let colnum = 0; colnum <= cell.hMerge; colnum++) {
           const tmpcell = this.cell(r + rownum, c + colnum);
           tmpcell.style.applyBorder = true;
           if (rownum === 0) {
