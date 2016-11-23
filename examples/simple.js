@@ -1,5 +1,5 @@
 const fs = require('fs');
-const xlsx = require('../lib').default;
+const xlsx = require('../lib');
 
 const file = new xlsx.File();
 
