@@ -5,6 +5,8 @@ better-xlsx
 
 [![NPM version](https://img.shields.io/npm/v/better-xlsx.svg)](https://www.npmjs.com/package/better-xlsx)
 [![NPM downloads](https://img.shields.io/npm/dm/better-xlsx.svg)](https://www.npmjs.com/package/better-xlsx)
+[![Build Status](https://travis-ci.org/d-band/better-xlsx.svg?branch=master)](https://travis-ci.org/d-band/better-xlsx)
+[![Coverage Status](https://coveralls.io/repos/github/d-band/better-xlsx/badge.svg?branch=master)](https://coveralls.io/github/d-band/better-xlsx?branch=master)
 [![Dependency Status](https://david-dm.org/d-band/better-xlsx.svg)](https://david-dm.org/d-band/better-xlsx)
 
 ---
