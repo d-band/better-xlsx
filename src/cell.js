@@ -1,3 +1,5 @@
+import { Style } from './style';
+
 export const CellType = {
   TypeString: 49,
   TypeFormula: 0,
@@ -17,10 +19,19 @@ export class Cell {
   hidden = false;
   hMerge = 0;
   vMerge = 0;
-  style = null;
+  _style = null;
   cellType = 'TypeString';
 
   constructor ({ row }) {
     this.row = row;
+  }
+  get style () {
+    if (this._style === null) {
+      this._style = new Style();
+    }
+    return this._style;
+  }
+  set style (s) {
+    this._style = s;
   }
 }

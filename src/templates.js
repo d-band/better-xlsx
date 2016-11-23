@@ -8,7 +8,7 @@ export const DOT_RELS = `<?xml version="1.0" encoding="UTF-8"?>
 export const DOCPROPS_APP = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
   <TotalTime>0</TotalTime>
-  <Application>Go XLSX</Application>
+  <Application>JS XLSX</Application>
 </Properties>`;
 
 export const DOCPROPS_CORE = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>

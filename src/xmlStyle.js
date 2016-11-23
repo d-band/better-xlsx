@@ -188,7 +188,7 @@ export class Xborder extends Node {
 
     let str = `<${pos} style="${posVal.style}">`;
     if (posVal.color) str += `<color rgb="${posVal.color}"/>`;
-    return str + `<${pos}>`;
+    return str + `</${pos}>`;
   }
   render () {
     let str = '<border>';

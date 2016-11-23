@@ -53,7 +53,7 @@ describe('Test: xmlSharedStrings.js', () => {
       })
     ];
     borders.count = 2;
-    expect(borders.render()).to.equal('<borders count="2"><border><left style="thin"><color rgb="ff000000"/><left><right style="thin"><color rgb="ffffffff"/><right></border><border><top style="thin"><color rgb="ff000000"/><top><bottom style="thin"><color rgb="ffffffff"/><bottom></border></borders>');
+    expect(borders.render()).to.equal('<borders count="2"><border><left style="thin"><color rgb="ff000000"/></left><right style="thin"><color rgb="ffffffff"/></right></border><border><top style="thin"><color rgb="ff000000"/></top><bottom style="thin"><color rgb="ffffffff"/></bottom></border></borders>');
     // cellStyles
     cellStyles.children = [
       new XcellStyle({ builtinId: 0, name: 'Normal', xfId: 0 })
@@ -89,7 +89,7 @@ describe('Test: xmlSharedStrings.js', () => {
   it('should XstyleSheet add children', () => {
     const styleSheet = new XstyleSheet({});
     styleSheet.reset();
-    expect(styleSheet.render()).to.equal('<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts/><fills/><borders count="1"><border><left style="none"><left><right style="none"><right><top style="none"><top><bottom style="none"><bottom></border></borders><cellStyleXfs/><cellXfs count="1"><xf><alignment horizontal="general" indent="0" shrinkToFit="false" textRotation="0" vertical="bottom" wrapText="false"/></xf></cellXfs><numFmts/></styleSheet>');
+    expect(styleSheet.render()).to.equal('<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts/><fills/><borders count="1"><border><left style="none"></left><right style="none"></right><top style="none"></top><bottom style="none"></bottom></border></borders><cellStyleXfs/><cellXfs count="1"><xf><alignment horizontal="general" indent="0" shrinkToFit="false" textRotation="0" vertical="bottom" wrapText="false"/></xf></cellXfs><numFmts/></styleSheet>');
 
     const font1 = new Xfont({ sz: 3, color: 'ff000000', name: 'Avenir Next', family: '0' });
     const font2 = new Xfont({ sz: 3, color: 'ff000000', name: 'Avenir Next', family: '0', b: true });
