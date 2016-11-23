@@ -20,8 +20,8 @@ $ npm install better-xlsx
 ## Usage
 
 ```
-const fs = require('fs');
-const xlsx = require('better-xlsx');
+import fs from 'fs';
+import xlsx from 'better-xlsx';
 
 const file = new xlsx.File();
 
