@@ -71,8 +71,11 @@ export class Xrow extends Node {}
 
 @props('r', 's', 't')
 export class Xc extends Node {
-  f = null;
-  v = null;
+  constructor (attrs, children) {
+    super(attrs, children);
+    this.f = null;
+    this.v = null;
+  }
   render () {
     if (this.f !== null) this.children.push(this.f);
     if (this.v !== null) this.children.push(new Node({}, [this.v], 'v'));
@@ -100,8 +103,11 @@ export class XpageSetup extends Node {}
 
 @props('differentFirst', 'differentOddEven')
 export class XheaderFooter extends Node {
-  oddHeader = null;
-  oddFooter = null;
+  constructor (attrs, children) {
+    super(attrs, children);
+    this.oddHeader = null;
+    this.oddFooter = null;
+  }
   render () {
     if (this.oddHeader !== null) this.children.push(new Node({}, [this.oddHeader], 'oddHeader'));
     if (this.oddFooter !== null) this.children.push(new Node({}, [this.oddFooter], 'oddFooter'));

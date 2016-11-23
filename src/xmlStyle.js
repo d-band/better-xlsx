@@ -227,7 +227,10 @@ export class XcellXfs extends Node {}
 
 @props('applyAlignment', 'applyBorder', 'applyFont', 'applyFill', 'applyNumberFormat', 'applyProtection', 'borderId', 'fillId', 'fontId', 'numFmtId', 'xfId')
 export class Xxf extends Node {
-  alignment = new Xalignment();
+  constructor (attrs, children) {
+    super(attrs, children);
+    this.alignment = new Xalignment();
+  }
   render () {
     if (this.alignment) {
       this.children = [this.alignment];
