@@ -4,7 +4,6 @@ import { RefTable } from './reftable';
 import { makeXworkbook, Xsheets, Xsheet, makeWorkbookRels } from './xmlWorkbook';
 import { makeXTypes, XOverride } from './xmlContentTypes';
 import { XstyleSheet } from './xmlStyle';
-import fs from 'fs';
 import Zip from 'jszip';
 
 export class File {
@@ -12,8 +11,7 @@ export class File {
   sheets = [];
   definedNames = [];
 
-  constructor (name) {
-    this.name = name;
+  constructor () {
     this.styles = new XstyleSheet({});
   }
   addSheet (name) {
@@ -29,18 +27,17 @@ export class File {
     this.sheets.push(sheet);
     return sheet;
   }
-  save () {
+  saveAs (type = 'nodebuffer') {
     const parts = this.makeParts();
     const zip = new Zip();
     for (const key of Object.keys(parts)) {
       zip.file(key, parts[key]);
     }
-    zip
-      .generateNodeStream({ type: 'nodebuffer', streamFiles: true })
-      .pipe(fs.createWriteStream(this.name))
-      .on('finish', function () {
-        console.log('Written done.');
-      });
+    if (type === 'blob' || type === 'base64') {
+      return zip.generateAsync({ type });
+    } else {
+      return zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true });
+    }
   }
   makeParts () {
     const parts = {};

@@ -1,22 +1,9 @@
-import { File } from './file';
-import { Style } from './style';
+import * as cell from './cell';
+import * as col from './col';
+import * as file from './file';
+import * as lib from './lib';
+import * as row from './row';
+import * as sheet from './sheet';
+import * as style from './style';
 
-const file = new File(process.env.HOME + '/Desktop/temp-xlsx/test.xlsx');
-
-const sheet = file.addSheet('hello');
-const row = sheet.addRow();
-const cell = row.addCell();
-cell.value = 'I am a cell!';
-cell.hMerge = 2;
-cell.vMerge = 1;
-
-const style = new Style();
-style.fill.patternType = 'solid';
-style.fill.fgColor = '00FF0000';
-style.fill.bgColor = 'FF000000';
-style.align.h = 'center';
-style.align.v = 'center';
-
-cell.style = style;
-
-file.save();
+export default { ...cell, ...col, ...file, ...lib, ...row, ...sheet, ...style };

@@ -27,6 +27,7 @@ export class XstyleSheet extends Node {
     return super.render();
   }
   reset () {
+    this.children = [];
     this.fonts = new Xfonts();
     this.fills = new Xfills();
     this.borders = new Xborders();
