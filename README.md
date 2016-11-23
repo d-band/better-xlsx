@@ -19,6 +19,8 @@ $ npm install better-xlsx
 
 ## Usage
 
+- [More Examples](examples)
+
 ```
 import fs from 'fs';
 import xlsx from 'better-xlsx';
