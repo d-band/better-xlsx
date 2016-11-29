@@ -104,4 +104,9 @@ function handleNumFmtId (numFmtId, styles) {
   return styles.addCellXf(xf);
 }
 
-export { NumFmt, NumFmtInv, NumFmtsCount, col2num, num2col, cid2coord, handleStyle, handleNumFmtId };
+function toExcelTime (d) {
+  const unix = d.getTime() / 1000;
+  return unix / 86400.0 + 25569.0;
+}
+
+export { NumFmt, NumFmtInv, NumFmtsCount, col2num, num2col, cid2coord, handleStyle, handleNumFmtId, toExcelTime };

@@ -9,7 +9,8 @@ import { File } from '../src/file';
 import { Style } from '../src/style';
 import Zip from 'jszip';
 
-Zip.defaults.date = new Date(Date.UTC(2016, 10, 23, 0, 0, 0));
+const DATE = new Date(Date.UTC(2016, 10, 23, 0, 0, 0));
+Zip.defaults.date = DATE;
 
 describe('Test: file.js', () => {
   it('should saveAs simple excel file', (done) => {
@@ -33,6 +34,103 @@ describe('Test: file.js', () => {
 
     const tmpfile = join(tmpdir(), 'simple.xlsx');
     const expfile = join(__dirname, 'expect/simple.xlsx');
+    file
+      .saveAs()
+      .pipe(fs.createWriteStream(tmpfile))
+      .on('finish', () => {
+        const expectFile = fs.createReadStream(expfile);
+        const actualFile = fs.createReadStream(tmpfile);
+        streamEqual(expectFile, actualFile, function (err, ok) {
+          expect(err).to.be.null;
+          expect(ok).to.be.true;
+          done();
+        });
+      });
+  });
+  it('should saveAs simple excel file with colWidth', (done) => {
+    const file = new File();
+    const sheet = file.addSheet('sheet1');
+    sheet.setColWidth(0, 1, 20);
+
+    const row = sheet.addRow();
+    const cell = row.addCell();
+    cell.value = 'I am a cell!';
+
+    const tmpfile = join(tmpdir(), 'simple2.xlsx');
+    const expfile = join(__dirname, 'expect/simple2.xlsx');
+    file
+      .saveAs()
+      .pipe(fs.createWriteStream(tmpfile))
+      .on('finish', () => {
+        const expectFile = fs.createReadStream(expfile);
+        const actualFile = fs.createReadStream(tmpfile);
+        streamEqual(expectFile, actualFile, function (err, ok) {
+          expect(err).to.be.null;
+          expect(ok).to.be.true;
+          done();
+        });
+      });
+  });
+  it('should saveAs simple excel file with multi types', (done) => {
+    const file = new File();
+    const sheet = file.addSheet('sheet1');
+    sheet.setColWidth(0, 5, 20);
+
+    const data1 = [null, DATE, 123, 'abc', true, [1, 2, 3]];
+    const data2 = [undefined, DATE, 123.456, 'abc', false, { foo: 'bar' }];
+    const data3 = ['0.00e+00', '#,##0', '#,##0.00', '0%', '0.00%', '$#,##0.00'];
+
+    const row1 = sheet.addRow();
+    for (const v of data1) {
+      const cell = row1.addCell();
+      cell.value = v;
+    }
+    const row2 = sheet.addRow();
+    for (const v of data2) {
+      const cell = row2.addCell();
+      cell.value = v;
+    }
+    const row3 = sheet.addRow();
+    for (const v of data3) {
+      const cell = row3.addCell();
+      cell.value = 12345678.87654321;
+      cell.numFmt = v;
+    }
+    const row4 = sheet.addRow();
+    const c1 = row4.addCell();
+    c1.setDate(DATE);
+    const c2 = row4.addCell();
+    c2.setFormula('SUM(C1:C3)');
+
+    const tmpfile = join(tmpdir(), 'simple3.xlsx');
+    const expfile = join(__dirname, 'expect/simple3.xlsx');
+    file
+      .saveAs()
+      .pipe(fs.createWriteStream(tmpfile))
+      .on('finish', () => {
+        const expectFile = fs.createReadStream(expfile);
+        const actualFile = fs.createReadStream(tmpfile);
+        streamEqual(expectFile, actualFile, function (err, ok) {
+          expect(err).to.be.null;
+          expect(ok).to.be.true;
+          done();
+        });
+      });
+  });
+  it('should saveAs simple excel file with col style', (done) => {
+    const file = new File();
+    const sheet = file.addSheet('sheet1');
+
+    for (let i = 10000; i <= 20000; i += 2000) {
+      const row = sheet.addRow();
+      const cell = row.addCell();
+      cell.value = i;
+    }
+
+    sheet.col(0).setType(3);
+
+    const tmpfile = join(tmpdir(), 'simple4.xlsx');
+    const expfile = join(__dirname, 'expect/simple4.xlsx');
     file
       .saveAs()
       .pipe(fs.createWriteStream(tmpfile))
