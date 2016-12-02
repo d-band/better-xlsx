@@ -45,6 +45,12 @@ export class Sheet {
     this.maybeAddCol(idx + 1);
     return this.cols[idx];
   }
+  row (idx) {
+    for (let len = this.rows.length; len <= idx; len++) {
+      this.addRow();
+    }
+    return this.rows[idx];
+  }
   cell (row, col) {
     for (let len = this.rows.length; len <= row; len++) {
       this.addRow();

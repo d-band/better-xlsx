@@ -18,6 +18,8 @@ describe('Test: file.js', () => {
     const sheet = file.addSheet('hello');
     const row = sheet.addRow();
 
+    expect(sheet.row(0) === row).to.be.true;
+
     const cell = row.addCell();
     cell.value = 'I am a cell!';
     cell.hMerge = 2;
