@@ -56,7 +56,7 @@ file
 - [ ] xlsx parser
 - [ ] read excel file
 - [x] write excel file
-- [ ] parse v-dom from html table
+- [x] transform html table to excel file [html2xlsx](https://github.com/d-band/html2xlsx)
 
 ## Report a issue
 
