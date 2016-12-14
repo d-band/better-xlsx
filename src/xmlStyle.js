@@ -228,6 +228,18 @@ export class XcellXfs extends Node {}
 @props('applyAlignment', 'applyBorder', 'applyFont', 'applyFill', 'applyNumberFormat', 'applyProtection', 'borderId', 'fillId', 'fontId', 'numFmtId', 'xfId')
 export class Xxf extends Node {
   constructor (attrs, children) {
+    attrs = Object.assign({
+      applyAlignment: false,
+      applyBorder: false,
+      applyFont: false,
+      applyFill: false,
+      applyNumberFormat: false,
+      applyProtection: false,
+      borderId: 0,
+      fillId: 0,
+      fontId: 0,
+      numFmtId: 0
+    }, attrs);
     super(attrs, children);
     this.alignment = new Xalignment();
   }
