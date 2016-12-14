@@ -79,17 +79,17 @@ describe('Test: xmlSharedStrings.js', () => {
     // cellStyleXfs
     cellStyleXfs.children = [xf];
     cellStyleXfs.count = 1;
-    expect(cellStyleXfs.render()).to.equal('<cellStyleXfs count="1"><xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="7" fontId="0" numFmtId="0"><alignment horizontal="general" indent="0" shrinkToFit="false" textRotation="0" vertical="top" wrapText="1"/></xf></cellStyleXfs>');
+    expect(cellStyleXfs.render()).to.equal('<cellStyleXfs count="1"><xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="7" fontId="0" numFmtId="0"><alignment horizontal="general" indent="0" shrinkToFit="0" textRotation="0" vertical="top" wrapText="1"/></xf></cellStyleXfs>');
     // cellXfs
     cellXfs.children = [xf];
     cellXfs.count = 1;
-    expect(cellXfs.render()).to.equal('<cellXfs count="1"><xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="7" fontId="0" numFmtId="0"><alignment horizontal="general" indent="0" shrinkToFit="false" textRotation="0" vertical="top" wrapText="1"/></xf></cellXfs>');
+    expect(cellXfs.render()).to.equal('<cellXfs count="1"><xf applyAlignment="1" applyBorder="1" applyFill="0" applyFont="1" applyNumberFormat="1" applyProtection="0" borderId="7" fontId="0" numFmtId="0"><alignment horizontal="general" indent="0" shrinkToFit="0" textRotation="0" vertical="top" wrapText="1"/></xf></cellXfs>');
   });
 
   it('should XstyleSheet add children', () => {
     const styleSheet = new XstyleSheet({});
     styleSheet.reset();
-    expect(styleSheet.render()).to.equal('<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts/><fills/><borders count="1"><border><left style="none"></left><right style="none"></right><top style="none"></top><bottom style="none"></bottom></border></borders><cellStyleXfs/><cellXfs count="1"><xf><alignment horizontal="general" indent="0" shrinkToFit="false" textRotation="0" vertical="bottom" wrapText="false"/></xf></cellXfs><numFmts/></styleSheet>');
+    expect(styleSheet.render()).to.equal('<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts/><fills/><borders count="1"><border><left style="none"></left><right style="none"></right><top style="none"></top><bottom style="none"></bottom></border></borders><cellStyleXfs/><cellXfs count="1"><xf><alignment horizontal="general" indent="0" shrinkToFit="0" textRotation="0" vertical="bottom" wrapText="0"/></xf></cellXfs><numFmts/></styleSheet>');
 
     const font1 = new Xfont({ sz: 3, color: 'ff000000', name: 'Avenir Next', family: '0' });
     const font2 = new Xfont({ sz: 3, color: 'ff000000', name: 'Avenir Next', family: '0', b: true });

@@ -7,7 +7,7 @@ describe('Test: xmlWorkbook.js', () => {
   it('should makeXworkbook return Xworkbook', () => {
     const worksheet = makeXworkbook();
     expect(worksheet instanceof Xworkbook).to.be.true;
-    expect(worksheet.render()).to.equal('<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><fileVersion appName="JS XLSX"/><workbookPr showObjects="all"/><bookViews><workbookView showHorizontalScroll="true" showSheetTabs="true" showVerticalScroll="true" tabRatio="204" windowHeight="8192" windowWidth="16384" xWindow="0" yWindow="0"/></bookViews><calcPr iterateCount="100" iterate="false" iterateDelta="0.001" refMode="A1"/></workbook>');
+    expect(worksheet.render()).to.equal('<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><fileVersion appName="JS XLSX"/><workbookPr showObjects="all"/><bookViews><workbookView showHorizontalScroll="1" showSheetTabs="1" showVerticalScroll="1" tabRatio="204" windowHeight="8192" windowWidth="16384" xWindow="0" yWindow="0"/></bookViews><calcPr iterateCount="100" iterate="0" iterateDelta="0.001" refMode="A1"/></workbook>');
   });
 
   it('should makeWorkbookRels return XRelationships', () => {

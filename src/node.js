@@ -66,6 +66,9 @@ export class Node {
         if (typeof v === 'string') {
           v = attrEscape(v);
         }
+        if (typeof v === 'boolean') {
+          v = v ? 1 : 0;
+        }
         tokens.push(` ${key}="${v}"`);
       }
 
