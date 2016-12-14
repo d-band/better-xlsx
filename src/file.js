@@ -32,19 +32,27 @@ export class File {
     const zip = new Zip();
     for (const key of Object.keys(parts)) {
       const paths = key.split('/');
-      console.log(paths);
       const folders = paths.slice(0, -1);
       const filename = paths[paths.length - 1];
-      const folder = folders.reduce(function (parent, name) {
+      const folder = folders.reduce((parent, name) => {
         return parent.folder(name);
       }, zip);
 
       folder.file(filename, parts[key]);
     }
     if (type === 'blob' || type === 'base64') {
-      return zip.generateAsync({ type });
+      return zip.generateAsync({
+        type,
+        mimeType: 'application/ods',
+        compression: 'DEFLATE'
+      });
     } else {
-      return zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true });
+      return zip.generateNodeStream({
+        type: 'nodebuffer',
+        streamFiles: true,
+        mimeType: 'application/ods',
+        compression: 'DEFLATE'
+      });
     }
   }
   makeParts () {
