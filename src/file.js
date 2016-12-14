@@ -41,18 +41,9 @@ export class File {
       folder.file(filename, parts[key]);
     }
     if (type === 'blob' || type === 'base64') {
-      return zip.generateAsync({
-        type,
-        mimeType: 'application/ods',
-        compression: 'DEFLATE'
-      });
+      return zip.generateAsync({ type });
     } else {
-      return zip.generateNodeStream({
-        type: 'nodebuffer',
-        streamFiles: true,
-        mimeType: 'application/ods',
-        compression: 'DEFLATE'
-      });
+      return zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true });
     }
   }
   makeParts () {
