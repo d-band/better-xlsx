@@ -31,14 +31,7 @@ export class File {
     const parts = this.makeParts();
     const zip = new Zip();
     for (const key of Object.keys(parts)) {
-      const paths = key.split('/');
-      const folders = paths.slice(0, -1);
-      const filename = paths[paths.length - 1];
-      const folder = folders.reduce((parent, name) => {
-        return parent.folder(name);
-      }, zip);
-
-      folder.file(filename, parts[key]);
+      zip.file(key, parts[key]);
     }
     if (type === 'blob' || type === 'base64') {
       return zip.generateAsync({ type });

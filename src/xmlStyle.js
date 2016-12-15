@@ -31,7 +31,6 @@ export class XstyleSheet extends Node {
     this.fonts = new Xfonts();
     this.fills = new Xfills();
     this.borders = new Xborders();
-    this.cellStyleXfs = new XcellStyleXfs();
     this.cellXfs = new XcellXfs({ count: 1 }, [new Xxf()]);
     this.numFmts = new XnumFmts();
     this.addBorder(new Xborder({
