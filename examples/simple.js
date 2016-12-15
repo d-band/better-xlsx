@@ -7,7 +7,7 @@ const sheet = file.addSheet('Sheet1');
 const row = sheet.addRow();
 const cell = row.addCell();
 
-cell.value = 'I am a cell!';
+cell.value = 'I am a cell2!';
 cell.hMerge = 2;
 cell.vMerge = 1;
 
