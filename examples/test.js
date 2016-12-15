@@ -23,7 +23,6 @@ style.align.v = 'center';
 cell.style = style;
 
 const zip = new yazl.ZipFile();
-
 const parts = file.makeParts();
 for (const key of Object.keys(parts)) {
   zip.addBuffer(parts[key], key, {
