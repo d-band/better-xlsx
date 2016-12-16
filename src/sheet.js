@@ -147,7 +147,9 @@ export class Sheet {
     if (this.sheetFormat.defaultRowHeight !== 0) {
       sheet.sheetFormatPr.defaultRowHeight = this.sheetFormat.defaultRowHeight;
     }
-    sheet.sheetFormatPr.defaultColWidth = this.sheetFormat.defaultColWidth;
+    if (this.sheetFormat.defaultColWidth !== 0) {
+      sheet.sheetFormatPr.defaultColWidth = this.sheetFormat.defaultColWidth;
+    }
 
     const fIdList = [];
     sheet.cols = new Xcols();

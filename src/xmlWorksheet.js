@@ -21,17 +21,18 @@ export class Xworksheet extends Node {
     this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
   }
   render () {
+    this.children = [];
     if (this.sheetPr) this.children.push(this.sheetPr);
+    if (this.dimension) this.children.push(this.dimension);
     if (this.sheetViews) this.children.push(this.sheetViews);
     if (this.sheetFormatPr) this.children.push(this.sheetFormatPr);
+    if (this.cols) this.children.push(this.cols);
+    if (this.sheetData) this.children.push(this.sheetData);
+    if (this.mergeCells) this.children.push(this.mergeCells);
     if (this.printOptions) this.children.push(this.printOptions);
     if (this.pageMargins) this.children.push(this.pageMargins);
     if (this.pageSetup) this.children.push(this.pageSetup);
     if (this.headerFooter) this.children.push(this.headerFooter);
-    if (this.mergeCells) this.children.push(this.mergeCells);
-    if (this.dimension) this.children.push(this.dimension);
-    if (this.cols) this.children.push(this.cols);
-    if (this.sheetData) this.children.push(this.sheetData);
     return super.render();
   }
 }

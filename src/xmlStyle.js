@@ -17,13 +17,14 @@ export class XstyleSheet extends Node {
     this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
   }
   render () {
+    this.children = [];
+    if (this.numFmts) this.children.push(this.numFmts);
     if (this.fonts) this.children.push(this.fonts);
     if (this.fills) this.children.push(this.fills);
     if (this.borders) this.children.push(this.borders);
-    if (this.cellStyles) this.children.push(this.cellStyles);
     if (this.cellStyleXfs) this.children.push(this.cellStyleXfs);
     if (this.cellXfs) this.children.push(this.cellXfs);
-    if (this.numFmts) this.children.push(this.numFmts);
+    if (this.cellStyles) this.children.push(this.cellStyles);
     return super.render();
   }
   reset () {
@@ -113,13 +114,23 @@ export class XstyleSheet extends Node {
 }
 
 @props('count')
-export class XnumFmts extends Node {}
+export class XnumFmts extends Node {
+  render () {
+    if (this.count) return super.render();
+    return '';
+  }
+}
 
 @props('numFmtId', 'formatCode')
 export class XnumFmt extends Node {}
 
 @props('count')
-export class Xfonts extends Node {}
+export class Xfonts extends Node {
+  render () {
+    if (this.count) return super.render();
+    return '';
+  }
+}
 
 @props('sz', 'name', 'family', 'charset', 'color', 'b', 'i', 'u')
 export class Xfont extends Node {
@@ -148,7 +159,12 @@ export class Xfont extends Node {
 }
 
 @props('count')
-export class Xfills extends Node {}
+export class Xfills extends Node {
+  render () {
+    if (this.count) return super.render();
+    return '';
+  }
+}
 
 @props('patternFill')
 export class Xfill extends Node {
@@ -178,7 +194,12 @@ export class XpatternFill extends Node {
 }
 
 @props('count')
-export class Xborders extends Node {}
+export class Xborders extends Node {
+  render () {
+    if (this.count) return super.render();
+    return '';
+  }
+}
 
 @props('left', 'right', 'top', 'bottom')
 export class Xborder extends Node {
@@ -213,16 +234,31 @@ export class Xborder extends Node {
 }
 
 @props('count')
-export class XcellStyles extends Node {}
+export class XcellStyles extends Node {
+  render () {
+    if (this.count) return super.render();
+    return '';
+  }
+}
 
 @props('builtInId', 'customBuiltIn', 'hidden', 'iLevel', 'name', 'xfId')
 export class XcellStyle extends Node {}
 
 @props('count')
-export class XcellStyleXfs extends Node {}
+export class XcellStyleXfs extends Node {
+  render () {
+    if (this.count) return super.render();
+    return '';
+  }
+}
 
 @props('count')
-export class XcellXfs extends Node {}
+export class XcellXfs extends Node {
+  render () {
+    if (this.count) return super.render();
+    return '';
+  }
+}
 
 @props('applyAlignment', 'applyBorder', 'applyFont', 'applyFill', 'applyNumberFormat', 'applyProtection', 'borderId', 'fillId', 'fontId', 'numFmtId', 'xfId')
 export class Xxf extends Node {

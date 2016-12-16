@@ -13,11 +13,26 @@ export class XRelationship extends Node {}
 
 @props('xmlns', 'xmlns:r')
 export class Xworkbook extends Node {
+  fileVersion = null;
+  workbookPr = null;
+  bookViews = null;
+  sheets = null;
+  calcPr = null;
+
   constructor (attrs = {}, children) {
     attrs['xmlns'] = attrs['xmlns'] || 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
     attrs['xmlns:r'] = attrs['xmlns:r'] || 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
     super(attrs, children);
     this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
+  }
+  render () {
+    this.children = [];
+    if (this.fileVersion) this.children.push(this.fileVersion);
+    if (this.workbookPr) this.children.push(this.workbookPr);
+    if (this.bookViews) this.children.push(this.bookViews);
+    if (this.sheets) this.children.push(this.sheets);
+    if (this.calcPr) this.children.push(this.calcPr);
+    return super.render();
   }
 }
 
@@ -71,9 +86,9 @@ export function makeWorkbookRels (sheetCount) {
 
 export function makeXworkbook () {
   const workbook = new Xworkbook();
-  const fileVersion = new XfileVersion({ appName: 'JS XLSX' });
-  const workbookPr = new XworkbookPr({ showObjects: 'all' });
-  const bookViews = new XbookViews({}, [
+  workbook.fileVersion = new XfileVersion({ appName: 'JS XLSX' });
+  workbook.workbookPr = new XworkbookPr({ showObjects: 'all' });
+  workbook.bookViews = new XbookViews({}, [
     new XworkbookView({
       showHorizontalScroll: true,
       showSheetTabs: true,
@@ -85,14 +100,12 @@ export function makeXworkbook () {
       yWindow: 0
     })
   ]);
-  const calcPr = new XcalcPr({
+  workbook.calcPr = new XcalcPr({
     iterateCount: 100,
     iterate: false,
     iterateDelta: 0.001,
     refMode: 'A1'
   });
-
-  workbook.children = [fileVersion, workbookPr, bookViews, calcPr];
 
   return workbook;
 }

@@ -64,7 +64,7 @@ export class File {
       parts[`xl/worksheets/sheet${i}.xml`] = xSheet.render();
       i++;
     }
-    workbook.children.push(sheets);
+    workbook.sheets = sheets;
 
     parts['xl/workbook.xml'] = workbook.render();
     parts['_rels/.rels'] = templates.DOT_RELS;
