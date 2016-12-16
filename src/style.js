@@ -63,10 +63,10 @@ export class Style {
 }
 
 export class Border {
-  leftColor = '';
-  rightColor = '';
-  topColor = '';
-  bottomColor = '';
+  leftColor = undefined;
+  rightColor = undefined;
+  topColor = undefined;
+  bottomColor = undefined;
 
   constructor ({ left = 'none', right = 'none', top = 'none', bottom = 'none' }) {
     this.left = left;
@@ -87,7 +87,7 @@ export class Fill {
 export class Font {
   family = 0;
   charset = 0;
-  color = '';
+  color = undefined;
   bold = false;
   italic = false;
   underline = false;

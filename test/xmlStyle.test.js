@@ -16,8 +16,15 @@ describe('Test: xmlSharedStrings.js', () => {
     const cellStyles = new XcellStyles({ count: 0 });
     const cellStyleXfs = new XcellStyleXfs({ count: 0 });
     const cellXfs = new XcellXfs({ count: 0 });
-    styleSheet.children = [numFmts, fonts, fills, borders, cellStyles, cellStyleXfs, cellXfs];
-    expect(styleSheet.render()).to.equal('<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"/>');
+
+    styleSheet.fonts = fonts;
+    styleSheet.fills = fills;
+    styleSheet.borders = borders;
+    styleSheet.cellStyles = cellStyles;
+    styleSheet.cellStyleXfs = cellStyleXfs;
+    styleSheet.cellXfs = cellXfs;
+    styleSheet.numFmts = numFmts;
+    expect(styleSheet.render()).to.equal('<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"></styleSheet>');
 
     // numFmts
     numFmts.children = [
