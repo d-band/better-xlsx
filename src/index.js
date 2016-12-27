@@ -7,4 +7,4 @@ import * as sheet from './sheet';
 import * as style from './style';
 import Zip from 'jszip';
 
-module.exports = { ...cell, ...col, ...file, ...lib, ...row, ...sheet, ...style, Zip };
+export default { ...cell, ...col, ...file, ...lib, ...row, ...sheet, ...style, Zip };

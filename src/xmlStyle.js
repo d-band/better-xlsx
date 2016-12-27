@@ -263,7 +263,7 @@ export class XcellXfs extends Node {
 @props('applyAlignment', 'applyBorder', 'applyFont', 'applyFill', 'applyNumberFormat', 'applyProtection', 'borderId', 'fillId', 'fontId', 'numFmtId', 'xfId')
 export class Xxf extends Node {
   constructor (attrs, children) {
-    attrs = Object.assign({
+    const defaults = {
       applyAlignment: false,
       applyBorder: false,
       applyFont: false,
@@ -274,8 +274,8 @@ export class Xxf extends Node {
       fillId: 0,
       fontId: 0,
       numFmtId: 0
-    }, attrs);
-    super(attrs, children);
+    };
+    super({ ...defaults, ...attrs }, children);
     this.alignment = new Xalignment();
   }
   render () {
@@ -301,16 +301,16 @@ export class Xxf extends Node {
 
 @props('horizontal', 'indent', 'shrinkToFit', 'textRotation', 'vertical', 'wrapText')
 export class Xalignment extends Node {
-  constructor (attrs = {}, children = []) {
-    attrs = Object.assign({
+  constructor (attrs, children = []) {
+    const defaults = {
       horizontal: 'general',
       indent: 0,
       shrinkToFit: false,
       textRotation: 0,
       vertical: 'bottom',
       wrapText: false
-    }, attrs);
-    super(attrs, children);
+    };
+    super({ ...defaults, ...attrs }, children);
   }
   equals (o) {
     return this.horizontal === o.horizontal &&
