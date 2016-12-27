@@ -27,8 +27,11 @@ export default {
       ],
       plugins: [
         'transform-decorators-legacy',
-        'external-helpers'
+        'external-helpers',
+        'transform-runtime'
       ],
+      runtimeHelpers: true,
+      externalHelpers: true,
       exclude: 'node_modules/**'
     })
   ]
