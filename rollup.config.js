@@ -7,14 +7,14 @@ export default {
   dest: 'dist/xlsx.js',
   format: 'umd',
   moduleName: 'xlsx',
+  external: ['jszip'],
   globals: {
     jszip: 'JSZip'
   },
   plugins: [
     nodeResolve({
       jsnext: true,
-      main: true,
-      skip: ['jszip']
+      main: true
     }),
     commonjs(),
     babel({

@@ -32,9 +32,9 @@ var _aFunction = function(it){
 };
 
 // optional / simple context binding
-var aFunction = _aFunction;
+
 var _ctx = function(fn, that, length){
-  aFunction(fn);
+  _aFunction(fn);
   if(that === undefined)return fn;
   switch(length){
     case 1: return function(a){
@@ -56,9 +56,8 @@ var _isObject = function(it){
   return typeof it === 'object' ? it !== null : typeof it === 'function';
 };
 
-var isObject = _isObject;
 var _anObject = function(it){
-  if(!isObject(it))throw TypeError(it + ' is not an object!');
+  if(!_isObject(it))throw TypeError(it + ' is not an object!');
   return it;
 };
 
@@ -75,9 +74,8 @@ var _descriptors = !_fails(function(){
   return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
 });
 
-var isObject$1 = _isObject;
 var document$1 = _global.document;
-var is = isObject$1(document$1) && isObject$1(document$1.createElement);
+var is = _isObject(document$1) && _isObject(document$1.createElement);
 var _domCreate = function(it){
   return is ? document$1.createElement(it) : {};
 };
@@ -87,29 +85,26 @@ var _ie8DomDefine = !_descriptors && !_fails(function(){
 });
 
 // 7.1.1 ToPrimitive(input [, PreferredType])
-var isObject$2 = _isObject;
+
 // instead of the ES6 spec version, we didn't implement @@toPrimitive case
 // and the second argument - flag - preferred type is a string
 var _toPrimitive = function(it, S){
-  if(!isObject$2(it))return it;
+  if(!_isObject(it))return it;
   var fn, val;
-  if(S && typeof (fn = it.toString) == 'function' && !isObject$2(val = fn.call(it)))return val;
-  if(typeof (fn = it.valueOf) == 'function' && !isObject$2(val = fn.call(it)))return val;
-  if(!S && typeof (fn = it.toString) == 'function' && !isObject$2(val = fn.call(it)))return val;
+  if(S && typeof (fn = it.toString) == 'function' && !_isObject(val = fn.call(it)))return val;
+  if(typeof (fn = it.valueOf) == 'function' && !_isObject(val = fn.call(it)))return val;
+  if(!S && typeof (fn = it.toString) == 'function' && !_isObject(val = fn.call(it)))return val;
   throw TypeError("Can't convert object to primitive value");
 };
 
-var anObject       = _anObject;
-var IE8_DOM_DEFINE = _ie8DomDefine;
-var toPrimitive    = _toPrimitive;
-var dP$1             = Object.defineProperty;
+var dP             = Object.defineProperty;
 
 var f = _descriptors ? Object.defineProperty : function defineProperty(O, P, Attributes){
-  anObject(O);
-  P = toPrimitive(P, true);
-  anObject(Attributes);
-  if(IE8_DOM_DEFINE)try {
-    return dP$1(O, P, Attributes);
+  _anObject(O);
+  P = _toPrimitive(P, true);
+  _anObject(Attributes);
+  if(_ie8DomDefine)try {
+    return dP(O, P, Attributes);
   } catch(e){ /* empty */ }
   if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
   if('value' in Attributes)O[P] = Attributes.value;
@@ -129,31 +124,25 @@ var _propertyDesc = function(bitmap, value){
   };
 };
 
-var dP         = _objectDp;
-var createDesc = _propertyDesc;
 var _hide = _descriptors ? function(object, key, value){
-  return dP.f(object, key, createDesc(1, value));
+  return _objectDp.f(object, key, _propertyDesc(1, value));
 } : function(object, key, value){
   object[key] = value;
   return object;
 };
 
-var global$1    = _global;
-var core      = _core;
-var ctx       = _ctx;
-var hide      = _hide;
 var PROTOTYPE = 'prototype';
 
-var $export$1 = function(type, name, source){
-  var IS_FORCED = type & $export$1.F
-    , IS_GLOBAL = type & $export$1.G
-    , IS_STATIC = type & $export$1.S
-    , IS_PROTO  = type & $export$1.P
-    , IS_BIND   = type & $export$1.B
-    , IS_WRAP   = type & $export$1.W
-    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
+var $export = function(type, name, source){
+  var IS_FORCED = type & $export.F
+    , IS_GLOBAL = type & $export.G
+    , IS_STATIC = type & $export.S
+    , IS_PROTO  = type & $export.P
+    , IS_BIND   = type & $export.B
+    , IS_WRAP   = type & $export.W
+    , exports   = IS_GLOBAL ? _core : _core[name] || (_core[name] = {})
     , expProto  = exports[PROTOTYPE]
-    , target    = IS_GLOBAL ? global$1 : IS_STATIC ? global$1[name] : (global$1[name] || {})[PROTOTYPE]
+    , target    = IS_GLOBAL ? _global : IS_STATIC ? _global[name] : (_global[name] || {})[PROTOTYPE]
     , key, own, out;
   if(IS_GLOBAL)source = name;
   for(key in source){
@@ -165,7 +154,7 @@ var $export$1 = function(type, name, source){
     // prevent global pollution for namespaces
     exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
     // bind timers to global for call from export context
-    : IS_BIND && own ? ctx(out, global$1)
+    : IS_BIND && own ? _ctx(out, _global)
     // wrap global constructors for prevent change them in library
     : IS_WRAP && target[key] == out ? (function(C){
       var F = function(a, b, c){
@@ -180,25 +169,25 @@ var $export$1 = function(type, name, source){
       F[PROTOTYPE] = C[PROTOTYPE];
       return F;
     // make static versions for prototype methods
-    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
+    })(out) : IS_PROTO && typeof out == 'function' ? _ctx(Function.call, out) : out;
     // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
     if(IS_PROTO){
       (exports.virtual || (exports.virtual = {}))[key] = out;
       // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
-      if(type & $export$1.R && expProto && !expProto[key])hide(expProto, key, out);
+      if(type & $export.R && expProto && !expProto[key])_hide(expProto, key, out);
     }
   }
 };
 // type bitmap
-$export$1.F = 1;   // forced
-$export$1.G = 2;   // global
-$export$1.S = 4;   // static
-$export$1.P = 8;   // proto
-$export$1.B = 16;  // bind
-$export$1.W = 32;  // wrap
-$export$1.U = 64;  // safe
-$export$1.R = 128; // real proto method for `library` 
-var _export = $export$1;
+$export.F = 1;   // forced
+$export.G = 2;   // global
+$export.S = 4;   // static
+$export.P = 8;   // proto
+$export.B = 16;  // bind
+$export.W = 32;  // wrap
+$export.U = 64;  // safe
+$export.R = 128; // real proto method for `library` 
+var _export = $export;
 
 var hasOwnProperty = {}.hasOwnProperty;
 var _has = function(it, key){
@@ -212,9 +201,9 @@ var _cof = function(it){
 };
 
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
-var cof = _cof;
+
 var _iobject = Object('z').propertyIsEnumerable(0) ? Object : function(it){
-  return cof(it) == 'String' ? it.split('') : Object(it);
+  return _cof(it) == 'String' ? it.split('') : Object(it);
 };
 
 // 7.2.1 RequireObjectCoercible(argument)
@@ -224,10 +213,9 @@ var _defined = function(it){
 };
 
 // to indexed object, toObject with fallback for non-array-like ES3 strings
-var IObject$1 = _iobject;
-var defined = _defined;
+
 var _toIobject = function(it){
-  return IObject$1(defined(it));
+  return _iobject(_defined(it));
 };
 
 // 7.1.4 ToInteger
@@ -238,30 +226,26 @@ var _toInteger = function(it){
 };
 
 // 7.1.15 ToLength
-var toInteger = _toInteger;
 var min       = Math.min;
 var _toLength = function(it){
-  return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
+  return it > 0 ? min(_toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
 };
 
-var toInteger$1 = _toInteger;
 var max       = Math.max;
 var min$1       = Math.min;
 var _toIndex = function(index, length){
-  index = toInteger$1(index);
+  index = _toInteger(index);
   return index < 0 ? max(index + length, 0) : min$1(index, length);
 };
 
 // false -> Array#indexOf
 // true  -> Array#includes
-var toIObject$1 = _toIobject;
-var toLength  = _toLength;
-var toIndex   = _toIndex;
+
 var _arrayIncludes = function(IS_INCLUDES){
   return function($this, el, fromIndex){
-    var O      = toIObject$1($this)
-      , length = toLength(O.length)
-      , index  = toIndex(fromIndex, length)
+    var O      = _toIobject($this)
+      , length = _toLength(O.length)
+      , index  = _toIndex(fromIndex, length)
       , value;
     // Array#includes uses SameValueZero equality algorithm
     if(IS_INCLUDES && el != el)while(length > index){
@@ -274,9 +258,8 @@ var _arrayIncludes = function(IS_INCLUDES){
   };
 };
 
-var global$2 = _global;
 var SHARED = '__core-js_shared__';
-var store  = global$2[SHARED] || (global$2[SHARED] = {});
+var store  = _global[SHARED] || (_global[SHARED] = {});
 var _shared = function(key){
   return store[key] || (store[key] = {});
 };
@@ -288,24 +271,21 @@ var _uid = function(key){
 };
 
 var shared = _shared('keys');
-var uid    = _uid;
 var _sharedKey = function(key){
-  return shared[key] || (shared[key] = uid(key));
+  return shared[key] || (shared[key] = _uid(key));
 };
 
-var has          = _has;
-var toIObject    = _toIobject;
 var arrayIndexOf = _arrayIncludes(false);
 var IE_PROTO     = _sharedKey('IE_PROTO');
 
 var _objectKeysInternal = function(object, names){
-  var O      = toIObject(object)
+  var O      = _toIobject(object)
     , i      = 0
     , result = []
     , key;
-  for(key in O)if(key != IE_PROTO)has(O, key) && result.push(key);
+  for(key in O)if(key != IE_PROTO)_has(O, key) && result.push(key);
   // Don't enum bug & hidden keys
-  while(names.length > i)if(has(O, key = names[i++])){
+  while(names.length > i)if(_has(O, key = names[i++])){
     ~arrayIndexOf(result, key) || result.push(key);
   }
   return result;
@@ -317,11 +297,10 @@ var _enumBugKeys = (
 ).split(',');
 
 // 19.1.2.14 / 15.2.3.14 Object.keys(O)
-var $keys       = _objectKeysInternal;
-var enumBugKeys = _enumBugKeys;
+
 
 var _objectKeys = Object.keys || function keys(O){
-  return $keys(O, enumBugKeys);
+  return _objectKeysInternal(O, _enumBugKeys);
 };
 
 var f$1 = Object.getOwnPropertySymbols;
@@ -337,17 +316,12 @@ var _objectPie = {
 };
 
 // 7.1.13 ToObject(argument)
-var defined$1 = _defined;
+
 var _toObject = function(it){
-  return Object(defined$1(it));
+  return Object(_defined(it));
 };
 
 // 19.1.2.1 Object.assign(target, source, ...)
-var getKeys  = _objectKeys;
-var gOPS     = _objectGops;
-var pIE      = _objectPie;
-var toObject = _toObject;
-var IObject  = _iobject;
 var $assign  = Object.assign;
 
 // should work with symbols and should have deterministic property order (V8 bug)
@@ -360,14 +334,14 @@ var _objectAssign = !$assign || _fails(function(){
   K.split('').forEach(function(k){ B[k] = k; });
   return $assign({}, A)[S] != 7 || Object.keys($assign({}, B)).join('') != K;
 }) ? function assign(target, source){ // eslint-disable-line no-unused-vars
-  var T     = toObject(target)
+  var T     = _toObject(target)
     , aLen  = arguments.length
     , index = 1
-    , getSymbols = gOPS.f
-    , isEnum     = pIE.f;
+    , getSymbols = _objectGops.f
+    , isEnum     = _objectPie.f;
   while(aLen > index){
-    var S      = IObject(arguments[index++])
-      , keys   = getSymbols ? getKeys(S).concat(getSymbols(S)) : getKeys(S)
+    var S      = _iobject(arguments[index++])
+      , keys   = getSymbols ? _objectKeys(S).concat(getSymbols(S)) : _objectKeys(S)
       , length = keys.length
       , j      = 0
       , key;
@@ -376,9 +350,9 @@ var _objectAssign = !$assign || _fails(function(){
 } : $assign;
 
 // 19.1.3.1 Object.assign(target, source)
-var $export = _export;
 
-$export($export.S + $export.F, 'Object', {assign: _objectAssign});
+
+_export(_export.S + _export.F, 'Object', {assign: _objectAssign});
 
 var assign$2 = _core.Object.assign;
 
@@ -391,9 +365,9 @@ var _extends = createCommonjsModule(function (module, exports) {
 
 exports.__esModule = true;
 
-var _assign = assign;
 
-var _assign2 = _interopRequireDefault(_assign);
+
+var _assign2 = _interopRequireDefault(assign);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -428,9 +402,8 @@ exports.default = function (instance, Constructor) {
 
 var _classCallCheck = unwrapExports(classCallCheck);
 
-var $export$2 = _export;
 // 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
-$export$2($export$2.S + $export$2.F * !_descriptors, 'Object', {defineProperty: _objectDp.f});
+_export(_export.S + _export.F * !_descriptors, 'Object', {defineProperty: _objectDp.f});
 
 var $Object = _core.Object;
 var defineProperty$1 = function defineProperty(it, key, desc){
@@ -448,9 +421,9 @@ var createClass = createCommonjsModule(function (module, exports) {
 
 exports.__esModule = true;
 
-var _defineProperty = defineProperty;
 
-var _defineProperty2 = _interopRequireDefault(_defineProperty);
+
+var _defineProperty2 = _interopRequireDefault(defineProperty);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -487,26 +460,19 @@ var _library = true;
 
 var _redefine = _hide;
 
-var dP$2       = _objectDp;
-var anObject$2 = _anObject;
-var getKeys$1  = _objectKeys;
-
 var _objectDps = _descriptors ? Object.defineProperties : function defineProperties(O, Properties){
-  anObject$2(O);
-  var keys   = getKeys$1(Properties)
+  _anObject(O);
+  var keys   = _objectKeys(Properties)
     , length = keys.length
     , i = 0
     , P;
-  while(length > i)dP$2.f(O, P = keys[i++], Properties[P]);
+  while(length > i)_objectDp.f(O, P = keys[i++], Properties[P]);
   return O;
 };
 
 var _html = _global.document && document.documentElement;
 
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-var anObject$1    = _anObject;
-var dPs         = _objectDps;
-var enumBugKeys$1 = _enumBugKeys;
 var IE_PROTO$1    = _sharedKey('IE_PROTO');
 var Empty       = function(){ /* empty */ };
 var PROTOTYPE$1   = 'prototype';
@@ -515,7 +481,7 @@ var PROTOTYPE$1   = 'prototype';
 var createDict = function(){
   // Thrash, waste and sodomy: IE GC bug
   var iframe = _domCreate('iframe')
-    , i      = enumBugKeys$1.length
+    , i      = _enumBugKeys.length
     , lt     = '<'
     , gt     = '>'
     , iframeDocument;
@@ -529,80 +495,64 @@ var createDict = function(){
   iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
   iframeDocument.close();
   createDict = iframeDocument.F;
-  while(i--)delete createDict[PROTOTYPE$1][enumBugKeys$1[i]];
+  while(i--)delete createDict[PROTOTYPE$1][_enumBugKeys[i]];
   return createDict();
 };
 
 var _objectCreate = Object.create || function create(O, Properties){
   var result;
   if(O !== null){
-    Empty[PROTOTYPE$1] = anObject$1(O);
+    Empty[PROTOTYPE$1] = _anObject(O);
     result = new Empty;
     Empty[PROTOTYPE$1] = null;
     // add "__proto__" for Object.getPrototypeOf polyfill
     result[IE_PROTO$1] = O;
   } else result = createDict();
-  return Properties === undefined ? result : dPs(result, Properties);
+  return Properties === undefined ? result : _objectDps(result, Properties);
 };
 
 var _wks = createCommonjsModule(function (module) {
 var store      = _shared('wks')
-  , uid        = _uid
   , Symbol     = _global.Symbol
   , USE_SYMBOL = typeof Symbol == 'function';
 
 var $exports = module.exports = function(name){
   return store[name] || (store[name] =
-    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
+    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : _uid)('Symbol.' + name));
 };
 
 $exports.store = store;
 });
 
 var def = _objectDp.f;
-var has$2 = _has;
 var TAG = _wks('toStringTag');
 
 var _setToStringTag = function(it, tag, stat){
-  if(it && !has$2(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
+  if(it && !_has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
 };
 
-var create         = _objectCreate;
-var descriptor     = _propertyDesc;
-var setToStringTag$1 = _setToStringTag;
 var IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
 _hide(IteratorPrototype, _wks('iterator'), function(){ return this; });
 
 var _iterCreate = function(Constructor, NAME, next){
-  Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
-  setToStringTag$1(Constructor, NAME + ' Iterator');
+  Constructor.prototype = _objectCreate(IteratorPrototype, {next: _propertyDesc(1, next)});
+  _setToStringTag(Constructor, NAME + ' Iterator');
 };
 
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
-var has$3         = _has;
-var toObject$1    = _toObject;
 var IE_PROTO$2    = _sharedKey('IE_PROTO');
 var ObjectProto = Object.prototype;
 
 var _objectGpo = Object.getPrototypeOf || function(O){
-  O = toObject$1(O);
-  if(has$3(O, IE_PROTO$2))return O[IE_PROTO$2];
+  O = _toObject(O);
+  if(_has(O, IE_PROTO$2))return O[IE_PROTO$2];
   if(typeof O.constructor == 'function' && O instanceof O.constructor){
     return O.constructor.prototype;
   } return O instanceof Object ? ObjectProto : null;
 };
 
-var LIBRARY        = _library;
-var $export$3        = _export;
-var redefine       = _redefine;
-var hide$2           = _hide;
-var has$1            = _has;
-var Iterators$2      = _iterators;
-var $iterCreate    = _iterCreate;
-var setToStringTag = _setToStringTag;
-var getPrototypeOf = _objectGpo;
 var ITERATOR       = _wks('iterator');
 var BUGGY          = !([].keys && 'next' in [].keys());
 var FF_ITERATOR    = '@@iterator';
@@ -612,7 +562,7 @@ var VALUES         = 'values';
 var returnThis = function(){ return this; };
 
 var _iterDefine = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED){
-  $iterCreate(Constructor, NAME, next);
+  _iterCreate(Constructor, NAME, next);
   var getMethod = function(kind){
     if(!BUGGY && kind in proto)return proto[kind];
     switch(kind){
@@ -631,12 +581,12 @@ var _iterDefine = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
     , methods, key, IteratorPrototype;
   // Fix native
   if($anyNative){
-    IteratorPrototype = getPrototypeOf($anyNative.call(new Base));
+    IteratorPrototype = _objectGpo($anyNative.call(new Base));
     if(IteratorPrototype !== Object.prototype){
       // Set @@toStringTag to native iterators
-      setToStringTag(IteratorPrototype, TAG, true);
+      _setToStringTag(IteratorPrototype, TAG, true);
       // fix for some old engines
-      if(!LIBRARY && !has$1(IteratorPrototype, ITERATOR))hide$2(IteratorPrototype, ITERATOR, returnThis);
+      if(!_library && !_has(IteratorPrototype, ITERATOR))_hide(IteratorPrototype, ITERATOR, returnThis);
     }
   }
   // fix Array#{values, @@iterator}.name in V8 / FF
@@ -645,12 +595,12 @@ var _iterDefine = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
     $default = function values(){ return $native.call(this); };
   }
   // Define iterator
-  if((!LIBRARY || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])){
-    hide$2(proto, ITERATOR, $default);
+  if((!_library || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])){
+    _hide(proto, ITERATOR, $default);
   }
   // Plug for library
-  Iterators$2[NAME] = $default;
-  Iterators$2[TAG]  = returnThis;
+  _iterators[NAME] = $default;
+  _iterators[TAG]  = returnThis;
   if(DEFAULT){
     methods = {
       values:  DEF_VALUES ? $default : getMethod(VALUES),
@@ -658,23 +608,18 @@ var _iterDefine = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
       entries: $entries
     };
     if(FORCED)for(key in methods){
-      if(!(key in proto))redefine(proto, key, methods[key]);
-    } else $export$3($export$3.P + $export$3.F * (BUGGY || VALUES_BUG), NAME, methods);
+      if(!(key in proto))_redefine(proto, key, methods[key]);
+    } else _export(_export.P + _export.F * (BUGGY || VALUES_BUG), NAME, methods);
   }
   return methods;
 };
-
-var addToUnscopables = _addToUnscopables;
-var step             = _iterStep;
-var Iterators$1        = _iterators;
-var toIObject$2        = _toIobject;
 
 // 22.1.3.4 Array.prototype.entries()
 // 22.1.3.13 Array.prototype.keys()
 // 22.1.3.29 Array.prototype.values()
 // 22.1.3.30 Array.prototype[@@iterator]()
 var es6_array_iterator = _iterDefine(Array, 'Array', function(iterated, kind){
-  this._t = toIObject$2(iterated); // target
+  this._t = _toIobject(iterated); // target
   this._i = 0;                   // next index
   this._k = kind;                // kind
 // 22.1.5.2.1 %ArrayIteratorPrototype%.next()
@@ -684,41 +629,36 @@ var es6_array_iterator = _iterDefine(Array, 'Array', function(iterated, kind){
     , index = this._i++;
   if(!O || index >= O.length){
     this._t = undefined;
-    return step(1);
+    return _iterStep(1);
   }
-  if(kind == 'keys'  )return step(0, index);
-  if(kind == 'values')return step(0, O[index]);
-  return step(0, [index, O[index]]);
+  if(kind == 'keys'  )return _iterStep(0, index);
+  if(kind == 'values')return _iterStep(0, O[index]);
+  return _iterStep(0, [index, O[index]]);
 }, 'values');
 
 // argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
-Iterators$1.Arguments = Iterators$1.Array;
+_iterators.Arguments = _iterators.Array;
 
-addToUnscopables('keys');
-addToUnscopables('values');
-addToUnscopables('entries');
+_addToUnscopables('keys');
+_addToUnscopables('values');
+_addToUnscopables('entries');
 
-var global$3        = _global;
-var hide$1          = _hide;
-var Iterators     = _iterators;
 var TO_STRING_TAG = _wks('toStringTag');
 
 for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList', 'CSSRuleList'], i = 0; i < 5; i++){
   var NAME       = collections[i]
-    , Collection = global$3[NAME]
+    , Collection = _global[NAME]
     , proto      = Collection && Collection.prototype;
-  if(proto && !proto[TO_STRING_TAG])hide$1(proto, TO_STRING_TAG, NAME);
-  Iterators[NAME] = Iterators.Array;
+  if(proto && !proto[TO_STRING_TAG])_hide(proto, TO_STRING_TAG, NAME);
+  _iterators[NAME] = _iterators.Array;
 }
 
-var toInteger$2 = _toInteger;
-var defined$2   = _defined;
 // true  -> String#at
 // false -> String#codePointAt
 var _stringAt = function(TO_STRING){
   return function(that, pos){
-    var s = String(defined$2(that))
-      , i = toInteger$2(pos)
+    var s = String(_defined(that))
+      , i = _toInteger(pos)
       , l = s.length
       , a, b;
     if(i < 0 || i >= l)return TO_STRING ? '' : undefined;
@@ -747,9 +687,8 @@ _iterDefine(String, 'String', function(iterated){
 });
 
 // getting tag from 19.1.3.6 Object.prototype.toString()
-var cof$1 = _cof;
 var TAG$1 = _wks('toStringTag');
-var ARG = cof$1(function(){ return arguments; }()) == 'Arguments';
+var ARG = _cof(function(){ return arguments; }()) == 'Arguments';
 
 // fallback for IE11 Script Access Denied error
 var tryGet = function(it, key){
@@ -764,26 +703,22 @@ var _classof = function(it){
     // @@toStringTag case
     : typeof (T = tryGet(O = Object(it), TAG$1)) == 'string' ? T
     // builtinTag case
-    : ARG ? cof$1(O)
+    : ARG ? _cof(O)
     // ES3 arguments fallback
-    : (B = cof$1(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
+    : (B = _cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
 };
 
-var classof   = _classof;
 var ITERATOR$1  = _wks('iterator');
-var Iterators$3 = _iterators;
 var core_getIteratorMethod = _core.getIteratorMethod = function(it){
   if(it != undefined)return it[ITERATOR$1]
     || it['@@iterator']
-    || Iterators$3[classof(it)];
+    || _iterators[_classof(it)];
 };
 
-var anObject$3 = _anObject;
-var get      = core_getIteratorMethod;
 var core_getIterator = _core.getIterator = function(it){
-  var iterFn = get(it);
+  var iterFn = core_getIteratorMethod(it);
   if(typeof iterFn != 'function')throw TypeError(it + ' is not iterable!');
-  return anObject$3(iterFn.call(it));
+  return _anObject(iterFn.call(it));
 };
 
 var getIterator$1 = core_getIterator;
@@ -795,33 +730,30 @@ module.exports = { "default": getIterator$1, __esModule: true };
 var _getIterator = unwrapExports(getIterator);
 
 // most Object methods by ES6 should accept primitives
-var $export$4 = _export;
-var core$1    = _core;
-var fails   = _fails;
+
 var _objectSap = function(KEY, exec){
-  var fn  = (core$1.Object || {})[KEY] || Object[KEY]
+  var fn  = (_core.Object || {})[KEY] || Object[KEY]
     , exp = {};
   exp[KEY] = exec(fn);
-  $export$4($export$4.S + $export$4.F * fails(function(){ fn(1); }), 'Object', exp);
+  _export(_export.S + _export.F * _fails(function(){ fn(1); }), 'Object', exp);
 };
 
 // 19.1.2.9 Object.getPrototypeOf(O)
-var toObject$2        = _toObject;
-var $getPrototypeOf = _objectGpo;
+
 
 _objectSap('getPrototypeOf', function(){
   return function getPrototypeOf(it){
-    return $getPrototypeOf(toObject$2(it));
+    return _objectGpo(_toObject(it));
   };
 });
 
-var getPrototypeOf$2 = _core.Object.getPrototypeOf;
+var getPrototypeOf$1 = _core.Object.getPrototypeOf;
 
-var getPrototypeOf$1 = createCommonjsModule(function (module) {
-module.exports = { "default": getPrototypeOf$2, __esModule: true };
+var getPrototypeOf = createCommonjsModule(function (module) {
+module.exports = { "default": getPrototypeOf$1, __esModule: true };
 });
 
-var _Object$getPrototypeOf = unwrapExports(getPrototypeOf$1);
+var _Object$getPrototypeOf = unwrapExports(getPrototypeOf);
 
 var f$3 = _wks;
 
@@ -837,8 +769,6 @@ module.exports = { "default": iterator$2, __esModule: true };
 
 var _meta = createCommonjsModule(function (module) {
 var META     = _uid('meta')
-  , isObject = _isObject
-  , has      = _has
   , setDesc  = _objectDp.f
   , id       = 0;
 var isExtensible = Object.isExtensible || function(){
@@ -855,8 +785,8 @@ var setMeta = function(it){
 };
 var fastKey = function(it, create){
   // return primitive with prefix
-  if(!isObject(it))return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
-  if(!has(it, META)){
+  if(!_isObject(it))return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
+  if(!_has(it, META)){
     // can't set metadata to uncaught frozen object
     if(!isExtensible(it))return 'F';
     // not necessary to add metadata
@@ -867,7 +797,7 @@ var fastKey = function(it, create){
   } return it[META].i;
 };
 var getWeak = function(it, create){
-  if(!has(it, META)){
+  if(!_has(it, META)){
     // can't set metadata to uncaught frozen object
     if(!isExtensible(it))return true;
     // not necessary to add metadata
@@ -879,7 +809,7 @@ var getWeak = function(it, create){
 };
 // add metadata on freeze-family methods calling
 var onFreeze = function(it){
-  if(FREEZE && meta.NEED && isExtensible(it) && !has(it, META))setMeta(it);
+  if(FREEZE && meta.NEED && isExtensible(it) && !_has(it, META))setMeta(it);
   return it;
 };
 var meta = module.exports = {
@@ -891,21 +821,15 @@ var meta = module.exports = {
 };
 });
 
-var global$5         = _global;
-var core$2           = _core;
-var LIBRARY$1        = _library;
-var wksExt$1         = _wksExt;
 var defineProperty$3 = _objectDp.f;
 var _wksDefine = function(name){
-  var $Symbol = core$2.Symbol || (core$2.Symbol = LIBRARY$1 ? {} : global$5.Symbol || {});
-  if(name.charAt(0) != '_' && !(name in $Symbol))defineProperty$3($Symbol, name, {value: wksExt$1.f(name)});
+  var $Symbol = _core.Symbol || (_core.Symbol = _library ? {} : _global.Symbol || {});
+  if(name.charAt(0) != '_' && !(name in $Symbol))defineProperty$3($Symbol, name, {value: _wksExt.f(name)});
 };
 
-var getKeys$2   = _objectKeys;
-var toIObject$4 = _toIobject;
 var _keyof = function(object, el){
-  var O      = toIObject$4(object)
-    , keys   = getKeys$2(O)
+  var O      = _toIobject(object)
+    , keys   = _objectKeys(O)
     , length = keys.length
     , index  = 0
     , key;
@@ -913,15 +837,13 @@ var _keyof = function(object, el){
 };
 
 // all enumerable object keys, includes symbols
-var getKeys$3 = _objectKeys;
-var gOPS$1    = _objectGops;
-var pIE$1     = _objectPie;
+
 var _enumKeys = function(it){
-  var result     = getKeys$3(it)
-    , getSymbols = gOPS$1.f;
+  var result     = _objectKeys(it)
+    , getSymbols = _objectGops.f;
   if(getSymbols){
     var symbols = getSymbols(it)
-      , isEnum  = pIE$1.f
+      , isEnum  = _objectPie.f
       , i       = 0
       , key;
     while(symbols.length > i)if(isEnum.call(it, key = symbols[i++]))result.push(key);
@@ -929,17 +851,16 @@ var _enumKeys = function(it){
 };
 
 // 7.2.2 IsArray(argument)
-var cof$2 = _cof;
+
 var _isArray = Array.isArray || function isArray(arg){
-  return cof$2(arg) == 'Array';
+  return _cof(arg) == 'Array';
 };
 
 // 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
-var $keys$2      = _objectKeysInternal;
 var hiddenKeys = _enumBugKeys.concat('length', 'prototype');
 
 var f$5 = Object.getOwnPropertyNames || function getOwnPropertyNames(O){
-  return $keys$2(O, hiddenKeys);
+  return _objectKeysInternal(O, hiddenKeys);
 };
 
 var _objectGopn = {
@@ -947,7 +868,6 @@ var _objectGopn = {
 };
 
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
-var toIObject$5 = _toIobject;
 var gOPN$1      = _objectGopn.f;
 var toString$1  = {}.toString;
 
@@ -963,28 +883,22 @@ var getWindowNames = function(it){
 };
 
 var f$4 = function getOwnPropertyNames(it){
-  return windowNames && toString$1.call(it) == '[object Window]' ? getWindowNames(it) : gOPN$1(toIObject$5(it));
+  return windowNames && toString$1.call(it) == '[object Window]' ? getWindowNames(it) : gOPN$1(_toIobject(it));
 };
 
 var _objectGopnExt = {
 	f: f$4
 };
 
-var pIE$2            = _objectPie;
-var createDesc$2     = _propertyDesc;
-var toIObject$6      = _toIobject;
-var toPrimitive$2    = _toPrimitive;
-var has$5            = _has;
-var IE8_DOM_DEFINE$1 = _ie8DomDefine;
 var gOPD$1           = Object.getOwnPropertyDescriptor;
 
 var f$6 = _descriptors ? gOPD$1 : function getOwnPropertyDescriptor(O, P){
-  O = toIObject$6(O);
-  P = toPrimitive$2(P, true);
-  if(IE8_DOM_DEFINE$1)try {
+  O = _toIobject(O);
+  P = _toPrimitive(P, true);
+  if(_ie8DomDefine)try {
     return gOPD$1(O, P);
   } catch(e){ /* empty */ }
-  if(has$5(O, P))return createDesc$2(!pIE$2.f.call(O, P), O[P]);
+  if(_has(O, P))return _propertyDesc(!_objectPie.f.call(O, P), O[P]);
 };
 
 var _objectGopd = {
@@ -992,64 +906,40 @@ var _objectGopd = {
 };
 
 // ECMAScript 6 symbols shim
-var global$4         = _global;
-var has$4            = _has;
-var DESCRIPTORS    = _descriptors;
-var $export$5        = _export;
-var redefine$1       = _redefine;
 var META           = _meta.KEY;
-var $fails         = _fails;
-var shared$1         = _shared;
-var setToStringTag$2 = _setToStringTag;
-var uid$1            = _uid;
-var wks            = _wks;
-var wksExt         = _wksExt;
-var wksDefine      = _wksDefine;
-var keyOf          = _keyof;
-var enumKeys       = _enumKeys;
-var isArray        = _isArray;
-var anObject$4       = _anObject;
-var toIObject$3      = _toIobject;
-var toPrimitive$1    = _toPrimitive;
-var createDesc$1     = _propertyDesc;
-var _create        = _objectCreate;
-var gOPNExt        = _objectGopnExt;
-var $GOPD          = _objectGopd;
-var $DP            = _objectDp;
-var $keys$1          = _objectKeys;
-var gOPD           = $GOPD.f;
-var dP$3             = $DP.f;
-var gOPN           = gOPNExt.f;
-var $Symbol        = global$4.Symbol;
-var $JSON          = global$4.JSON;
+var gOPD           = _objectGopd.f;
+var dP$1             = _objectDp.f;
+var gOPN           = _objectGopnExt.f;
+var $Symbol        = _global.Symbol;
+var $JSON          = _global.JSON;
 var _stringify     = $JSON && $JSON.stringify;
 var PROTOTYPE$2      = 'prototype';
-var HIDDEN         = wks('_hidden');
-var TO_PRIMITIVE   = wks('toPrimitive');
+var HIDDEN         = _wks('_hidden');
+var TO_PRIMITIVE   = _wks('toPrimitive');
 var isEnum         = {}.propertyIsEnumerable;
-var SymbolRegistry = shared$1('symbol-registry');
-var AllSymbols     = shared$1('symbols');
-var OPSymbols      = shared$1('op-symbols');
+var SymbolRegistry = _shared('symbol-registry');
+var AllSymbols     = _shared('symbols');
+var OPSymbols      = _shared('op-symbols');
 var ObjectProto$1    = Object[PROTOTYPE$2];
 var USE_NATIVE     = typeof $Symbol == 'function';
-var QObject        = global$4.QObject;
+var QObject        = _global.QObject;
 // Don't use setters in Qt Script, https://github.com/zloirock/core-js/issues/173
 var setter = !QObject || !QObject[PROTOTYPE$2] || !QObject[PROTOTYPE$2].findChild;
 
 // fallback for old Android, https://code.google.com/p/v8/issues/detail?id=687
-var setSymbolDesc = DESCRIPTORS && $fails(function(){
-  return _create(dP$3({}, 'a', {
-    get: function(){ return dP$3(this, 'a', {value: 7}).a; }
+var setSymbolDesc = _descriptors && _fails(function(){
+  return _objectCreate(dP$1({}, 'a', {
+    get: function(){ return dP$1(this, 'a', {value: 7}).a; }
   })).a != 7;
 }) ? function(it, key, D){
   var protoDesc = gOPD(ObjectProto$1, key);
   if(protoDesc)delete ObjectProto$1[key];
-  dP$3(it, key, D);
-  if(protoDesc && it !== ObjectProto$1)dP$3(ObjectProto$1, key, protoDesc);
-} : dP$3;
+  dP$1(it, key, D);
+  if(protoDesc && it !== ObjectProto$1)dP$1(ObjectProto$1, key, protoDesc);
+} : dP$1;
 
 var wrap = function(tag){
-  var sym = AllSymbols[tag] = _create($Symbol[PROTOTYPE$2]);
+  var sym = AllSymbols[tag] = _objectCreate($Symbol[PROTOTYPE$2]);
   sym._k = tag;
   return sym;
 };
@@ -1062,22 +952,22 @@ var isSymbol = USE_NATIVE && typeof $Symbol.iterator == 'symbol' ? function(it){
 
 var $defineProperty = function defineProperty(it, key, D){
   if(it === ObjectProto$1)$defineProperty(OPSymbols, key, D);
-  anObject$4(it);
-  key = toPrimitive$1(key, true);
-  anObject$4(D);
-  if(has$4(AllSymbols, key)){
+  _anObject(it);
+  key = _toPrimitive(key, true);
+  _anObject(D);
+  if(_has(AllSymbols, key)){
     if(!D.enumerable){
-      if(!has$4(it, HIDDEN))dP$3(it, HIDDEN, createDesc$1(1, {}));
+      if(!_has(it, HIDDEN))dP$1(it, HIDDEN, _propertyDesc(1, {}));
       it[HIDDEN][key] = true;
     } else {
-      if(has$4(it, HIDDEN) && it[HIDDEN][key])it[HIDDEN][key] = false;
-      D = _create(D, {enumerable: createDesc$1(0, false)});
+      if(_has(it, HIDDEN) && it[HIDDEN][key])it[HIDDEN][key] = false;
+      D = _objectCreate(D, {enumerable: _propertyDesc(0, false)});
     } return setSymbolDesc(it, key, D);
-  } return dP$3(it, key, D);
+  } return dP$1(it, key, D);
 };
 var $defineProperties = function defineProperties(it, P){
-  anObject$4(it);
-  var keys = enumKeys(P = toIObject$3(P))
+  _anObject(it);
+  var keys = _enumKeys(P = _toIobject(P))
     , i    = 0
     , l = keys.length
     , key;
@@ -1085,38 +975,38 @@ var $defineProperties = function defineProperties(it, P){
   return it;
 };
 var $create = function create(it, P){
-  return P === undefined ? _create(it) : $defineProperties(_create(it), P);
+  return P === undefined ? _objectCreate(it) : $defineProperties(_objectCreate(it), P);
 };
 var $propertyIsEnumerable = function propertyIsEnumerable(key){
-  var E = isEnum.call(this, key = toPrimitive$1(key, true));
-  if(this === ObjectProto$1 && has$4(AllSymbols, key) && !has$4(OPSymbols, key))return false;
-  return E || !has$4(this, key) || !has$4(AllSymbols, key) || has$4(this, HIDDEN) && this[HIDDEN][key] ? E : true;
+  var E = isEnum.call(this, key = _toPrimitive(key, true));
+  if(this === ObjectProto$1 && _has(AllSymbols, key) && !_has(OPSymbols, key))return false;
+  return E || !_has(this, key) || !_has(AllSymbols, key) || _has(this, HIDDEN) && this[HIDDEN][key] ? E : true;
 };
 var $getOwnPropertyDescriptor = function getOwnPropertyDescriptor(it, key){
-  it  = toIObject$3(it);
-  key = toPrimitive$1(key, true);
-  if(it === ObjectProto$1 && has$4(AllSymbols, key) && !has$4(OPSymbols, key))return;
+  it  = _toIobject(it);
+  key = _toPrimitive(key, true);
+  if(it === ObjectProto$1 && _has(AllSymbols, key) && !_has(OPSymbols, key))return;
   var D = gOPD(it, key);
-  if(D && has$4(AllSymbols, key) && !(has$4(it, HIDDEN) && it[HIDDEN][key]))D.enumerable = true;
+  if(D && _has(AllSymbols, key) && !(_has(it, HIDDEN) && it[HIDDEN][key]))D.enumerable = true;
   return D;
 };
 var $getOwnPropertyNames = function getOwnPropertyNames(it){
-  var names  = gOPN(toIObject$3(it))
+  var names  = gOPN(_toIobject(it))
     , result = []
     , i      = 0
     , key;
   while(names.length > i){
-    if(!has$4(AllSymbols, key = names[i++]) && key != HIDDEN && key != META)result.push(key);
+    if(!_has(AllSymbols, key = names[i++]) && key != HIDDEN && key != META)result.push(key);
   } return result;
 };
 var $getOwnPropertySymbols = function getOwnPropertySymbols(it){
   var IS_OP  = it === ObjectProto$1
-    , names  = gOPN(IS_OP ? OPSymbols : toIObject$3(it))
+    , names  = gOPN(IS_OP ? OPSymbols : _toIobject(it))
     , result = []
     , i      = 0
     , key;
   while(names.length > i){
-    if(has$4(AllSymbols, key = names[i++]) && (IS_OP ? has$4(ObjectProto$1, key) : true))result.push(AllSymbols[key]);
+    if(_has(AllSymbols, key = names[i++]) && (IS_OP ? _has(ObjectProto$1, key) : true))result.push(AllSymbols[key]);
   } return result;
 };
 
@@ -1124,60 +1014,60 @@ var $getOwnPropertySymbols = function getOwnPropertySymbols(it){
 if(!USE_NATIVE){
   $Symbol = function Symbol(){
     if(this instanceof $Symbol)throw TypeError('Symbol is not a constructor!');
-    var tag = uid$1(arguments.length > 0 ? arguments[0] : undefined);
+    var tag = _uid(arguments.length > 0 ? arguments[0] : undefined);
     var $set = function(value){
       if(this === ObjectProto$1)$set.call(OPSymbols, value);
-      if(has$4(this, HIDDEN) && has$4(this[HIDDEN], tag))this[HIDDEN][tag] = false;
-      setSymbolDesc(this, tag, createDesc$1(1, value));
+      if(_has(this, HIDDEN) && _has(this[HIDDEN], tag))this[HIDDEN][tag] = false;
+      setSymbolDesc(this, tag, _propertyDesc(1, value));
     };
-    if(DESCRIPTORS && setter)setSymbolDesc(ObjectProto$1, tag, {configurable: true, set: $set});
+    if(_descriptors && setter)setSymbolDesc(ObjectProto$1, tag, {configurable: true, set: $set});
     return wrap(tag);
   };
-  redefine$1($Symbol[PROTOTYPE$2], 'toString', function toString(){
+  _redefine($Symbol[PROTOTYPE$2], 'toString', function toString(){
     return this._k;
   });
 
-  $GOPD.f = $getOwnPropertyDescriptor;
-  $DP.f   = $defineProperty;
-  _objectGopn.f = gOPNExt.f = $getOwnPropertyNames;
+  _objectGopd.f = $getOwnPropertyDescriptor;
+  _objectDp.f   = $defineProperty;
+  _objectGopn.f = _objectGopnExt.f = $getOwnPropertyNames;
   _objectPie.f  = $propertyIsEnumerable;
   _objectGops.f = $getOwnPropertySymbols;
 
-  if(DESCRIPTORS && !_library){
-    redefine$1(ObjectProto$1, 'propertyIsEnumerable', $propertyIsEnumerable, true);
+  if(_descriptors && !_library){
+    _redefine(ObjectProto$1, 'propertyIsEnumerable', $propertyIsEnumerable, true);
   }
 
-  wksExt.f = function(name){
-    return wrap(wks(name));
+  _wksExt.f = function(name){
+    return wrap(_wks(name));
   };
 }
 
-$export$5($export$5.G + $export$5.W + $export$5.F * !USE_NATIVE, {Symbol: $Symbol});
+_export(_export.G + _export.W + _export.F * !USE_NATIVE, {Symbol: $Symbol});
 
 for(var symbols = (
   // 19.4.2.2, 19.4.2.3, 19.4.2.4, 19.4.2.6, 19.4.2.8, 19.4.2.9, 19.4.2.10, 19.4.2.11, 19.4.2.12, 19.4.2.13, 19.4.2.14
   'hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables'
-).split(','), i$1 = 0; symbols.length > i$1; )wks(symbols[i$1++]);
+).split(','), i$1 = 0; symbols.length > i$1; )_wks(symbols[i$1++]);
 
-for(var symbols = $keys$1(wks.store), i$1 = 0; symbols.length > i$1; )wksDefine(symbols[i$1++]);
+for(var symbols = _objectKeys(_wks.store), i$1 = 0; symbols.length > i$1; )_wksDefine(symbols[i$1++]);
 
-$export$5($export$5.S + $export$5.F * !USE_NATIVE, 'Symbol', {
+_export(_export.S + _export.F * !USE_NATIVE, 'Symbol', {
   // 19.4.2.1 Symbol.for(key)
   'for': function(key){
-    return has$4(SymbolRegistry, key += '')
+    return _has(SymbolRegistry, key += '')
       ? SymbolRegistry[key]
       : SymbolRegistry[key] = $Symbol(key);
   },
   // 19.4.2.5 Symbol.keyFor(sym)
   keyFor: function keyFor(key){
-    if(isSymbol(key))return keyOf(SymbolRegistry, key);
+    if(isSymbol(key))return _keyof(SymbolRegistry, key);
     throw TypeError(key + ' is not a symbol!');
   },
   useSetter: function(){ setter = true; },
   useSimple: function(){ setter = false; }
 });
 
-$export$5($export$5.S + $export$5.F * !USE_NATIVE, 'Object', {
+_export(_export.S + _export.F * !USE_NATIVE, 'Object', {
   // 19.1.2.2 Object.create(O [, Properties])
   create: $create,
   // 19.1.2.4 Object.defineProperty(O, P, Attributes)
@@ -1193,7 +1083,7 @@ $export$5($export$5.S + $export$5.F * !USE_NATIVE, 'Object', {
 });
 
 // 24.3.2 JSON.stringify(value [, replacer [, space]])
-$JSON && $export$5($export$5.S + $export$5.F * (!USE_NATIVE || $fails(function(){
+$JSON && _export(_export.S + _export.F * (!USE_NATIVE || _fails(function(){
   var S = $Symbol();
   // MS Edge converts symbol values to JSON as {}
   // WebKit converts symbol values to JSON as null
@@ -1208,7 +1098,7 @@ $JSON && $export$5($export$5.S + $export$5.F * (!USE_NATIVE || $fails(function()
     while(arguments.length > i)args.push(arguments[i++]);
     replacer = args[1];
     if(typeof replacer == 'function')$replacer = replacer;
-    if($replacer || !isArray(replacer))replacer = function(key, value){
+    if($replacer || !_isArray(replacer))replacer = function(key, value){
       if($replacer)value = $replacer.call(this, key, value);
       if(!isSymbol(value))return value;
     };
@@ -1220,11 +1110,11 @@ $JSON && $export$5($export$5.S + $export$5.F * (!USE_NATIVE || $fails(function()
 // 19.4.3.4 Symbol.prototype[@@toPrimitive](hint)
 $Symbol[PROTOTYPE$2][TO_PRIMITIVE] || _hide($Symbol[PROTOTYPE$2], TO_PRIMITIVE, $Symbol[PROTOTYPE$2].valueOf);
 // 19.4.3.5 Symbol.prototype[@@toStringTag]
-setToStringTag$2($Symbol, 'Symbol');
+_setToStringTag($Symbol, 'Symbol');
 // 20.2.1.9 Math[@@toStringTag]
-setToStringTag$2(Math, 'Math', true);
+_setToStringTag(Math, 'Math', true);
 // 24.3.3 JSON[@@toStringTag]
-setToStringTag$2(global$4.JSON, 'JSON', true);
+_setToStringTag(_global.JSON, 'JSON', true);
 
 _wksDefine('asyncIterator');
 
@@ -1243,13 +1133,13 @@ var _typeof_1 = createCommonjsModule(function (module, exports) {
 
 exports.__esModule = true;
 
-var _iterator = iterator;
 
-var _iterator2 = _interopRequireDefault(_iterator);
 
-var _symbol = symbol;
+var _iterator2 = _interopRequireDefault(iterator);
 
-var _symbol2 = _interopRequireDefault(_symbol);
+
+
+var _symbol2 = _interopRequireDefault(symbol);
 
 var _typeof = typeof _symbol2.default === "function" && typeof _iterator2.default === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj; };
 
@@ -1267,9 +1157,9 @@ var possibleConstructorReturn = createCommonjsModule(function (module, exports) 
 
 exports.__esModule = true;
 
-var _typeof2 = _typeof_1;
 
-var _typeof3 = _interopRequireDefault(_typeof2);
+
+var _typeof3 = _interopRequireDefault(_typeof_1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1285,12 +1175,11 @@ exports.default = function (self, call) {
 var _possibleConstructorReturn = unwrapExports(possibleConstructorReturn);
 
 // 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
-var toIObject$7                 = _toIobject;
 var $getOwnPropertyDescriptor$1 = _objectGopd.f;
 
 _objectSap('getOwnPropertyDescriptor', function(){
   return function getOwnPropertyDescriptor(it, key){
-    return $getOwnPropertyDescriptor$1(toIObject$7(it), key);
+    return $getOwnPropertyDescriptor$1(_toIobject(it), key);
   };
 });
 
@@ -1308,13 +1197,13 @@ var get$1 = createCommonjsModule(function (module, exports) {
 
 exports.__esModule = true;
 
-var _getPrototypeOf = getPrototypeOf$1;
 
-var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
-var _getOwnPropertyDescriptor = getOwnPropertyDescriptor;
+var _getPrototypeOf2 = _interopRequireDefault(getPrototypeOf);
 
-var _getOwnPropertyDescriptor2 = _interopRequireDefault(_getOwnPropertyDescriptor);
+
+
+var _getOwnPropertyDescriptor2 = _interopRequireDefault(getOwnPropertyDescriptor);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1348,11 +1237,10 @@ var _get = unwrapExports(get$1);
 
 // Works with __proto__ only. Old v8 can't work with null proto objects.
 /* eslint-disable no-proto */
-var isObject$3 = _isObject;
-var anObject$5 = _anObject;
+
 var check = function(O, proto){
-  anObject$5(O);
-  if(!isObject$3(proto) && proto !== null)throw TypeError(proto + ": can't set as prototype!");
+  _anObject(O);
+  if(!_isObject(proto) && proto !== null)throw TypeError(proto + ": can't set as prototype!");
 };
 var _setProto = {
   set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
@@ -1373,8 +1261,8 @@ var _setProto = {
 };
 
 // 19.1.3.19 Object.setPrototypeOf(O, proto)
-var $export$6 = _export;
-$export$6($export$6.S, 'Object', {setPrototypeOf: _setProto.set});
+
+_export(_export.S, 'Object', {setPrototypeOf: _setProto.set});
 
 var setPrototypeOf$2 = _core.Object.setPrototypeOf;
 
@@ -1382,17 +1270,16 @@ var setPrototypeOf = createCommonjsModule(function (module) {
 module.exports = { "default": setPrototypeOf$2, __esModule: true };
 });
 
-var $export$7 = _export;
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-$export$7($export$7.S, 'Object', {create: _objectCreate});
+_export(_export.S, 'Object', {create: _objectCreate});
 
 var $Object$2 = _core.Object;
-var create$3 = function create(P, D){
+var create$2 = function create(P, D){
   return $Object$2.create(P, D);
 };
 
-var create$1 = createCommonjsModule(function (module) {
-module.exports = { "default": create$3, __esModule: true };
+var create = createCommonjsModule(function (module) {
+module.exports = { "default": create$2, __esModule: true };
 });
 
 var inherits = createCommonjsModule(function (module, exports) {
@@ -1400,17 +1287,17 @@ var inherits = createCommonjsModule(function (module, exports) {
 
 exports.__esModule = true;
 
-var _setPrototypeOf = setPrototypeOf;
 
-var _setPrototypeOf2 = _interopRequireDefault(_setPrototypeOf);
 
-var _create = create$1;
+var _setPrototypeOf2 = _interopRequireDefault(setPrototypeOf);
 
-var _create2 = _interopRequireDefault(_create);
 
-var _typeof2 = _typeof_1;
 
-var _typeof3 = _interopRequireDefault(_typeof2);
+var _create2 = _interopRequireDefault(create);
+
+
+
+var _typeof3 = _interopRequireDefault(_typeof_1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1434,12 +1321,11 @@ exports.default = function (subClass, superClass) {
 var _inherits = unwrapExports(inherits);
 
 // 19.1.2.14 Object.keys(O)
-var toObject$3 = _toObject;
-var $keys$3    = _objectKeys;
+
 
 _objectSap('keys', function(){
   return function keys(it){
-    return $keys$3(toObject$3(it));
+    return _objectKeys(_toObject(it));
   };
 });
 
@@ -1689,7 +1575,7 @@ var _didIteratorError = false;
 var _iteratorError = undefined;
 
 try {
-  for (var _iterator = _getIterator(_Object$keys(NumFmt)), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+  for (var _iterator$1 = _getIterator(_Object$keys(NumFmt)), _step; !(_iteratorNormalCompletion = (_step = _iterator$1.next()).done); _iteratorNormalCompletion = true) {
     var k = _step.value;
 
     NumFmtInv[NumFmt[k]] = k;
@@ -1700,8 +1586,8 @@ try {
   _iteratorError = err;
 } finally {
   try {
-    if (!_iteratorNormalCompletion && _iterator.return) {
-      _iterator.return();
+    if (!_iteratorNormalCompletion && _iterator$1.return) {
+      _iterator$1.return();
     }
   } finally {
     if (_didIteratorError) {
@@ -2518,19 +2404,18 @@ var style = Object.freeze({
 // The _isBuffer check is for Safari 5-7 support, because it's missing
 // Object.prototype.constructor. Remove this eventually
 var index$4 = function (obj) {
-  return obj != null && (isBuffer$1(obj) || isSlowBuffer(obj) || !!obj._isBuffer)
+  return obj != null && (isBuffer(obj) || isSlowBuffer(obj) || !!obj._isBuffer)
 };
 
-function isBuffer$1 (obj) {
+function isBuffer (obj) {
   return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
 }
 
 // For Node v0.10 support. Remove this eventually.
 function isSlowBuffer (obj) {
-  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer$1(obj.slice(0, 0))
+  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-var isBuffer = index$4;
 var toString$2 = Object.prototype.toString;
 
 /**
@@ -2593,7 +2478,7 @@ var index$3 = function kindOf(val) {
   }
 
   // buffer
-  if (typeof Buffer !== 'undefined' && isBuffer(val)) {
+  if (index$4(val)) {
     return 'buffer';
   }
 
