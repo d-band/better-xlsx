@@ -1,6 +1,8 @@
 better-xlsx
 ===========
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/d-band/better-xlsx.svg)](https://greenkeeper.io/)
+
 > A better xlsx lib for read / write / toTable / from Table
 
 [![NPM version](https://img.shields.io/npm/v/better-xlsx.svg)](https://www.npmjs.com/package/better-xlsx)
