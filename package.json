@@ -55,7 +55,7 @@
     "rollup-plugin-commonjs": "^8.0.2",
     "rollup-plugin-node-resolve": "^3.0.0",
     "stream-equal": "^1.0.0",
-    "uglifyjs": "^2.4.10"
+    "uglify-js": "^3.0.7"
   },
   "repository": {
     "type": "git",
