@@ -4,7 +4,7 @@
 	(global.xlsx = factory(global.JSZip));
 }(this, (function (Zip) { 'use strict';
 
-Zip = 'default' in Zip ? Zip['default'] : Zip;
+Zip = Zip && 'default' in Zip ? Zip['default'] : Zip;
 
 function unwrapExports (x) {
 	return x && x.__esModule ? x['default'] : x;
@@ -2394,28 +2394,6 @@ var style = Object.freeze({
 	Alignment: Alignment
 });
 
-/*!
- * Determine if an object is a Buffer
- *
- * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
- * @license  MIT
- */
-
-// The _isBuffer check is for Safari 5-7 support, because it's missing
-// Object.prototype.constructor. Remove this eventually
-var index$4 = function (obj) {
-  return obj != null && (isBuffer(obj) || isSlowBuffer(obj) || !!obj._isBuffer)
-};
-
-function isBuffer (obj) {
-  return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
-}
-
-// For Node v0.10 support. Remove this eventually.
-function isSlowBuffer (obj) {
-  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
-}
-
 var toString$2 = Object.prototype.toString;
 
 /**
@@ -2426,8 +2404,10 @@ var toString$2 = Object.prototype.toString;
  */
 
 var index$3 = function kindOf(val) {
+  var type = typeof val;
+
   // primitivies
-  if (typeof val === 'undefined') {
+  if (type === 'undefined') {
     return 'undefined';
   }
   if (val === null) {
@@ -2436,15 +2416,18 @@ var index$3 = function kindOf(val) {
   if (val === true || val === false || val instanceof Boolean) {
     return 'boolean';
   }
-  if (typeof val === 'string' || val instanceof String) {
+  if (type === 'string' || val instanceof String) {
     return 'string';
   }
-  if (typeof val === 'number' || val instanceof Number) {
+  if (type === 'number' || val instanceof Number) {
     return 'number';
   }
 
   // functions
-  if (typeof val === 'function' || val instanceof Function) {
+  if (type === 'function' || val instanceof Function) {
+    if (val.constructor.name.slice(0, 9) === 'Generator') {
+      return 'generatorfunction';
+    }
     return 'function';
   }
 
@@ -2462,7 +2445,7 @@ var index$3 = function kindOf(val) {
   }
 
   // other objects
-  var type = toString$2.call(val);
+  type = toString$2.call(val);
 
   if (type === '[object RegExp]') {
     return 'regexp';
@@ -2481,7 +2464,7 @@ var index$3 = function kindOf(val) {
   }
 
   // buffer
-  if (index$4(val)) {
+  if (isBuffer(val)) {
     return 'buffer';
   }
 
@@ -2500,6 +2483,12 @@ var index$3 = function kindOf(val) {
   }
   if (type === '[object Symbol]') {
     return 'symbol';
+  }
+  if (type === '[object Map Iterator]') {
+    return 'mapiterator';
+  }
+  if (type === '[object Set Iterator]') {
+    return 'setiterator';
   }
 
   // typed arrays
@@ -2534,6 +2523,17 @@ var index$3 = function kindOf(val) {
   // must be a plain object
   return 'object';
 };
+
+/**
+ * If you need to support Safari 5-7 (8-10 yr-old browser),
+ * take a look at https://github.com/feross/is-buffer
+ */
+
+function isBuffer(val) {
+  return val.constructor
+    && typeof val.constructor.isBuffer === 'function'
+    && val.constructor.isBuffer(val);
+}
 
 var CellType = {
   TypeString: 49,
