@@ -1,0 +1,42 @@
+{
+  "coverage": "100%",
+  "expectCount": 60,
+  "actualCount": 60,
+  "files": {
+    "src/style.js": {
+      "expectCount": 27,
+      "actualCount": 27,
+      "undocumentLines": []
+    },
+    "src/cell.js": {
+      "expectCount": 15,
+      "actualCount": 15,
+      "undocumentLines": []
+    },
+    "src/col.js": {
+      "expectCount": 4,
+      "actualCount": 4,
+      "undocumentLines": []
+    },
+    "src/file.js": {
+      "expectCount": 3,
+      "actualCount": 3,
+      "undocumentLines": []
+    },
+    "src/lib.js": {
+      "expectCount": 1,
+      "actualCount": 1,
+      "undocumentLines": []
+    },
+    "src/row.js": {
+      "expectCount": 4,
+      "actualCount": 4,
+      "undocumentLines": []
+    },
+    "src/sheet.js": {
+      "expectCount": 6,
+      "actualCount": 6,
+      "undocumentLines": []
+    }
+  }
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl">
+  <title data-ice="title">API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+<link data-ice="userStyle" rel="stylesheet" href="user/css/0-style.css">
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/d-band/better-xlsx" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/cell.js~Cell.html">Cell</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/col.js~Col.html">Col</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/file.js~File.html">File</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/row.js~Row.html">Row</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/sheet.js~Sheet.html">Sheet</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/style.js~Alignment.html">Alignment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/style.js~Border.html">Border</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/style.js~Fill.html">Fill</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/style.js~Font.html">Font</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/style.js~Style.html">Style</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-NumFmt">NumFmt</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="better-xlsx">better-xlsx</h1>
+<p><a href="https://greenkeeper.io/"><img src="https://badges.greenkeeper.io/d-band/better-xlsx.svg" alt="Greenkeeper badge"></a></p>
+<blockquote>
+<p>A better xlsx lib for read / write / toTable / from Table</p>
+</blockquote>
+<p><a href="https://www.npmjs.com/package/better-xlsx"><img src="https://img.shields.io/npm/v/better-xlsx.svg" alt="NPM version"></a>
+<a href="https://www.npmjs.com/package/better-xlsx"><img src="https://img.shields.io/npm/dm/better-xlsx.svg" alt="NPM downloads"></a>
+<a href="https://travis-ci.org/d-band/better-xlsx"><img src="https://travis-ci.org/d-band/better-xlsx.svg?branch=master" alt="Build Status"></a>
+<a href="https://coveralls.io/github/d-band/better-xlsx?branch=master"><img src="https://coveralls.io/repos/github/d-band/better-xlsx/badge.svg?branch=master" alt="Coverage Status"></a>
+<a href="https://david-dm.org/d-band/better-xlsx"><img src="https://david-dm.org/d-band/better-xlsx.svg" alt="Dependency Status"></a></p>
+<hr>
+<h2 id="install">Install</h2>
+<pre><code class="lang-bash"><code class="source-code prettyprint">$ npm install better-xlsx</code>
+</code></pre>
+<h2 id="usage">Usage</h2>
+<ul>
+<li><a href="examples">More Examples</a></li>
+</ul>
+<pre><code><code class="source-code prettyprint">const fs = require(&apos;fs&apos;);
+const xlsx = require(&apos;better-xlsx&apos;);
+
+const file = new xlsx.File();
+
+const sheet = file.addSheet(&apos;Sheet1&apos;);
+const row = sheet.addRow();
+const cell = row.addCell();
+
+cell.value = &apos;I am a cell!&apos;;
+cell.hMerge = 2;
+cell.vMerge = 1;
+
+const style = new xlsx.Style();
+
+style.fill.patternType = &apos;solid&apos;;
+style.fill.fgColor = &apos;00FF0000&apos;;
+style.fill.bgColor = &apos;FF000000&apos;;
+style.align.h = &apos;center&apos;;
+style.align.v = &apos;center&apos;;
+
+cell.style = style;
+
+file
+  .saveAs()
+  .pipe(fs.createWriteStream(&apos;test.xlsx&apos;))
+  .on(&apos;finish&apos;, () =&gt; console.log(&apos;Done.&apos;));</code>
+</code></pre><h2 id="todo">Todo</h2>
+<ul>
+<li>[ ] xlsx parser</li>
+<li>[ ] read excel file</li>
+<li>[x] write excel file</li>
+<li>[x] transform html table to excel file <a href="https://github.com/d-band/html2xlsx">html2xlsx</a></li>
+</ul>
+<h2 id="report-a-issue">Report a issue</h2>
+<ul>
+<li><a href="https://github.com/d-band/better-xlsx/issues">All issues</a></li>
+<li><a href="https://github.com/d-band/better-xlsx/issues/new">New issue</a></li>
+</ul>
+<h2 id="reference">Reference</h2>
+<ul>
+<li><a href="http://www.ecma-international.org/publications/standards/Ecma-376.htm">http://www.ecma-international.org/publications/standards/Ecma-376.htm</a></li>
+<li><a href="https://github.com/tealeg/xlsx">https://github.com/tealeg/xlsx</a></li>
+</ul>
+<h2 id="license">License</h2>
+<p>better-xlsx is available under the terms of the MIT License.</p>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
