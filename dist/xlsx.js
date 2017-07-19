@@ -4,7 +4,7 @@
 	(global.xlsx = factory(global.JSZip));
 }(this, (function (Zip) { 'use strict';
 
-Zip = Zip && 'default' in Zip ? Zip['default'] : Zip;
+Zip = Zip && Zip.hasOwnProperty('default') ? Zip['default'] : Zip;
 
 function unwrapExports (x) {
 	return x && x.__esModule ? x['default'] : x;
@@ -1534,6 +1534,48 @@ var Node = function () {
 }();
 
 var NumFmtsCount = 163;
+/**
+ * Number format table
+ * 
+ * ```js
+ * {
+ *   0: 'general',
+ *   1: '0',
+ *   2: '0.00',
+ *   3: '#,##0',
+ *   4: '#,##0.00',
+ *   9: '0%',
+ *   10: '0.00%',
+ *   11: '0.00e+00',
+ *   12: '# ?/?',
+ *   13: '# ??/??',
+ *   14: 'mm-dd-yy',
+ *   15: 'd-mmm-yy',
+ *   16: 'd-mmm',
+ *   17: 'mmm-yy',
+ *   18: 'h:mm am/pm',
+ *   19: 'h:mm:ss am/pm',
+ *   20: 'h:mm',
+ *   21: 'h:mm:ss',
+ *   22: 'm/d/yy h:mm',
+ *   37: '#,##0 ;(#,##0)',
+ *   38: '#,##0 ;[red](#,##0)',
+ *   39: '#,##0.00;(#,##0.00)',
+ *   40: '#,##0.00;[red](#,##0.00)',
+ *   41: '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)',
+ *   42: '_("$"* #,##0_);_("$* (#,##0);_("$"* "-"_);_(@_)',
+ *   43: '_(* #,##0.00_);_(* (#,##0.00);_(* "-"??_);_(@_)',
+ *   44: '_("$"* #,##0.00_);_("$"* (#,##0.00);_("$"* "-"??_);_(@_)',
+ *   45: 'mm:ss',
+ *   46: '[h]:mm:ss',
+ *   47: 'mmss.0',
+ *   48: '##0.0e+0',
+ *   49: '@'
+ * }
+ * ```
+ * 
+ * @type {Object}
+ */
 var NumFmt = {
   0: 'general',
   1: '0',
@@ -2242,6 +2284,9 @@ var Xalignment = (_dec16 = props('horizontal', 'indent', 'shrinkToFit', 'textRot
   return Xalignment;
 }(Node)) || _class17);
 
+/**
+ * Style class for set Cell styles.
+ */
 var Style = function () {
   function Style() {
     _classCallCheck(this, Style);
@@ -2252,9 +2297,25 @@ var Style = function () {
     this.applyAlignment = false;
     this.namedStyleIndex = null;
 
+    /**
+     * Cell border
+     * @type {Border}
+     */
     this.border = new Border({});
+    /**
+     * Cell fill background or foreground
+     * @type {Fill}
+     */
     this.fill = new Fill({});
+    /**
+     * Cell font
+     * @type {Font}
+     */
     this.font = new Font({});
+    /**
+     * Cell alignment
+     * @type {Alignment}
+     */
     this.align = new Alignment({});
   }
 
@@ -2312,7 +2373,21 @@ var Style = function () {
   return Style;
 }();
 
-var Border = function Border(_ref) {
+/**
+ * Border of the Style and border type have: `none`, `thin`, `medium`, `thick`, `dashed`, `dotted`, `double`
+ * 
+ */
+var Border =
+/**
+ * top border color
+ * @type {String}
+ */
+
+/**
+ * left border color
+ * @type {String}
+ */
+function Border(_ref) {
   var _ref$left = _ref.left,
       left = _ref$left === undefined ? 'none' : _ref$left,
       _ref$right = _ref.right,
@@ -2329,12 +2404,30 @@ var Border = function Border(_ref) {
   this.topColor = undefined;
   this.bottomColor = undefined;
 
+  /**
+   * left border type
+   * @type {String}
+   */
   this.left = left;
+  /**
+   * right border type
+   * @type {String}
+   */
   this.right = right;
+  /**
+   * top border type
+   * @type {String}
+   */
   this.top = top;
+  /**
+   * bottom border type
+   * @type {String}
+   */
   this.bottom = bottom;
 };
-
+/**
+ * Fill of the Style
+ */
 var Fill = function Fill(_ref2) {
   var _ref2$patternType = _ref2.patternType,
       patternType = _ref2$patternType === undefined ? 'none' : _ref2$patternType,
@@ -2345,12 +2438,36 @@ var Fill = function Fill(_ref2) {
 
   _classCallCheck(this, Fill);
 
+  /**
+   * pattern type of the fill
+   * @type {String}
+   */
   this.patternType = patternType;
+  /**
+   * foreground color of the fill
+   * @type {String}
+   */
   this.fgColor = fgColor;
+  /**
+   * background color of the fill
+   * @type {String}
+   */
   this.bgColor = bgColor;
 };
+/**
+ * Font of the Style
+ */
+var Font =
+/**
+ * Is italic style
+ * @type {Boolean}
+ */
 
-var Font = function Font(_ref3) {
+/**
+ * font color
+ * @type {String}
+ */
+function Font(_ref3) {
   var _ref3$size = _ref3.size,
       size = _ref3$size === undefined ? 12 : _ref3$size,
       _ref3$name = _ref3.name,
@@ -2365,10 +2482,16 @@ var Font = function Font(_ref3) {
   this.italic = false;
   this.underline = false;
 
+  /**
+   * font size [default 12]
+   * @type {Number}
+   */
   this.size = size;
   this.name = name;
 };
-
+/**
+ * Alignment of the Style.
+ */
 var Alignment = function Alignment(_ref4) {
   var _ref4$h = _ref4.h,
       h = _ref4$h === undefined ? 'general' : _ref4$h,
@@ -2382,7 +2505,15 @@ var Alignment = function Alignment(_ref4) {
   this.textRotation = 0;
   this.wrapText = false;
 
+  /**
+   * Horizontal align: `general`, `center`, `left`, `right`
+   * @type {String}
+   */
   this.h = h;
+  /**
+   * Vertical align: `general`, `top`, `bottom`, `center`
+   * @type {String}
+   */
   this.v = v;
 };
 
@@ -2546,7 +2677,54 @@ var CellType = {
   TypeGeneral: 0
 };
 
+/**
+ * Cell intended to provide user access to the contents of Cell within an xlsx.Row.
+ *
+ * ```js
+ * const cell = row.addCell();
+ * cell.value = 'I am a cell!';
+ * cell.hMerge = 2;
+ * cell.vMerge = 1;
+ * cell.style.fill.patternType = 'solid';
+ * cell.style.fill.fgColor = '00FF0000';
+ * cell.style.fill.bgColor = 'FF000000';
+ * cell.style.align.h = 'center';
+ * cell.style.align.v = 'center';
+ * ```
+ *
+ * Set the cell value
+ *
+ * ```js
+ * const cell = row.addCell();
+ * // Date type
+ * cell.setDate(new Date());
+ * // Number type
+ * cell.setNumber(123456);
+ * cell.numFmt = '$#,##0.00';
+ * ```
+ */
 var Cell = function () {
+
+  /**
+   * Create a cell and add it to a row.
+   * @private
+   * @param  {Object} options.row Row of add to
+   */
+
+  /**
+   * Vertical merge with other cells.
+   * @type {Number}
+   */
+
+  /**
+   * Hide the cell.
+   * @type {Boolean}
+   */
+
+  /**
+   * Number format @see {@link NumFmt}
+   * @type {String}
+   */
   function Cell(_ref) {
     var row = _ref.row;
 
@@ -2564,14 +2742,34 @@ var Cell = function () {
 
     this.row = row;
   }
+  /**
+   * Get the cell style.
+   * @return {Style}
+   */
+
+  /**
+   * Horizontal merge with other cells.
+   * @type {Number}
+   */
+
 
   _createClass(Cell, [{
     key: 'setString',
+
+    /**
+     * Set cell value with String type.
+     * @param {String} v
+     */
     value: function setString(v) {
       this._value = v;
       this.formula = '';
       this.cellType = 'TypeString';
     }
+    /**
+     * Set cell value with Date type.
+     * @param {Date} v
+     */
+
   }, {
     key: 'setDate',
     value: function setDate(v) {
@@ -2580,6 +2778,11 @@ var Cell = function () {
       this.numFmt = NumFmt[14];
       this.cellType = 'TypeDate';
     }
+    /**
+     * Set cell value with DateTime type.
+     * @param {Date} v
+     */
+
   }, {
     key: 'setDateTime',
     value: function setDateTime(v) {
@@ -2588,6 +2791,11 @@ var Cell = function () {
       this.numFmt = NumFmt[22];
       this.cellType = 'TypeDate';
     }
+    /**
+     * Set cell value with Number type.
+     * @param {Number} v
+     */
+
   }, {
     key: 'setNumber',
     value: function setNumber(v) {
@@ -2596,12 +2804,22 @@ var Cell = function () {
       this.numFmt = NumFmt[0];
       this.cellType = 'TypeNumeric';
     }
+    /**
+     * Set cell value with Boolean type.
+     * @param {Boolean} v
+     */
+
   }, {
     key: 'setBool',
     value: function setBool(v) {
       this._value = v ? 1 : 0;
       this.cellType = 'TypeBool';
     }
+    /**
+     * Set cell formula.
+     * @param {String} f - Formula like `B2*C2-D2`.
+     */
+
   }, {
     key: 'setFormula',
     value: function setFormula(f) {
@@ -2615,15 +2833,29 @@ var Cell = function () {
         this._style = new Style();
       }
       return this._style;
-    },
+    }
+    /**
+     * Set the style of the cell.
+     * @param  {Style} s
+     */
+    ,
     set: function set(s) {
       this._style = s;
     }
+    /**
+     * Get the cell value.
+     */
+
   }, {
     key: 'value',
     get: function get() {
       return this._value;
-    },
+    }
+    /**
+     * Set the cell value.
+     * @param  {String|Date|Number|Boolean} v
+     */
+    ,
     set: function set(v) {
       var t = index$3(v);
       if (t === 'null' || t === 'undefined') {
@@ -2653,6 +2885,19 @@ var cell = Object.freeze({
 	Cell: Cell
 });
 
+/**
+ * The column of the Sheet.
+ *
+ * ```js
+ * const col = sheet.col(0);
+ * col.width = 20;
+ * col.style.fill.patternType = 'solid';
+ * col.style.fill.fgColor = '00FF0000';
+ * col.style.fill.bgColor = 'FF000000';
+ * col.style.align.h = 'center';
+ * col.style.align.v = 'center';
+ * ```
+ */
 var Col = function () {
   function Col(_ref) {
     var min = _ref.min,
@@ -2673,9 +2918,22 @@ var Col = function () {
     this.max = max;
     this.hidden = hidden;
     this.collapsed = collapsed;
+    /**
+     * Column width [default 9.5]
+     * @type {Number}
+     */
     this.width = width;
+    /**
+     * Style of the column.
+     * @type {Style}
+     */
     this.style = new Style();
   }
+  /**
+   * Number format for all column @see {@link NumFmt}
+   * @type {String}
+   */
+
 
   _createClass(Col, [{
     key: 'setType',
@@ -2691,6 +2949,13 @@ var col = Object.freeze({
 	Col: Col
 });
 
+/**
+ * Row of the sheet.
+ * ```js
+ * const row = sheet.addRow();
+ * row.setHeightCM(0.8);
+ * ```
+ */
 var Row = function () {
   function Row(_ref) {
     var sheet = _ref.sheet;
@@ -2705,6 +2970,16 @@ var Row = function () {
 
     this.sheet = sheet;
   }
+  /**
+   * Set height of the Row with `cm` unit.
+   * @param {Number} ht Height with `cm` unit
+   */
+
+  /**
+   * Row height
+   * @type {Number}
+   */
+
 
   _createClass(Row, [{
     key: 'setHeightCM',
@@ -2712,6 +2987,11 @@ var Row = function () {
       this.height = ht * 28.3464567;
       this.isCustom = true;
     }
+    /**
+     * Create a cell and add it into the Row.
+     * @return {Cell}
+     */
+
   }, {
     key: 'addCell',
     value: function addCell() {
@@ -3152,6 +3432,16 @@ function makeXworksheet() {
   return sheet;
 }
 
+/**
+ * Sheet of the xlsx file.
+ * ```js
+ * import { File } from 'better-xlsx';
+ * const file = new File();
+ * const sheet = file.addSheet('Sheet-1');
+ * const row = sheet.addRow();
+ * const cell = row.addCell();
+ * ```
+ */
 var Sheet = function () {
   function Sheet(_ref) {
     var name = _ref.name,
@@ -3177,6 +3467,11 @@ var Sheet = function () {
     this.file = file;
     this.selected = selected;
   }
+  /**
+   * Create a Row and add it into the Sheet.
+   * @return {Row}
+   */
+
 
   _createClass(Sheet, [{
     key: 'addRow',
@@ -3202,12 +3497,24 @@ var Sheet = function () {
         this.maxCol = cellCount;
       }
     }
+    /**
+     * Get Col of the sheet with index and create cols when `index > maxCol`.
+     * @param  {Number} idx Index of the Col [from 0].
+     * @return {Col}
+     */
+
   }, {
     key: 'col',
     value: function col(idx) {
       this.maybeAddCol(idx + 1);
       return this.cols[idx];
     }
+    /**
+     * Get Row of the sheet with index and create rows when `index > maxRow`.
+     * @param  {Number} idx Index of the Row [from 0].
+     * @return {Row}
+     */
+
   }, {
     key: 'row',
     value: function row(idx) {
@@ -3216,6 +3523,13 @@ var Sheet = function () {
       }
       return this.rows[idx];
     }
+    /**
+     * Get Cell of the sheet with `(row, col)` and create cell when out of range.
+     * @param  {Number} row
+     * @param {Number} col
+     * @return {Cell}
+     */
+
   }, {
     key: 'cell',
     value: function cell(row, col) {
@@ -3228,6 +3542,13 @@ var Sheet = function () {
       }
       return r.cells[col];
     }
+    /**
+     * Set columns width from `startcol` to `endcol`.
+     * @param {Number} startcol
+     * @param {Number} endcol
+     * @param {Number} width
+     */
+
   }, {
     key: 'setColWidth',
     value: function setColWidth(startcol, endcol, width) {
@@ -4000,7 +4321,21 @@ function makeXTypes() {
   return types;
 }
 
+/**
+ * This is the main class, use it:
+ * 
+ * ```js
+ * import { File } from 'better-xlsx';
+ * const file = new File();
+ * const sheet = file.addSheet('Sheet-1');
+ * ```
+ * 
+ * @class File
+ */
 var File = function () {
+  /**
+   * @private
+   */
   function File() {
     _classCallCheck(this, File);
 
@@ -4008,8 +4343,25 @@ var File = function () {
     this.sheets = [];
     this.definedNames = [];
 
+    /**
+     * @private
+     */
     this.styles = new XstyleSheet({});
   }
+  /**
+   * Add a new Sheet, with the provided name, to a File
+   * @param {String} name Name of the Sheet
+   * @return {Sheet}
+   */
+
+  /**
+   * @private
+   */
+
+  /**
+   * @private
+   */
+
 
   _createClass(File, [{
     key: 'addSheet',
@@ -4026,6 +4378,12 @@ var File = function () {
       this.sheets.push(sheet);
       return sheet;
     }
+    /**
+     * Save the File to an xlsx file.
+     * @param  {String} [type='nodebuffer'] For Node.js use `nodebuffer` and browser use `blob` or `base64`.
+     * @return {Promise|stream} For Node.js return `stream` and browser return Promise.
+     */
+
   }, {
     key: 'saveAs',
     value: function saveAs() {
@@ -4064,6 +4422,11 @@ var File = function () {
         return zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true });
       }
     }
+    /**
+     * @private
+     * @return {Object} XML files mapping object
+     */
+
   }, {
     key: 'makeParts',
     value: function makeParts() {

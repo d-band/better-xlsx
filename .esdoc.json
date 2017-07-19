@@ -1,0 +1,17 @@
+{
+  "source": "./src",
+  "destination": "./esdoc",
+  "undocumentIdentifier": false,
+  "includeSource": false,
+  "styles": ["./docs/style.css"],
+  "experimentalProposal": {
+    "classProperties": true,
+    "objectRestSpread": true,
+    "decorators": true,
+    "doExpressions": true,
+    "functionBind": true,
+    "asyncGenerators": true,
+    "exportExtensions": true,
+    "dynamicImport": true
+  }
+}

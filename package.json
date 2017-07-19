@@ -1,6 +1,6 @@
 {
   "name": "better-xlsx",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "A better xlsx lib for read / write / toTable / from Table",
   "main": "lib/index.js",
   "scripts": {
@@ -11,7 +11,9 @@
     "prepublish": "npm run build",
     "test": "NODE_ENV=test nyc mocha --no-timeouts",
     "report": "nyc report --reporter=html",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls"
+    "coveralls": "nyc report --reporter=text-lcov | coveralls",
+    "doc": "esdoc",
+    "pages": "npm run doc && gh-pages -d esdoc"
   },
   "nyc": {
     "include": [
@@ -42,12 +44,15 @@
     "babel-runtime": "^6.20.0",
     "chai": "^4.0.0",
     "coveralls": "^2.11.14",
+    "esdoc": "^0.5.2",
+    "esdoc-importpath-plugin": "^0.1.4",
     "eslint": "^4.1.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-plugin-import": "^2.3.0",
     "eslint-plugin-node": "^5.0.0",
     "eslint-plugin-promise": "^3.3.1",
     "eslint-plugin-standard": "^3.0.1",
+    "gh-pages": "^1.0.0",
     "mocha": "^3.1.2",
     "nyc": "^11.0.0",
     "pre-commit": "^1.1.3",

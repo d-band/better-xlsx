@@ -1,0 +1,10 @@
+a[href="source.html"],
+a[href^="file/src/"] {
+  display: none;
+}
+.import-path {
+  display: none;
+}
+.header-notice {
+  display: none;
+}

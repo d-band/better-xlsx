@@ -3,6 +3,16 @@ import { Col } from './col';
 import { num2col, handleStyle, handleNumFmtId } from './lib';
 import { makeXworksheet, XsheetData, Xpane, Xcols, Xcol, Xrow, Xdimension, Xc, Xf, XmergeCells, XmergeCell } from './xmlWorksheet';
 
+/**
+ * Sheet of the xlsx file.
+ * ```js
+ * import { File } from 'better-xlsx';
+ * const file = new File();
+ * const sheet = file.addSheet('Sheet-1');
+ * const row = sheet.addRow();
+ * const cell = row.addCell();
+ * ```
+ */
 export class Sheet {
   rows = [];
   cols = [];
@@ -21,6 +31,10 @@ export class Sheet {
     this.file = file;
     this.selected = selected;
   }
+  /**
+   * Create a Row and add it into the Sheet.
+   * @return {Row}
+   */
   addRow () {
     const row = new Row({ sheet: this });
     this.rows.push(row);
@@ -41,16 +55,32 @@ export class Sheet {
       this.maxCol = cellCount;
     }
   }
+  /**
+   * Get Col of the sheet with index and create cols when `index > maxCol`.
+   * @param  {Number} idx Index of the Col [from 0].
+   * @return {Col}
+   */
   col (idx) {
     this.maybeAddCol(idx + 1);
     return this.cols[idx];
   }
+  /**
+   * Get Row of the sheet with index and create rows when `index > maxRow`.
+   * @param  {Number} idx Index of the Row [from 0].
+   * @return {Row}
+   */
   row (idx) {
     for (let len = this.rows.length; len <= idx; len++) {
       this.addRow();
     }
     return this.rows[idx];
   }
+  /**
+   * Get Cell of the sheet with `(row, col)` and create cell when out of range.
+   * @param  {Number} row
+   * @param {Number} col
+   * @return {Cell}
+   */
   cell (row, col) {
     for (let len = this.rows.length; len <= row; len++) {
       this.addRow();
@@ -61,6 +91,12 @@ export class Sheet {
     }
     return r.cells[col];
   }
+  /**
+   * Set columns width from `startcol` to `endcol`.
+   * @param {Number} startcol
+   * @param {Number} endcol
+   * @param {Number} width
+   */
   setColWidth (startcol, endcol, width) {
     if (startcol > endcol) {
       throw new Error(`Could not set width for range ${startcol}-${endcol}: startcol must be less than endcol.`);

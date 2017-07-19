@@ -6,14 +6,42 @@ import { makeXTypes, XOverride } from './xmlContentTypes';
 import { XstyleSheet } from './xmlStyle';
 import Zip from 'jszip';
 
+/**
+ * This is the main class, use it:
+ * 
+ * ```js
+ * import { File } from 'better-xlsx';
+ * const file = new File();
+ * const sheet = file.addSheet('Sheet-1');
+ * ```
+ * 
+ * @class File
+ */
 export class File {
+  /**
+   * @private
+   */
   sheet = {};
+  /**
+   * @private
+   */
   sheets = [];
+  /**
+   * @private
+   */
   definedNames = [];
 
   constructor () {
+    /**
+     * @private
+     */
     this.styles = new XstyleSheet({});
   }
+  /**
+   * Add a new Sheet, with the provided name, to a File
+   * @param {String} name Name of the Sheet
+   * @return {Sheet}
+   */
   addSheet (name) {
     if (this.sheet[name]) {
       throw new Error(`duplicate sheet name ${name}.`);
@@ -27,6 +55,11 @@ export class File {
     this.sheets.push(sheet);
     return sheet;
   }
+  /**
+   * Save the File to an xlsx file.
+   * @param  {String} [type='nodebuffer'] For Node.js use `nodebuffer` and browser use `blob` or `base64`.
+   * @return {Promise|stream} For Node.js return `stream` and browser return Promise.
+   */
   saveAs (type = 'nodebuffer') {
     const parts = this.makeParts();
     const zip = new Zip();
@@ -39,6 +72,10 @@ export class File {
       return zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true });
     }
   }
+  /**
+   * @private
+   * @return {Object} XML files mapping object
+   */
   makeParts () {
     const parts = {};
     const refTable = new RefTable();
