@@ -2556,7 +2556,7 @@ var index$3 = function kindOf(val) {
 
   // functions
   if (type === 'function' || val instanceof Function) {
-    if (val.constructor.name.slice(0, 9) === 'Generator') {
+    if (typeof val.constructor.name !== 'undefined' && val.constructor.name.slice(0, 9) === 'Generator') {
       return 'generatorfunction';
     }
     return 'function';
