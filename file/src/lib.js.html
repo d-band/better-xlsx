@@ -3,15 +3,12 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../">
-  <title data-ice="title">src/lib.js | API Document</title>
+  <title data-ice="title">src/lib.js | better-xlsx</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
-  
-  
   <script src="script/manual.js"></script>
-<link data-ice="userStyle" rel="stylesheet" href="user/css/0-style.css">
-</head>
+<link rel="stylesheet" href="./inject/css/0-style.css"><meta name="description" content="A better xlsx lib for read / write / toTable / from Table"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="better-xlsx"><meta property="twitter:description" content="A better xlsx lib for read / write / toTable / from Table"></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -20,7 +17,6 @@
   <a href="identifiers.html">Reference</a>
   <a href="source.html">Source</a>
   
-  <a data-ice="repoURL" href="https://github.com/d-band/better-xlsx" class="repo-url-github">Repository</a>
   <div class="search-box">
   <span>
     <img src="./image/search.png">
@@ -28,7 +24,7 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-</header>
+<a style="position:relative; top:3px;" href="https://github.com/d-band/better-xlsx"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
@@ -49,12 +45,166 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/lib.js</h1>
-<pre class="source-code line-number raw-source-code"></pre>
-<p data-ice="emptySourceCode">Sorry, this documentation does not provide source code.</p>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Xfill, XpatternFill, Xxf } from &apos;./xmlStyle&apos;;
+const NumFmtsCount = 163;
+/**
+ * Number format table
+ * 
+ * ```js
+ * {
+ *   0: &apos;general&apos;,
+ *   1: &apos;0&apos;,
+ *   2: &apos;0.00&apos;,
+ *   3: &apos;#,##0&apos;,
+ *   4: &apos;#,##0.00&apos;,
+ *   9: &apos;0%&apos;,
+ *   10: &apos;0.00%&apos;,
+ *   11: &apos;0.00e+00&apos;,
+ *   12: &apos;# ?/?&apos;,
+ *   13: &apos;# ??/??&apos;,
+ *   14: &apos;mm-dd-yy&apos;,
+ *   15: &apos;d-mmm-yy&apos;,
+ *   16: &apos;d-mmm&apos;,
+ *   17: &apos;mmm-yy&apos;,
+ *   18: &apos;h:mm am/pm&apos;,
+ *   19: &apos;h:mm:ss am/pm&apos;,
+ *   20: &apos;h:mm&apos;,
+ *   21: &apos;h:mm:ss&apos;,
+ *   22: &apos;m/d/yy h:mm&apos;,
+ *   37: &apos;#,##0 ;(#,##0)&apos;,
+ *   38: &apos;#,##0 ;[red](#,##0)&apos;,
+ *   39: &apos;#,##0.00;(#,##0.00)&apos;,
+ *   40: &apos;#,##0.00;[red](#,##0.00)&apos;,
+ *   41: &apos;_(* #,##0_);_(* (#,##0);_(* &quot;-&quot;_);_(@_)&apos;,
+ *   42: &apos;_(&quot;$&quot;* #,##0_);_(&quot;$* (#,##0);_(&quot;$&quot;* &quot;-&quot;_);_(@_)&apos;,
+ *   43: &apos;_(* #,##0.00_);_(* (#,##0.00);_(* &quot;-&quot;??_);_(@_)&apos;,
+ *   44: &apos;_(&quot;$&quot;* #,##0.00_);_(&quot;$&quot;* (#,##0.00);_(&quot;$&quot;* &quot;-&quot;??_);_(@_)&apos;,
+ *   45: &apos;mm:ss&apos;,
+ *   46: &apos;[h]:mm:ss&apos;,
+ *   47: &apos;mmss.0&apos;,
+ *   48: &apos;##0.0e+0&apos;,
+ *   49: &apos;@&apos;
+ * }
+ * ```
+ * 
+ * @type {Object}
+ */
+const NumFmt = {
+  0: &apos;general&apos;,
+  1: &apos;0&apos;,
+  2: &apos;0.00&apos;,
+  3: &apos;#,##0&apos;,
+  4: &apos;#,##0.00&apos;,
+  9: &apos;0%&apos;,
+  10: &apos;0.00%&apos;,
+  11: &apos;0.00e+00&apos;,
+  12: &apos;# ?/?&apos;,
+  13: &apos;# ??/??&apos;,
+  14: &apos;mm-dd-yy&apos;,
+  15: &apos;d-mmm-yy&apos;,
+  16: &apos;d-mmm&apos;,
+  17: &apos;mmm-yy&apos;,
+  18: &apos;h:mm am/pm&apos;,
+  19: &apos;h:mm:ss am/pm&apos;,
+  20: &apos;h:mm&apos;,
+  21: &apos;h:mm:ss&apos;,
+  22: &apos;m/d/yy h:mm&apos;,
+  37: &apos;#,##0 ;(#,##0)&apos;,
+  38: &apos;#,##0 ;[red](#,##0)&apos;,
+  39: &apos;#,##0.00;(#,##0.00)&apos;,
+  40: &apos;#,##0.00;[red](#,##0.00)&apos;,
+  41: &apos;_(* #,##0_);_(* (#,##0);_(* &quot;-&quot;_);_(@_)&apos;,
+  42: &apos;_(&quot;$&quot;* #,##0_);_(&quot;$* (#,##0);_(&quot;$&quot;* &quot;-&quot;_);_(@_)&apos;,
+  43: &apos;_(* #,##0.00_);_(* (#,##0.00);_(* &quot;-&quot;??_);_(@_)&apos;,
+  44: &apos;_(&quot;$&quot;* #,##0.00_);_(&quot;$&quot;* (#,##0.00);_(&quot;$&quot;* &quot;-&quot;??_);_(@_)&apos;,
+  45: &apos;mm:ss&apos;,
+  46: &apos;[h]:mm:ss&apos;,
+  47: &apos;mmss.0&apos;,
+  48: &apos;##0.0e+0&apos;,
+  49: &apos;@&apos;
+};
+
+const NumFmtInv = {};
+for (const k of Object.keys(NumFmt)) {
+  NumFmtInv[NumFmt[k]] = k;
+}
+// AA =&gt; 26
+function col2num (colstr) {
+  let d = 0;
+  for (let i = 0; i !== colstr.length; ++i) {
+    d = 26 * d + colstr.charCodeAt(i) - 64;
+  }
+  return d - 1;
+}
+// 26 =&gt; AA
+function num2col (col) {
+  let s = &apos;&apos;;
+  for (++col; col; col = Math.floor((col - 1) / 26)) {
+    s = String.fromCharCode(((col - 1) % 26) + 65) + s;
+  }
+  return s;
+}
+// B3 =&gt; {x: 1, y: 2}
+function cid2coord (cid) {
+  const temp = cid.match(/([A-Z]+)(\d+)/);
+  return {
+    x: col2num(temp[1]),
+    y: parseInt(temp[2], 10) - 1
+  };
+}
+
+function handleStyle (style, numFmtId, styles) {
+  const { xFont, xFill, xBorder, xXf } = style.makeXStyleElements();
+
+  const fontId = styles.addFont(xFont);
+  const fillId = styles.addFill(xFill);
+
+  // HACK - adding light grey fill, as in OO and Google
+  const greyfill = new Xfill({
+    patternFill: new XpatternFill({ patternType: &apos;lightGray&apos; })
+  });
+  styles.addFill(greyfill);
+
+  const borderId = styles.addBorder(xBorder);
+  xXf.fontId = fontId;
+  xXf.fillId = fillId;
+  xXf.borderId = borderId;
+  xXf.numFmtId = numFmtId;
+  // apply the numFmtId when it is not the default cellxf
+  if (xXf.numFmtId &gt; 0) {
+    xXf.applyNumberFormat = true;
+  }
+
+  xXf.alignment.horizontal = style.align.h;
+  xXf.alignment.indent = style.align.indent;
+  xXf.alignment.shrinkToFit = style.align.shrinkToFit;
+  xXf.alignment.textRotation = style.align.textRotation;
+  xXf.alignment.vertical = style.align.v;
+  xXf.alignment.wrapText = style.align.wrapText;
+
+  return styles.addCellXf(xXf);
+}
+
+function handleNumFmtId (numFmtId, styles) {
+  const xf = new Xxf({ numFmtId });
+  if (numFmtId &gt; 0) {
+    xf.applyNumberFormat = true;
+  }
+  return styles.addCellXf(xf);
+}
+
+function toExcelTime (d) {
+  const unix = d.getTime() / 1000;
+  return unix / 86400.0 + 25569.0;
+}
+
+export { NumFmt, NumFmtInv, NumFmtsCount, col2num, num2col, cid2coord, handleStyle, handleNumFmtId, toExcelTime };
+</code></pre>
+
 </div>
 
 <footer class="footer">
-  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.1)</span><img src="./image/esdoc-logo-mini-black.png"></a>
 </footer>
 
 <script src="script/search_index.js"></script>

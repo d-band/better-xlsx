@@ -3,15 +3,12 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../">
-  <title data-ice="title">src/xmlWorkbook.js | API Document</title>
+  <title data-ice="title">src/xmlWorkbook.js | better-xlsx</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
-  
-  
   <script src="script/manual.js"></script>
-<link data-ice="userStyle" rel="stylesheet" href="user/css/0-style.css">
-</head>
+<link rel="stylesheet" href="./inject/css/0-style.css"><meta name="description" content="A better xlsx lib for read / write / toTable / from Table"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="better-xlsx"><meta property="twitter:description" content="A better xlsx lib for read / write / toTable / from Table"></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -20,7 +17,6 @@
   <a href="identifiers.html">Reference</a>
   <a href="source.html">Source</a>
   
-  <a data-ice="repoURL" href="https://github.com/d-band/better-xlsx" class="repo-url-github">Repository</a>
   <div class="search-box">
   <span>
     <img src="./image/search.png">
@@ -28,7 +24,7 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-</header>
+<a style="position:relative; top:3px;" href="https://github.com/d-band/better-xlsx"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
@@ -49,12 +45,123 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/xmlWorkbook.js</h1>
-<pre class="source-code line-number raw-source-code"></pre>
-<p data-ice="emptySourceCode">Sorry, this documentation does not provide source code.</p>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { props, Node, HEAD } from &apos;./node&apos;;
+
+@props(&apos;xmlns&apos;)
+export class XRelationships extends Node {
+  constructor ({ xmlns = &apos;http://schemas.openxmlformats.org/package/2006/relationships&apos; }, children) {
+    super({ xmlns }, children);
+    this[HEAD] = &apos;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&apos;;
+  }
+}
+
+@props(&apos;Id&apos;, &apos;Target&apos;, &apos;Type&apos;)
+export class XRelationship extends Node {}
+
+@props(&apos;xmlns&apos;, &apos;xmlns:r&apos;)
+export class Xworkbook extends Node {
+  fileVersion = null;
+  workbookPr = null;
+  bookViews = null;
+  sheets = null;
+  calcPr = null;
+
+  constructor (attrs = {}, children) {
+    attrs[&apos;xmlns&apos;] = attrs[&apos;xmlns&apos;] || &apos;http://schemas.openxmlformats.org/spreadsheetml/2006/main&apos;;
+    attrs[&apos;xmlns:r&apos;] = attrs[&apos;xmlns:r&apos;] || &apos;http://schemas.openxmlformats.org/officeDocument/2006/relationships&apos;;
+    super(attrs, children);
+    this[HEAD] = &apos;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&apos;;
+  }
+  render () {
+    this.children = [];
+    if (this.fileVersion) this.children.push(this.fileVersion);
+    if (this.workbookPr) this.children.push(this.workbookPr);
+    if (this.bookViews) this.children.push(this.bookViews);
+    if (this.sheets) this.children.push(this.sheets);
+    if (this.calcPr) this.children.push(this.calcPr);
+    return super.render();
+  }
+}
+
+@props(&apos;appName&apos;, &apos;lastEdited&apos;, &apos;lowestEdited&apos;, &apos;rupBuild&apos;)
+export class XfileVersion extends Node {}
+
+@props(&apos;defaultThemeVersion&apos;, &apos;backupFile&apos;, &apos;showObjects&apos;, &apos;date1904&apos;)
+export class XworkbookPr extends Node {}
+
+export class XworkbookProtection extends Node {}
+
+export class XbookViews extends Node {}
+
+@props(&apos;activeTab&apos;, &apos;firstSheet&apos;, &apos;showHorizontalScroll&apos;, &apos;showVerticalScroll&apos;, &apos;showSheetTabs&apos;, &apos;tabRatio&apos;, &apos;windowHeight&apos;, &apos;windowWidth&apos;, &apos;xWindow&apos;, &apos;yWindow&apos;)
+export class XworkbookView extends Node {}
+
+export class Xsheets extends Node {}
+
+@props(&apos;name&apos;, &apos;sheetId&apos;, &apos;r:id&apos;, &apos;state&apos;)
+export class Xsheet extends Node {}
+
+@props(&apos;calcId&apos;, &apos;iterateCount&apos;, &apos;refMode&apos;, &apos;iterate&apos;, &apos;iterateDelta&apos;)
+export class XcalcPr extends Node {}
+
+export function makeWorkbookRels (sheetCount) {
+  const rels = new XRelationships({});
+  for (let i = 1; i &lt;= sheetCount; i++) {
+    rels.children.push(new XRelationship({
+      Id: `rId${i}`,
+      Target: `worksheets/sheet${i}.xml`,
+      Type: &apos;http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet&apos;
+    }));
+  }
+  rels.children.push(new XRelationship({
+    Id: `rId${sheetCount + 1}`,
+    Target: &apos;sharedStrings.xml&apos;,
+    Type: &apos;http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings&apos;
+  }));
+  rels.children.push(new XRelationship({
+    Id: `rId${sheetCount + 2}`,
+    Target: &apos;theme/theme1.xml&apos;,
+    Type: &apos;http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme&apos;
+  }));
+  rels.children.push(new XRelationship({
+    Id: `rId${sheetCount + 3}`,
+    Target: &apos;styles.xml&apos;,
+    Type: &apos;http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles&apos;
+  }));
+  return rels;
+}
+
+export function makeXworkbook () {
+  const workbook = new Xworkbook();
+  workbook.fileVersion = new XfileVersion({ appName: &apos;JS XLSX&apos; });
+  workbook.workbookPr = new XworkbookPr({ showObjects: &apos;all&apos; });
+  workbook.bookViews = new XbookViews({}, [
+    new XworkbookView({
+      showHorizontalScroll: true,
+      showSheetTabs: true,
+      showVerticalScroll: true,
+      tabRatio: 204,
+      windowHeight: 8192,
+      windowWidth: 16384,
+      xWindow: 0,
+      yWindow: 0
+    })
+  ]);
+  workbook.calcPr = new XcalcPr({
+    iterateCount: 100,
+    iterate: false,
+    iterateDelta: 0.001,
+    refMode: &apos;A1&apos;
+  });
+
+  return workbook;
+}
+</code></pre>
+
 </div>
 
 <footer class="footer">
-  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.1)</span><img src="./image/esdoc-logo-mini-black.png"></a>
 </footer>
 
 <script src="script/search_index.js"></script>

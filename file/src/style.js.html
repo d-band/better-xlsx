@@ -3,15 +3,12 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../">
-  <title data-ice="title">src/style.js | API Document</title>
+  <title data-ice="title">src/style.js | better-xlsx</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
-  
-  
   <script src="script/manual.js"></script>
-<link data-ice="userStyle" rel="stylesheet" href="user/css/0-style.css">
-</head>
+<link rel="stylesheet" href="./inject/css/0-style.css"><meta name="description" content="A better xlsx lib for read / write / toTable / from Table"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="better-xlsx"><meta property="twitter:description" content="A better xlsx lib for read / write / toTable / from Table"></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -20,7 +17,6 @@
   <a href="identifiers.html">Reference</a>
   <a href="source.html">Source</a>
   
-  <a data-ice="repoURL" href="https://github.com/d-band/better-xlsx" class="repo-url-github">Repository</a>
   <div class="search-box">
   <span>
     <img src="./image/search.png">
@@ -28,7 +24,7 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-</header>
+<a style="position:relative; top:3px;" href="https://github.com/d-band/better-xlsx"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
@@ -49,12 +45,224 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/style.js</h1>
-<pre class="source-code line-number raw-source-code"></pre>
-<p data-ice="emptySourceCode">Sorry, this documentation does not provide source code.</p>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Xfont, Xfill, XpatternFill, Xborder, Xxf, Xalignment } from &apos;./xmlStyle&apos;;
+
+/**
+ * Style class for set Cell styles.
+ */
+export class Style {
+  applyBorder = false;
+  applyFill = false;
+  applyFont = false;
+  applyAlignment = false;
+  namedStyleIndex = null;
+
+  constructor () {
+    /**
+     * Cell border
+     * @type {Border}
+     */
+    this.border = new Border({});
+    /**
+     * Cell fill background or foreground
+     * @type {Fill}
+     */
+    this.fill = new Fill({});
+    /**
+     * Cell font
+     * @type {Font}
+     */
+    this.font = new Font({});
+    /**
+     * Cell alignment
+     * @type {Alignment}
+     */
+    this.align = new Alignment({});
+  }
+  makeXStyleElements () {
+    const xFont = new Xfont({
+      sz: this.font.size,
+      name: this.font.name,
+      family: this.font.family,
+      charset: this.font.charset,
+      color: this.font.color,
+      b: this.font.bold,
+      i: this.font.italic,
+      u: this.font.underline
+    });
+    const xFill = new Xfill({
+      patternFill: new XpatternFill({
+        patternType: this.fill.patternType,
+        fgColor: this.fill.fgColor,
+        bgColor: this.fill.bgColor
+      })
+    });
+    const xBorder = new Xborder({
+      left: { style: this.border.left, color: this.border.leftColor },
+      right: { style: this.border.right, color: this.border.rightColor },
+      top: { style: this.border.top, color: this.border.topColor },
+      bottom: { style: this.border.bottom, color: this.border.bottomColor }
+    });
+    const xXf = new Xxf({
+      numFmtId: 0,
+      applyBorder: this.applyBorder,
+      applyFill: this.applyFill,
+      applyFont: this.applyFont,
+      applyAlignment: this.applyAlignment
+    });
+
+    xXf.alignment = new Xalignment({
+      horizontal: this.align.h,
+      indent: this.align.indent,
+      shrinkToFit: this.align.shrinkToFit,
+      textRotation: this.align.textRotation,
+      vertical: this.align.v,
+      wrapText: this.align.wrapText
+    });
+
+    if (this.namedStyleIndex !== null) {
+      xXf.xfId = this.namedStyleIndex;
+    }
+
+    return { xFont, xFill, xBorder, xXf };
+  }
+}
+
+/**
+ * Border of the Style and border type have: `none`, `thin`, `medium`, `thick`, `dashed`, `dotted`, `double`
+ * 
+ */
+export class Border {
+  /**
+   * left border color
+   * @type {String}
+   */
+  leftColor = undefined;
+  /**
+   * right border color
+   * @type {String}
+   */
+  rightColor = undefined;
+  /**
+   * top border color
+   * @type {String}
+   */
+  topColor = undefined;
+  /**
+   * bottom border color
+   * @type {String}
+   */
+  bottomColor = undefined;
+
+  constructor ({ left = &apos;none&apos;, right = &apos;none&apos;, top = &apos;none&apos;, bottom = &apos;none&apos; }) {
+    /**
+     * left border type
+     * @type {String}
+     */
+    this.left = left;
+    /**
+     * right border type
+     * @type {String}
+     */
+    this.right = right;
+    /**
+     * top border type
+     * @type {String}
+     */
+    this.top = top;
+    /**
+     * bottom border type
+     * @type {String}
+     */
+    this.bottom = bottom;
+  }
+}
+/**
+ * Fill of the Style
+ */
+export class Fill {
+  constructor ({ patternType = &apos;none&apos;, fgColor = &apos;FFFFFFFF&apos;, bgColor = &apos;00000000&apos; }) {
+    /**
+     * pattern type of the fill
+     * @type {String}
+     */
+    this.patternType = patternType;
+    /**
+     * foreground color of the fill
+     * @type {String}
+     */
+    this.fgColor = fgColor;
+    /**
+     * background color of the fill
+     * @type {String}
+     */
+    this.bgColor = bgColor;
+  }
+}
+/**
+ * Font of the Style
+ */
+export class Font {
+  family = 0;
+  charset = 0;
+  /**
+   * font color
+   * @type {String}
+   */
+  color = undefined;
+  /**
+   * Is bold style
+   * @type {Boolean}
+   */
+  bold = false;
+  /**
+   * Is italic style
+   * @type {Boolean}
+   */
+  italic = false;
+  /**
+   * IS underline style
+   * @type {Boolean}
+   */
+  underline = false;
+
+  constructor ({ size = 12, name = &apos;Verdana&apos; }) {
+    /**
+     * font size [default 12]
+     * @type {Number}
+     */
+    this.size = size;
+    this.name = name;
+  }
+}
+/**
+ * Alignment of the Style.
+ */
+export class Alignment {
+  indent = 0;
+  shrinkToFit = false;
+  textRotation = 0;
+  wrapText = false;
+
+  constructor ({ h = &apos;general&apos;, v = &apos;bottom&apos; }) {
+    /**
+     * Horizontal align: `general`, `center`, `left`, `right`
+     * @type {String}
+     */
+    this.h = h;
+    /**
+     * Vertical align: `general`, `top`, `bottom`, `center`
+     * @type {String}
+     */
+    this.v = v;
+  }
+}
+</code></pre>
+
 </div>
 
 <footer class="footer">
-  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.1)</span><img src="./image/esdoc-logo-mini-black.png"></a>
 </footer>
 
 <script src="script/search_index.js"></script>

@@ -1,42 +1,318 @@
 {
-  "coverage": "100%",
-  "expectCount": 60,
-  "actualCount": 60,
+  "coverage": "22.99%",
+  "expectCount": 287,
+  "actualCount": 66,
   "files": {
-    "src/style.js": {
-      "expectCount": 27,
-      "actualCount": 27,
-      "undocumentLines": []
-    },
     "src/cell.js": {
-      "expectCount": 15,
-      "actualCount": 15,
-      "undocumentLines": []
+      "expectCount": 23,
+      "actualCount": 16,
+      "undocumentLines": [
+        5,
+        43,
+        44,
+        45,
+        51,
+        67,
+        75
+      ]
     },
     "src/col.js": {
-      "expectCount": 4,
+      "expectCount": 11,
       "actualCount": 4,
-      "undocumentLines": []
+      "undocumentLines": [
+        18,
+        25,
+        26,
+        27,
+        28,
+        29,
+        41
+      ]
     },
     "src/file.js": {
-      "expectCount": 3,
-      "actualCount": 3,
-      "undocumentLines": []
+      "expectCount": 9,
+      "actualCount": 8,
+      "undocumentLines": [
+        34
+      ]
     },
     "src/lib.js": {
-      "expectCount": 1,
+      "expectCount": 9,
       "actualCount": 1,
-      "undocumentLines": []
+      "undocumentLines": [
+        80,
+        2,
+        85,
+        93,
+        101,
+        109,
+        141,
+        149
+      ]
+    },
+    "src/node.js": {
+      "expectCount": 10,
+      "actualCount": 0,
+      "undocumentLines": [
+        1,
+        9,
+        16,
+        18,
+        44,
+        45,
+        47,
+        49,
+        50,
+        52
+      ]
+    },
+    "src/reftable.js": {
+      "expectCount": 8,
+      "actualCount": 0,
+      "undocumentLines": [
+        3,
+        4,
+        5,
+        6,
+        8,
+        20,
+        29,
+        32
+      ]
     },
     "src/row.js": {
-      "expectCount": 4,
+      "expectCount": 10,
       "actualCount": 4,
-      "undocumentLines": []
+      "undocumentLines": [
+        11,
+        12,
+        18,
+        19,
+        21,
+        22
+      ]
     },
     "src/sheet.js": {
-      "expectCount": 6,
+      "expectCount": 20,
       "actualCount": 6,
-      "undocumentLines": []
+      "undocumentLines": [
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        29,
+        30,
+        31,
+        32,
+        46,
+        116,
+        158
+      ]
+    },
+    "src/style.js": {
+      "expectCount": 45,
+      "actualCount": 27,
+      "undocumentLines": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        13,
+        35,
+        110,
+        137,
+        159,
+        160,
+        182,
+        188,
+        195,
+        196,
+        197,
+        198,
+        200
+      ]
+    },
+    "src/templates.js": {
+      "expectCount": 4,
+      "actualCount": 0,
+      "undocumentLines": [
+        1,
+        8,
+        14,
+        17
+      ]
+    },
+    "src/xmlContentTypes.js": {
+      "expectCount": 6,
+      "actualCount": 0,
+      "undocumentLines": [
+        4,
+        5,
+        7,
+        12,
+        15,
+        17
+      ]
+    },
+    "src/xmlSharedStrings.js": {
+      "expectCount": 6,
+      "actualCount": 0,
+      "undocumentLines": [
+        4,
+        5,
+        7,
+        11,
+        14,
+        16
+      ]
+    },
+    "src/xmlStyle.js": {
+      "expectCount": 57,
+      "actualCount": 0,
+      "undocumentLines": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        15,
+        17,
+        19,
+        20,
+        30,
+        44,
+        55,
+        65,
+        75,
+        85,
+        93,
+        117,
+        118,
+        125,
+        128,
+        129,
+        136,
+        137,
+        149,
+        162,
+        163,
+        170,
+        171,
+        174,
+        187,
+        188,
+        197,
+        198,
+        205,
+        206,
+        214,
+        222,
+        237,
+        238,
+        245,
+        248,
+        249,
+        256,
+        257,
+        264,
+        265,
+        279,
+        281,
+        283,
+        287,
+        303,
+        304,
+        315
+      ]
+    },
+    "src/xmlWorkbook.js": {
+      "expectCount": 24,
+      "actualCount": 0,
+      "undocumentLines": [
+        4,
+        5,
+        7,
+        12,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        22,
+        26,
+        28,
+        29,
+        40,
+        43,
+        45,
+        47,
+        50,
+        52,
+        55,
+        58,
+        60,
+        87
+      ]
+    },
+    "src/xmlWorksheet.js": {
+      "expectCount": 45,
+      "actualCount": 0,
+      "undocumentLines": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        17,
+        21,
+        23,
+        24,
+        41,
+        44,
+        47,
+        49,
+        52,
+        55,
+        58,
+        61,
+        63,
+        66,
+        68,
+        71,
+        74,
+        75,
+        77,
+        78,
+        80,
+        88,
+        91,
+        94,
+        97,
+        100,
+        103,
+        106,
+        107,
+        109,
+        110,
+        112,
+        119
+      ]
     }
   }
 }

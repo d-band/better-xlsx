@@ -3,15 +3,12 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../">
-  <title data-ice="title">src/sheet.js | API Document</title>
+  <title data-ice="title">src/sheet.js | better-xlsx</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
-  
-  
   <script src="script/manual.js"></script>
-<link data-ice="userStyle" rel="stylesheet" href="user/css/0-style.css">
-</head>
+<link rel="stylesheet" href="./inject/css/0-style.css"><meta name="description" content="A better xlsx lib for read / write / toTable / from Table"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="better-xlsx"><meta property="twitter:description" content="A better xlsx lib for read / write / toTable / from Table"></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -20,7 +17,6 @@
   <a href="identifiers.html">Reference</a>
   <a href="source.html">Source</a>
   
-  <a data-ice="repoURL" href="https://github.com/d-band/better-xlsx" class="repo-url-github">Repository</a>
   <div class="search-box">
   <span>
     <img src="./image/search.png">
@@ -28,7 +24,7 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-</header>
+<a style="position:relative; top:3px;" href="https://github.com/d-band/better-xlsx"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
@@ -49,12 +45,335 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/sheet.js</h1>
-<pre class="source-code line-number raw-source-code"></pre>
-<p data-ice="emptySourceCode">Sorry, this documentation does not provide source code.</p>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Row } from &apos;./row&apos;;
+import { Col } from &apos;./col&apos;;
+import { num2col, handleStyle, handleNumFmtId } from &apos;./lib&apos;;
+import { makeXworksheet, XsheetData, Xpane, Xcols, Xcol, Xrow, Xdimension, Xc, Xf, XmergeCells, XmergeCell } from &apos;./xmlWorksheet&apos;;
+
+/**
+ * Sheet of the xlsx file.
+ * ```js
+ * import { File } from &apos;better-xlsx&apos;;
+ * const file = new File();
+ * const sheet = file.addSheet(&apos;Sheet-1&apos;);
+ * const row = sheet.addRow();
+ * const cell = row.addCell();
+ * ```
+ */
+export class Sheet {
+  rows = [];
+  cols = [];
+  maxRow = 0;
+  maxCol = 0;
+  hidden = false;
+  sheetViews = [];
+  sheetFormat = {
+    defaultColWidth: 0,
+    defaultRowHeight: 0,
+    outlineLevelCol: 0,
+    outlineLevelRow: 0
+  };
+  constructor ({ name, file, selected }) {
+    this.name = name;
+    this.file = file;
+    this.selected = selected;
+  }
+  /**
+   * Create a Row and add it into the Sheet.
+   * @return {Row}
+   */
+  addRow () {
+    const row = new Row({ sheet: this });
+    this.rows.push(row);
+    if (this.rows.length &gt; this.maxRow) {
+      this.maxRow = this.rows.length;
+    }
+    return row;
+  }
+  maybeAddCol (cellCount) {
+    if (cellCount &gt; this.maxCol) {
+      const col = new Col({
+        min: cellCount,
+        max: cellCount,
+        hidden: false,
+        collapsed: false
+      });
+      this.cols.push(col);
+      this.maxCol = cellCount;
+    }
+  }
+  /**
+   * Get Col of the sheet with index and create cols when `index &gt; maxCol`.
+   * @param  {Number} idx Index of the Col [from 0].
+   * @return {Col}
+   */
+  col (idx) {
+    this.maybeAddCol(idx + 1);
+    return this.cols[idx];
+  }
+  /**
+   * Get Row of the sheet with index and create rows when `index &gt; maxRow`.
+   * @param  {Number} idx Index of the Row [from 0].
+   * @return {Row}
+   */
+  row (idx) {
+    for (let len = this.rows.length; len &lt;= idx; len++) {
+      this.addRow();
+    }
+    return this.rows[idx];
+  }
+  /**
+   * Get Cell of the sheet with `(row, col)` and create cell when out of range.
+   * @param  {Number} row
+   * @param {Number} col
+   * @return {Cell}
+   */
+  cell (row, col) {
+    for (let len = this.rows.length; len &lt;= row; len++) {
+      this.addRow();
+    }
+    const r = this.rows[row];
+    for (let len = r.cells.length; len &lt;= col; len++) {
+      r.addCell();
+    }
+    return r.cells[col];
+  }
+  /**
+   * Set columns width from `startcol` to `endcol`.
+   * @param {Number} startcol
+   * @param {Number} endcol
+   * @param {Number} width
+   */
+  setColWidth (startcol, endcol, width) {
+    if (startcol &gt; endcol) {
+      throw new Error(`Could not set width for range ${startcol}-${endcol}: startcol must be less than endcol.`);
+    }
+    const col = new Col({
+      min: startcol + 1,
+      max: endcol + 1,
+      hidden: false,
+      collapsed: false,
+      width: width
+    });
+    this.cols.push(col);
+    if (endcol + 1 &gt; this.maxCol) {
+      this.maxCol = endcol + 1;
+    }
+  }
+  handleMerged () {
+    const merged = [];
+    for (let r = 0; r &lt; this.rows.length; r++) {
+      const row = this.rows[r];
+      for (let c = 0; c &lt; row.cells.length; c++) {
+        const cell = row.cells[c];
+        if (cell.hMerge &gt; 0 || cell.vMerge &gt; 0) {
+          merged.push({ r, c, cell });
+        }
+      }
+    }
+    for (const { r, c, cell } of merged) {
+      const left = cell.style.border.left;
+      const right = cell.style.border.right;
+      const top = cell.style.border.top;
+      const bottom = cell.style.border.bottom;
+
+      cell.style.border.left = &apos;none&apos;;
+      cell.style.border.right = &apos;none&apos;;
+      cell.style.border.top = &apos;none&apos;;
+      cell.style.border.bottom = &apos;none&apos;;
+
+      for (let rownum = 0; rownum &lt;= cell.vMerge; rownum++) {
+        for (let colnum = 0; colnum &lt;= cell.hMerge; colnum++) {
+          const tmpcell = this.cell(r + rownum, c + colnum);
+          tmpcell.style.applyBorder = true;
+          if (rownum === 0) {
+            tmpcell.style.border.top = top;
+          }
+          if (rownum === cell.vMerge) {
+            tmpcell.style.border.bottom = bottom;
+          }
+          if (colnum === 0) {
+            tmpcell.style.border.left = left;
+          }
+          if (colnum === cell.hMerge) {
+            tmpcell.style.border.right = right;
+          }
+        }
+      }
+    }
+  }
+  makeXSheet (refTable, styles) {
+    const sheet = makeXworksheet();
+    const xSheet = new XsheetData();
+    let maxRow = 0;
+    let maxCell = 0;
+    let maxLevelCol;
+    let maxLevelRow;
+
+    this.handleMerged();
+
+    for (let i = 0; i &lt; this.sheetViews.length; i++) {
+      const view = this.sheetViews[i];
+      if (view &amp;&amp; view.pane) {
+        sheet.sheetViews.children[i].children.push(new Xpane({
+          xSplit: view.pane.xSplit,
+          ySplit: view.pane.ySplit,
+          topLeftCell: view.pane.topLeftCell,
+          activePane: view.pane.activePane,
+          state: view.pane.state
+        }));
+      }
+    }
+    if (this.selected) {
+      sheet.sheetViews.children[0].tabSelected = true;
+    }
+    if (this.sheetFormat.defaultRowHeight !== 0) {
+      sheet.sheetFormatPr.defaultRowHeight = this.sheetFormat.defaultRowHeight;
+    }
+    if (this.sheetFormat.defaultColWidth !== 0) {
+      sheet.sheetFormatPr.defaultColWidth = this.sheetFormat.defaultColWidth;
+    }
+
+    const fIdList = [];
+    sheet.cols = new Xcols();
+    for (let c = 0; c &lt; this.cols.length; c++) {
+      const col = this.cols[c];
+      col.min = col.min || 1;
+      col.max = col.max || 1;
+      const xNumFmt = styles.newNumFmt(col.numFmt);
+      const fId = handleStyle(col.style, xNumFmt.numFmtId, styles);
+
+      fIdList.push(fId);
+
+      let customWidth = 0;
+      if (col.width === 0) {
+        col.width = 9.5;
+      } else {
+        customWidth = 1;
+      }
+      sheet.cols.children.push(new Xcol({
+        min: col.min,
+        max: col.max,
+        hidden: col.hidden,
+        width: col.width,
+        customWidth: customWidth,
+        collapsed: col.collapsed,
+        outlineLevel: col.outlineLevel,
+        style: fId
+      }));
+
+      if (col.outlineLevel &gt; maxLevelCol) {
+        maxLevelCol = col.outlineLevel;
+      }
+    }
+    for (let r = 0; r &lt; this.rows.length; r++) {
+      const row = this.rows[r];
+      if (r &gt; maxRow) maxRow = r;
+      const xRow = new Xrow({ r: r + 1 });
+      if (row.isCustom) {
+        xRow.customHeight = true;
+        xRow.ht = row.height;
+      }
+      xRow.outlineLevel = row.outlineLevel;
+      if (row.outlineLevel &gt; maxLevelRow) {
+        maxLevelRow = row.outlineLevel;
+      }
+      for (let c = 0; c &lt; row.cells.length; c++) {
+        let fId = fIdList[c];
+        const cell = row.cells[c];
+        const xNumFmt = styles.newNumFmt(cell.numFmt);
+        const style = cell.style;
+        if (style !== null) {
+          fId = handleStyle(style, xNumFmt.numFmtId, styles);
+        } else if (cell.numFmt &amp;&amp; this.cols[c].numFmt !== cell.numFmt) {
+          fId = handleNumFmtId(xNumFmt.NumFmtId, styles);
+        }
+
+        if (c &gt; maxCell) maxCell = c;
+
+        const xC = new Xc({ r: `${num2col(c)}${r + 1}` });
+        switch (cell.cellType) {
+          case &apos;TypeString&apos;:
+            if (cell.value) {
+              xC.v = refTable.addString(cell.value);
+            }
+            xC.t = &apos;s&apos;;
+            xC.s = fId;
+            break;
+          case &apos;TypeBool&apos;:
+            xC.v = cell.value;
+            xC.t = &apos;b&apos;;
+            xC.s = fId;
+            break;
+          case &apos;TypeNumeric&apos;:
+            xC.v = cell.value;
+            xC.s = fId;
+            break;
+          case &apos;TypeDate&apos;:
+            xC.v = cell.value;
+            xC.s = fId;
+            break;
+          case &apos;TypeFormula&apos;:
+            xC.v = cell.value;
+            xC.f = new Xf({}, [cell.formula]);
+            xC.s = fId;
+            break;
+          case &apos;TypeError&apos;:
+            xC.v = cell.value;
+            xC.f = new Xf({}, [cell.formula]);
+            xC.t = &apos;e&apos;;
+            xC.s = fId;
+            break;
+          case &apos;TypeGeneral&apos;:
+            xC.v = cell.value;
+            xC.s = fId;
+            break;
+        }
+        xRow.children.push(xC);
+        if (cell.hMerge &gt; 0 || cell.vMerge &gt; 0) {
+          // r == rownum, c == colnum
+          const start = `${num2col(c)}${r + 1}`;
+          const endcol = c + cell.hMerge;
+          const endrow = r + cell.vMerge + 1;
+          const end = `${num2col(endcol)}${endrow}`;
+          const mc = new XmergeCell({ ref: start + &apos;:&apos; + end });
+          if (sheet.mergeCells === null) {
+            sheet.mergeCells = new XmergeCells();
+          }
+          sheet.mergeCells.children.push(mc);
+        }
+      }
+      xSheet.children.push(xRow);
+    }
+    // Update sheet format with the freshly determined max levels
+    this.sheetFormat.outlineLevelCol = maxLevelCol;
+    this.sheetFormat.outlineLevelRow = maxLevelRow;
+    // .. and then also apply this to the xml worksheet
+    sheet.sheetFormatPr.outlineLevelCol = this.sheetFormat.outlineLevelCol;
+    sheet.sheetFormatPr.outlineLevelRow = this.sheetFormat.outlineLevelRow;
+
+    if (sheet.mergeCells !== null) {
+      sheet.mergeCells.count = sheet.mergeCells.children.length;
+    }
+
+    sheet.sheetData = xSheet;
+
+    const dimension = new Xdimension({
+      ref: `A1:${num2col(maxCell)}${maxRow + 1}`
+    });
+    if (dimension.ref === &apos;A1:A1&apos;) {
+      dimension.ref = &apos;A1&apos;;
+    }
+    sheet.dimension = dimension;
+    return sheet;
+  }
+}
+</code></pre>
+
 </div>
 
 <footer class="footer">
-  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.1)</span><img src="./image/esdoc-logo-mini-black.png"></a>
 </footer>
 
 <script src="script/search_index.js"></script>

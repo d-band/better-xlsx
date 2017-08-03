@@ -3,15 +3,12 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../">
-  <title data-ice="title">src/xmlStyle.js | API Document</title>
+  <title data-ice="title">src/xmlStyle.js | better-xlsx</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
-  
-  
   <script src="script/manual.js"></script>
-<link data-ice="userStyle" rel="stylesheet" href="user/css/0-style.css">
-</head>
+<link rel="stylesheet" href="./inject/css/0-style.css"><meta name="description" content="A better xlsx lib for read / write / toTable / from Table"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="better-xlsx"><meta property="twitter:description" content="A better xlsx lib for read / write / toTable / from Table"></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -20,7 +17,6 @@
   <a href="identifiers.html">Reference</a>
   <a href="source.html">Source</a>
   
-  <a data-ice="repoURL" href="https://github.com/d-band/better-xlsx" class="repo-url-github">Repository</a>
   <div class="search-box">
   <span>
     <img src="./image/search.png">
@@ -28,7 +24,7 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-</header>
+<a style="position:relative; top:3px;" href="https://github.com/d-band/better-xlsx"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
@@ -49,12 +45,335 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/xmlStyle.js</h1>
-<pre class="source-code line-number raw-source-code"></pre>
-<p data-ice="emptySourceCode">Sorry, this documentation does not provide source code.</p>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { props, Node, HEAD } from &apos;./node&apos;;
+import { NumFmtInv, NumFmtsCount } from &apos;./lib&apos;;
+
+@props(&apos;xmlns&apos;)
+export class XstyleSheet extends Node {
+  fonts = null;
+  fills = null;
+  borders = null;
+  cellStyles = null;
+  cellStyleXfs = null;
+  cellXfs = null;
+  numFmts = null;
+  numFmtRefTable = {};
+
+  constructor ({ xmlns = &apos;http://schemas.openxmlformats.org/spreadsheetml/2006/main&apos; }, children) {
+    super({ xmlns }, children);
+    this[HEAD] = &apos;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&apos;;
+  }
+  render () {
+    this.children = [];
+    if (this.numFmts) this.children.push(this.numFmts);
+    if (this.fonts) this.children.push(this.fonts);
+    if (this.fills) this.children.push(this.fills);
+    if (this.borders) this.children.push(this.borders);
+    if (this.cellStyleXfs) this.children.push(this.cellStyleXfs);
+    if (this.cellXfs) this.children.push(this.cellXfs);
+    if (this.cellStyles) this.children.push(this.cellStyles);
+    return super.render();
+  }
+  reset () {
+    this.children = [];
+    this.fonts = new Xfonts();
+    this.fills = new Xfills();
+    this.borders = new Xborders();
+    this.cellXfs = new XcellXfs({ count: 1 }, [new Xxf()]);
+    this.numFmts = new XnumFmts();
+    this.addBorder(new Xborder({
+      left: { style: &apos;none&apos; },
+      right: { style: &apos;none&apos; },
+      top: { style: &apos;none&apos; },
+      bottom: { style: &apos;none&apos; }
+    }));
+  }
+  addFont (xFont) {
+    if (!xFont.name) return 0;
+    const list = this.fonts.children;
+    const len = list.length;
+    for (let i = 0; i &lt; list.length; i++) {
+      if (xFont.equals(list[i])) return i;
+    }
+    list.push(xFont);
+    this.fonts.count = list.length;
+    return len;
+  }
+  addFill (xFill) {
+    const list = this.fills.children;
+    const len = list.length;
+    for (let i = 0; i &lt; list.length; i++) {
+      if (xFill.equals(list[i])) return i;
+    }
+    list.push(xFill);
+    this.fills.count = list.length;
+    return len;
+  }
+  addBorder (xBorder) {
+    const list = this.borders.children;
+    const len = list.length;
+    for (let i = 0; i &lt; list.length; i++) {
+      if (xBorder.equals(list[i])) return i;
+    }
+    list.push(xBorder);
+    this.borders.count = list.length;
+    return len;
+  }
+  addCellXf (xXf) {
+    const list = this.cellXfs.children;
+    const len = list.length;
+    for (let i = 0; i &lt; list.length; i++) {
+      if (xXf.equals(list[i])) return i;
+    }
+    list.push(xXf);
+    this.cellXfs.count = list.length;
+    return len;
+  }
+  addNumFmt (xNumFmt) {
+    if (xNumFmt.numFmtId &lt;= NumFmtsCount) return;
+    if (this.numFmtRefTable[xNumFmt.numFmtId] === undefined) {
+      this.numFmts.children.push(xNumFmt);
+      this.numFmts.count = this.numFmts.children.length;
+      this.numFmtRefTable[xNumFmt.numFmtId] = xNumFmt;
+    }
+  }
+  newNumFmt (formatCode) {
+    if (!formatCode) return new XnumFmt({ numFmtId: 0, formatCode: &apos;general&apos; });
+    let numFmtId = NumFmtInv[formatCode];
+    if (numFmtId !== undefined) {
+      return new XnumFmt({ numFmtId, formatCode });
+    }
+    for (const numFmt of this.numFmts.children) {
+      if (formatCode === numFmt.formatCode) return numFmt;
+    }
+
+    numFmtId = NumFmtsCount + 1;
+    do {
+      if (this.numFmtRefTable[numFmtId]) {
+        numFmtId++;
+      } else {
+        this.addNumFmt(new XnumFmt({ numFmtId, formatCode }));
+        break;
+      }
+    } while (1);
+    return new XnumFmt({ numFmtId, formatCode });
+  }
+}
+
+@props(&apos;count&apos;)
+export class XnumFmts extends Node {
+  render () {
+    if (this.count) return super.render();
+    return &apos;&apos;;
+  }
+}
+
+@props(&apos;numFmtId&apos;, &apos;formatCode&apos;)
+export class XnumFmt extends Node {}
+
+@props(&apos;count&apos;)
+export class Xfonts extends Node {
+  render () {
+    if (this.count) return super.render();
+    return &apos;&apos;;
+  }
+}
+
+@props(&apos;sz&apos;, &apos;name&apos;, &apos;family&apos;, &apos;charset&apos;, &apos;color&apos;, &apos;b&apos;, &apos;i&apos;, &apos;u&apos;)
+export class Xfont extends Node {
+  render () {
+    let str = &apos;&lt;font&gt;&apos;;
+    if (this.sz) str += `&lt;sz val=&quot;${this.sz}&quot;/&gt;`;
+    if (this.name) str += `&lt;name val=&quot;${this.name}&quot;/&gt;`;
+    if (this.family) str += `&lt;family val=&quot;${this.family}&quot;/&gt;`;
+    if (this.charset) str += `&lt;charset val=&quot;${this.charset}&quot;/&gt;`;
+    if (this.color) str += `&lt;color rgb=&quot;${this.color}&quot;/&gt;`;
+    if (this.b) str += `&lt;b/&gt;`;
+    if (this.i) str += `&lt;i/&gt;`;
+    if (this.u) str += `&lt;u/&gt;`;
+    return str + &apos;&lt;/font&gt;&apos;;
+  }
+  equals (o) {
+    return this.sz === o.sz &amp;&amp;
+      this.name === o.name &amp;&amp;
+      this.family === o.family &amp;&amp;
+      this.charset === o.charset &amp;&amp;
+      this.color === o.color &amp;&amp;
+      this.b === o.b &amp;&amp;
+      this.i === o.i &amp;&amp;
+      this.u === o.u;
+  }
+}
+
+@props(&apos;count&apos;)
+export class Xfills extends Node {
+  render () {
+    if (this.count) return super.render();
+    return &apos;&apos;;
+  }
+}
+
+@props(&apos;patternFill&apos;)
+export class Xfill extends Node {
+  render () {
+    return `&lt;fill&gt;${this.patternFill.render()}&lt;/fill&gt;`;
+  }
+  equals (o) {
+    const pf1 = this.patternFill;
+    const pf2 = o.patternFill;
+    if (pf1 &amp;&amp; pf2) {
+      return pf1.patternType === pf2.patternType &amp;&amp;
+        pf1.fgColor === pf2.fgColor &amp;&amp;
+        pf1.bgColor === pf2.bgColor;
+    }
+    return !pf1 &amp;&amp; !pf2;
+  }
+}
+
+@props(&apos;patternType&apos;, &apos;fgColor&apos;, &apos;bgColor&apos;)
+export class XpatternFill extends Node {
+  render () {
+    let str = `&lt;patternFill patternType=&quot;${this.patternType}&quot;&gt;`;
+    if (this.fgColor) str += `&lt;fgColor rgb=&quot;${this.fgColor}&quot;/&gt;`;
+    if (this.bgColor) str += `&lt;bgColor rgb=&quot;${this.bgColor}&quot;/&gt;`;
+    return str + &apos;&lt;/patternFill&gt;&apos;;
+  }
+}
+
+@props(&apos;count&apos;)
+export class Xborders extends Node {
+  render () {
+    if (this.count) return super.render();
+    return &apos;&apos;;
+  }
+}
+
+@props(&apos;left&apos;, &apos;right&apos;, &apos;top&apos;, &apos;bottom&apos;)
+export class Xborder extends Node {
+  _renderLine (pos) {
+    const posVal = this[pos];
+    if (!posVal) return &apos;&apos;;
+
+    let str = `&lt;${pos} style=&quot;${posVal.style}&quot;&gt;`;
+    if (posVal.color) str += `&lt;color rgb=&quot;${posVal.color}&quot;/&gt;`;
+    return str + `&lt;/${pos}&gt;`;
+  }
+  render () {
+    let str = &apos;&lt;border&gt;&apos;;
+    str += this._renderLine(&apos;left&apos;);
+    str += this._renderLine(&apos;right&apos;);
+    str += this._renderLine(&apos;top&apos;);
+    str += this._renderLine(&apos;bottom&apos;);
+    return str + &apos;&lt;/border&gt;&apos;;
+  }
+  equals (o) {
+    const check = (a, b) =&gt; {
+      if (a &amp;&amp; b) {
+        return a.style === b.style &amp;&amp; a.color === b.color;
+      }
+      return !a &amp;&amp; !b;
+    };
+    return check(this.left, o.left) &amp;&amp;
+      check(this.right, o.right) &amp;&amp;
+      check(this.top, o.top) &amp;&amp;
+      check(this.bottom, o.bottom);
+  }
+}
+
+@props(&apos;count&apos;)
+export class XcellStyles extends Node {
+  render () {
+    if (this.count) return super.render();
+    return &apos;&apos;;
+  }
+}
+
+@props(&apos;builtInId&apos;, &apos;customBuiltIn&apos;, &apos;hidden&apos;, &apos;iLevel&apos;, &apos;name&apos;, &apos;xfId&apos;)
+export class XcellStyle extends Node {}
+
+@props(&apos;count&apos;)
+export class XcellStyleXfs extends Node {
+  render () {
+    if (this.count) return super.render();
+    return &apos;&apos;;
+  }
+}
+
+@props(&apos;count&apos;)
+export class XcellXfs extends Node {
+  render () {
+    if (this.count) return super.render();
+    return &apos;&apos;;
+  }
+}
+
+@props(&apos;applyAlignment&apos;, &apos;applyBorder&apos;, &apos;applyFont&apos;, &apos;applyFill&apos;, &apos;applyNumberFormat&apos;, &apos;applyProtection&apos;, &apos;borderId&apos;, &apos;fillId&apos;, &apos;fontId&apos;, &apos;numFmtId&apos;, &apos;xfId&apos;)
+export class Xxf extends Node {
+  constructor (attrs, children) {
+    const defaults = {
+      applyAlignment: false,
+      applyBorder: false,
+      applyFont: false,
+      applyFill: false,
+      applyNumberFormat: false,
+      applyProtection: false,
+      borderId: 0,
+      fillId: 0,
+      fontId: 0,
+      numFmtId: 0
+    };
+    super({ ...defaults, ...attrs }, children);
+    this.alignment = new Xalignment();
+  }
+  render () {
+    if (this.alignment) {
+      this.children = [this.alignment];
+    }
+    return super.render();
+  }
+  equals (o) {
+    return this.applyAlignment === o.applyAlignment &amp;&amp;
+      this.applyBorder === o.applyBorder &amp;&amp;
+      this.applyFont === o.applyFont &amp;&amp;
+      this.applyFill === o.applyFill &amp;&amp;
+      this.applyProtection === o.applyProtection &amp;&amp;
+      this.borderId === o.borderId &amp;&amp;
+      this.fillId === o.fillId &amp;&amp;
+      this.fontId === o.fontId &amp;&amp;
+      this.numFmtId === o.numFmtId &amp;&amp;
+      this.xfId === o.xfId &amp;&amp;
+      this.alignment.equals(o.alignment);
+  }
+}
+
+@props(&apos;horizontal&apos;, &apos;indent&apos;, &apos;shrinkToFit&apos;, &apos;textRotation&apos;, &apos;vertical&apos;, &apos;wrapText&apos;)
+export class Xalignment extends Node {
+  constructor (attrs, children = []) {
+    const defaults = {
+      horizontal: &apos;general&apos;,
+      indent: 0,
+      shrinkToFit: false,
+      textRotation: 0,
+      vertical: &apos;bottom&apos;,
+      wrapText: false
+    };
+    super({ ...defaults, ...attrs }, children);
+  }
+  equals (o) {
+    return this.horizontal === o.horizontal &amp;&amp;
+      this.indent === o.indent &amp;&amp;
+      this.shrinkToFit === o.shrinkToFit &amp;&amp;
+      this.textRotation === o.textRotation &amp;&amp;
+      this.vertical === o.vertical &amp;&amp;
+      this.wrapText === o.wrapText;
+  }
+}
+</code></pre>
+
 </div>
 
 <footer class="footer">
-  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.1)</span><img src="./image/esdoc-logo-mini-black.png"></a>
 </footer>
 
 <script src="script/search_index.js"></script>

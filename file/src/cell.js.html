@@ -3,15 +3,12 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../">
-  <title data-ice="title">src/cell.js | API Document</title>
+  <title data-ice="title">src/cell.js | better-xlsx</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
-  
-  
   <script src="script/manual.js"></script>
-<link data-ice="userStyle" rel="stylesheet" href="user/css/0-style.css">
-</head>
+<link rel="stylesheet" href="./inject/css/0-style.css"><meta name="description" content="A better xlsx lib for read / write / toTable / from Table"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="better-xlsx"><meta property="twitter:description" content="A better xlsx lib for read / write / toTable / from Table"></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -20,7 +17,6 @@
   <a href="identifiers.html">Reference</a>
   <a href="source.html">Source</a>
   
-  <a data-ice="repoURL" href="https://github.com/d-band/better-xlsx" class="repo-url-github">Repository</a>
   <div class="search-box">
   <span>
     <img src="./image/search.png">
@@ -28,7 +24,7 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-</header>
+<a style="position:relative; top:3px;" href="https://github.com/d-band/better-xlsx"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
@@ -49,12 +45,190 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/cell.js</h1>
-<pre class="source-code line-number raw-source-code"></pre>
-<p data-ice="emptySourceCode">Sorry, this documentation does not provide source code.</p>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Style } from &apos;./style&apos;;
+import { toExcelTime, NumFmt } from &apos;./lib&apos;;
+import kind from &apos;kind-of&apos;;
+
+export const CellType = {
+  TypeString: 49,
+  TypeFormula: 0,
+  TypeNumeric: 1,
+  TypeBool: 0,
+  TypeInline: 0,
+  TypeError: 0,
+  TypeDate: 14,
+  TypeGeneral: 0
+};
+
+/**
+ * Cell intended to provide user access to the contents of Cell within an xlsx.Row.
+ *
+ * ```js
+ * const cell = row.addCell();
+ * cell.value = &apos;I am a cell!&apos;;
+ * cell.hMerge = 2;
+ * cell.vMerge = 1;
+ * cell.style.fill.patternType = &apos;solid&apos;;
+ * cell.style.fill.fgColor = &apos;00FF0000&apos;;
+ * cell.style.fill.bgColor = &apos;FF000000&apos;;
+ * cell.style.align.h = &apos;center&apos;;
+ * cell.style.align.v = &apos;center&apos;;
+ * ```
+ *
+ * Set the cell value
+ *
+ * ```js
+ * const cell = row.addCell();
+ * // Date type
+ * cell.setDate(new Date());
+ * // Number type
+ * cell.setNumber(123456);
+ * cell.numFmt = &apos;$#,##0.00&apos;;
+ * ```
+ */
+export class Cell {
+  _value = &apos;&apos;;
+  _style = null;
+  formula = &apos;&apos;;
+  /**
+   * Number format @see {@link NumFmt}
+   * @type {String}
+   */
+  numFmt = &apos;&apos;;
+  date1904 = false;
+  /**
+   * Hide the cell.
+   * @type {Boolean}
+   */
+  hidden = false;
+  /**
+   * Horizontal merge with other cells.
+   * @type {Number}
+   */
+  hMerge = 0;
+  /**
+   * Vertical merge with other cells.
+   * @type {Number}
+   */
+  vMerge = 0;
+  cellType = &apos;TypeString&apos;;
+
+  /**
+   * Create a cell and add it to a row.
+   * @private
+   * @param  {Object} options.row Row of add to
+   */
+  constructor ({ row }) {
+    this.row = row;
+  }
+  /**
+   * Get the cell style.
+   * @return {Style}
+   */
+  get style () {
+    if (this._style === null) {
+      this._style = new Style();
+    }
+    return this._style;
+  }
+  /**
+   * Set the style of the cell.
+   * @param  {Style} s
+   */
+  set style (s) {
+    this._style = s;
+  }
+  /**
+   * Get the cell value.
+   */
+  get value () {
+    return this._value;
+  }
+  /**
+   * Set the cell value.
+   * @param  {String|Date|Number|Boolean} v
+   */
+  set value (v) {
+    const t = kind(v);
+    if (t === &apos;null&apos; || t === &apos;undefined&apos;) {
+      return this.setString(&apos;&apos;);
+    }
+    if (t === &apos;date&apos;) {
+      return this.setDateTime(v);
+    }
+    if (t === &apos;number&apos;) {
+      return this.setNumber(v);
+    }
+    if (t === &apos;string&apos;) {
+      return this.setString(v);
+    }
+    if (t === &apos;boolean&apos;) {
+      return this.setBool(v);
+    }
+    return this.setString(v.toString());
+  }
+  /**
+   * Set cell value with String type.
+   * @param {String} v
+   */
+  setString (v) {
+    this._value = v;
+    this.formula = &apos;&apos;;
+    this.cellType = &apos;TypeString&apos;;
+  }
+  /**
+   * Set cell value with Date type.
+   * @param {Date} v
+   */
+  setDate (v) {
+    this._value = parseInt(toExcelTime(v));
+    this.formula = &apos;&apos;;
+    this.numFmt = NumFmt[14];
+    this.cellType = &apos;TypeDate&apos;;
+  }
+  /**
+   * Set cell value with DateTime type.
+   * @param {Date} v
+   */
+  setDateTime (v) {
+    this._value = toExcelTime(v);
+    this.formula = &apos;&apos;;
+    this.numFmt = NumFmt[22];
+    this.cellType = &apos;TypeDate&apos;;
+  }
+  /**
+   * Set cell value with Number type.
+   * @param {Number} v
+   */
+  setNumber (v) {
+    this._value = v;
+    this.formula = &apos;&apos;;
+    this.numFmt = NumFmt[0];
+    this.cellType = &apos;TypeNumeric&apos;;
+  }
+  /**
+   * Set cell value with Boolean type.
+   * @param {Boolean} v
+   */
+  setBool (v) {
+    this._value = v ? 1 : 0;
+    this.cellType = &apos;TypeBool&apos;;
+  }
+  /**
+   * Set cell formula.
+   * @param {String} f - Formula like `B2*C2-D2`.
+   */
+  setFormula (f) {
+    this.formula = f;
+    this.cellType = &apos;TypeFormula&apos;;
+  }
+}
+</code></pre>
+
 </div>
 
 <footer class="footer">
-  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.1)</span><img src="./image/esdoc-logo-mini-black.png"></a>
 </footer>
 
 <script src="script/search_index.js"></script>

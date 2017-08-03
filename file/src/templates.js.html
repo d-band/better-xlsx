@@ -3,15 +3,12 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../">
-  <title data-ice="title">src/templates.js | API Document</title>
+  <title data-ice="title">src/templates.js | better-xlsx</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
-  
-  
   <script src="script/manual.js"></script>
-<link data-ice="userStyle" rel="stylesheet" href="user/css/0-style.css">
-</head>
+<link rel="stylesheet" href="./inject/css/0-style.css"><meta name="description" content="A better xlsx lib for read / write / toTable / from Table"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="better-xlsx"><meta property="twitter:description" content="A better xlsx lib for read / write / toTable / from Table"></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -20,7 +17,6 @@
   <a href="identifiers.html">Reference</a>
   <a href="source.html">Source</a>
   
-  <a data-ice="repoURL" href="https://github.com/d-band/better-xlsx" class="repo-url-github">Repository</a>
   <div class="search-box">
   <span>
     <img src="./image/search.png">
@@ -28,7 +24,7 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-</header>
+<a style="position:relative; top:3px;" href="https://github.com/d-band/better-xlsx"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
@@ -49,12 +45,346 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/templates.js</h1>
-<pre class="source-code line-number raw-source-code"></pre>
-<p data-ice="emptySourceCode">Sorry, this documentation does not provide source code.</p>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">export const DOT_RELS = `&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;Relationships xmlns=&quot;http://schemas.openxmlformats.org/package/2006/relationships&quot;&gt;
+  &lt;Relationship Id=&quot;rId1&quot; Type=&quot;http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument&quot; Target=&quot;xl/workbook.xml&quot;/&gt;
+  &lt;Relationship Id=&quot;rId2&quot; Type=&quot;http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties&quot; Target=&quot;docProps/core.xml&quot;/&gt;
+  &lt;Relationship Id=&quot;rId3&quot; Type=&quot;http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties&quot; Target=&quot;docProps/app.xml&quot;/&gt;
+&lt;/Relationships&gt;`;
+
+export const DOCPROPS_APP = `&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;yes&quot;?&gt;
+&lt;Properties xmlns=&quot;http://schemas.openxmlformats.org/officeDocument/2006/extended-properties&quot; xmlns:vt=&quot;http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes&quot;&gt;
+  &lt;TotalTime&gt;0&lt;/TotalTime&gt;
+  &lt;Application&gt;JS XLSX&lt;/Application&gt;
+&lt;/Properties&gt;`;
+
+export const DOCPROPS_CORE = `&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;yes&quot;?&gt;
+&lt;cp:coreProperties xmlns:cp=&quot;http://schemas.openxmlformats.org/package/2006/metadata/core-properties&quot; xmlns:dc=&quot;http://purl.org/dc/elements/1.1/&quot; xmlns:dcmitype=&quot;http://purl.org/dc/dcmitype/&quot; xmlns:dcterms=&quot;http://purl.org/dc/terms/&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;&lt;/cp:coreProperties&gt;`;
+
+export const XL_THEME_THEME = `&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;yes&quot;?&gt;
+&lt;a:theme xmlns:a=&quot;http://schemas.openxmlformats.org/drawingml/2006/main&quot; name=&quot;Office-Design&quot;&gt;
+  &lt;a:themeElements&gt;
+    &lt;a:clrScheme name=&quot;Office&quot;&gt;
+      &lt;a:dk1&gt;
+        &lt;a:sysClr val=&quot;windowText&quot; lastClr=&quot;000000&quot;/&gt;
+      &lt;/a:dk1&gt;
+      &lt;a:lt1&gt;
+        &lt;a:sysClr val=&quot;window&quot; lastClr=&quot;FFFFFF&quot;/&gt;
+      &lt;/a:lt1&gt;
+      &lt;a:dk2&gt;
+        &lt;a:srgbClr val=&quot;1F497D&quot;/&gt;
+      &lt;/a:dk2&gt;
+      &lt;a:lt2&gt;
+        &lt;a:srgbClr val=&quot;EEECE1&quot;/&gt;
+      &lt;/a:lt2&gt;
+      &lt;a:accent1&gt;
+        &lt;a:srgbClr val=&quot;4F81BD&quot;/&gt;
+      &lt;/a:accent1&gt;
+      &lt;a:accent2&gt;
+        &lt;a:srgbClr val=&quot;C0504D&quot;/&gt;
+      &lt;/a:accent2&gt;
+      &lt;a:accent3&gt;
+        &lt;a:srgbClr val=&quot;9BBB59&quot;/&gt;
+      &lt;/a:accent3&gt;
+      &lt;a:accent4&gt;
+        &lt;a:srgbClr val=&quot;8064A2&quot;/&gt;
+      &lt;/a:accent4&gt;
+      &lt;a:accent5&gt;
+        &lt;a:srgbClr val=&quot;4BACC6&quot;/&gt;
+      &lt;/a:accent5&gt;
+      &lt;a:accent6&gt;
+        &lt;a:srgbClr val=&quot;F79646&quot;/&gt;
+      &lt;/a:accent6&gt;
+      &lt;a:hlink&gt;
+        &lt;a:srgbClr val=&quot;0000FF&quot;/&gt;
+      &lt;/a:hlink&gt;
+      &lt;a:folHlink&gt;
+        &lt;a:srgbClr val=&quot;800080&quot;/&gt;
+      &lt;/a:folHlink&gt;
+    &lt;/a:clrScheme&gt;
+    &lt;a:fontScheme name=&quot;Office&quot;&gt;
+      &lt;a:majorFont&gt;
+        &lt;a:latin typeface=&quot;Cambria&quot;/&gt;
+        &lt;a:ea typeface=&quot;&quot;/&gt;
+        &lt;a:cs typeface=&quot;&quot;/&gt;
+        &lt;a:font script=&quot;Jpan&quot; typeface=&quot;&#xFF2D;&#xFF33; &#xFF30;&#x30B4;&#x30B7;&#x30C3;&#x30AF;&quot;/&gt;
+        &lt;a:font script=&quot;Hang&quot; typeface=&quot;&#xB9D1;&#xC740; &#xACE0;&#xB515;&quot;/&gt;
+        &lt;a:font script=&quot;Hans&quot; typeface=&quot;&#x5B8B;&#x4F53;&quot;/&gt;
+        &lt;a:font script=&quot;Hant&quot; typeface=&quot;&#x65B0;&#x7D30;&#x660E;&#x9AD4;&quot;/&gt;
+        &lt;a:font script=&quot;Arab&quot; typeface=&quot;Times New Roman&quot;/&gt;
+        &lt;a:font script=&quot;Hebr&quot; typeface=&quot;Times New Roman&quot;/&gt;
+        &lt;a:font script=&quot;Thai&quot; typeface=&quot;Tahoma&quot;/&gt;
+        &lt;a:font script=&quot;Ethi&quot; typeface=&quot;Nyala&quot;/&gt;
+        &lt;a:font script=&quot;Beng&quot; typeface=&quot;Vrinda&quot;/&gt;
+        &lt;a:font script=&quot;Gujr&quot; typeface=&quot;Shruti&quot;/&gt;
+        &lt;a:font script=&quot;Khmr&quot; typeface=&quot;MoolBoran&quot;/&gt;
+        &lt;a:font script=&quot;Knda&quot; typeface=&quot;Tunga&quot;/&gt;
+        &lt;a:font script=&quot;Guru&quot; typeface=&quot;Raavi&quot;/&gt;
+        &lt;a:font script=&quot;Cans&quot; typeface=&quot;Euphemia&quot;/&gt;
+        &lt;a:font script=&quot;Cher&quot; typeface=&quot;Plantagenet Cherokee&quot;/&gt;
+        &lt;a:font script=&quot;Yiii&quot; typeface=&quot;Microsoft Yi Baiti&quot;/&gt;
+        &lt;a:font script=&quot;Tibt&quot; typeface=&quot;Microsoft Himalaya&quot;/&gt;
+        &lt;a:font script=&quot;Thaa&quot; typeface=&quot;MV Boli&quot;/&gt;
+        &lt;a:font script=&quot;Deva&quot; typeface=&quot;Mangal&quot;/&gt;
+        &lt;a:font script=&quot;Telu&quot; typeface=&quot;Gautami&quot;/&gt;
+        &lt;a:font script=&quot;Taml&quot; typeface=&quot;Latha&quot;/&gt;
+        &lt;a:font script=&quot;Syrc&quot; typeface=&quot;Estrangelo Edessa&quot;/&gt;
+        &lt;a:font script=&quot;Orya&quot; typeface=&quot;Kalinga&quot;/&gt;
+        &lt;a:font script=&quot;Mlym&quot; typeface=&quot;Kartika&quot;/&gt;
+        &lt;a:font script=&quot;Laoo&quot; typeface=&quot;DokChampa&quot;/&gt;
+        &lt;a:font script=&quot;Sinh&quot; typeface=&quot;Iskoola Pota&quot;/&gt;
+        &lt;a:font script=&quot;Mong&quot; typeface=&quot;Mongolian Baiti&quot;/&gt;
+        &lt;a:font script=&quot;Viet&quot; typeface=&quot;Times New Roman&quot;/&gt;
+        &lt;a:font script=&quot;Uigh&quot; typeface=&quot;Microsoft Uighur&quot;/&gt;
+        &lt;a:font script=&quot;Geor&quot; typeface=&quot;Sylfaen&quot;/&gt;
+      &lt;/a:majorFont&gt;
+      &lt;a:minorFont&gt;
+        &lt;a:latin typeface=&quot;Calibri&quot;/&gt;
+        &lt;a:ea typeface=&quot;&quot;/&gt;
+        &lt;a:cs typeface=&quot;&quot;/&gt;
+        &lt;a:font script=&quot;Jpan&quot; typeface=&quot;&#xFF2D;&#xFF33; &#xFF30;&#x30B4;&#x30B7;&#x30C3;&#x30AF;&quot;/&gt;
+        &lt;a:font script=&quot;Hang&quot; typeface=&quot;&#xB9D1;&#xC740; &#xACE0;&#xB515;&quot;/&gt;
+        &lt;a:font script=&quot;Hans&quot; typeface=&quot;&#x5B8B;&#x4F53;&quot;/&gt;
+        &lt;a:font script=&quot;Hant&quot; typeface=&quot;&#x65B0;&#x7D30;&#x660E;&#x9AD4;&quot;/&gt;
+        &lt;a:font script=&quot;Arab&quot; typeface=&quot;Arial&quot;/&gt;
+        &lt;a:font script=&quot;Hebr&quot; typeface=&quot;Arial&quot;/&gt;
+        &lt;a:font script=&quot;Thai&quot; typeface=&quot;Tahoma&quot;/&gt;
+        &lt;a:font script=&quot;Ethi&quot; typeface=&quot;Nyala&quot;/&gt;
+        &lt;a:font script=&quot;Beng&quot; typeface=&quot;Vrinda&quot;/&gt;
+        &lt;a:font script=&quot;Gujr&quot; typeface=&quot;Shruti&quot;/&gt;
+        &lt;a:font script=&quot;Khmr&quot; typeface=&quot;DaunPenh&quot;/&gt;
+        &lt;a:font script=&quot;Knda&quot; typeface=&quot;Tunga&quot;/&gt;
+        &lt;a:font script=&quot;Guru&quot; typeface=&quot;Raavi&quot;/&gt;
+        &lt;a:font script=&quot;Cans&quot; typeface=&quot;Euphemia&quot;/&gt;
+        &lt;a:font script=&quot;Cher&quot; typeface=&quot;Plantagenet Cherokee&quot;/&gt;
+        &lt;a:font script=&quot;Yiii&quot; typeface=&quot;Microsoft Yi Baiti&quot;/&gt;
+        &lt;a:font script=&quot;Tibt&quot; typeface=&quot;Microsoft Himalaya&quot;/&gt;
+        &lt;a:font script=&quot;Thaa&quot; typeface=&quot;MV Boli&quot;/&gt;
+        &lt;a:font script=&quot;Deva&quot; typeface=&quot;Mangal&quot;/&gt;
+        &lt;a:font script=&quot;Telu&quot; typeface=&quot;Gautami&quot;/&gt;
+        &lt;a:font script=&quot;Taml&quot; typeface=&quot;Latha&quot;/&gt;
+        &lt;a:font script=&quot;Syrc&quot; typeface=&quot;Estrangelo Edessa&quot;/&gt;
+        &lt;a:font script=&quot;Orya&quot; typeface=&quot;Kalinga&quot;/&gt;
+        &lt;a:font script=&quot;Mlym&quot; typeface=&quot;Kartika&quot;/&gt;
+        &lt;a:font script=&quot;Laoo&quot; typeface=&quot;DokChampa&quot;/&gt;
+        &lt;a:font script=&quot;Sinh&quot; typeface=&quot;Iskoola Pota&quot;/&gt;
+        &lt;a:font script=&quot;Mong&quot; typeface=&quot;Mongolian Baiti&quot;/&gt;
+        &lt;a:font script=&quot;Viet&quot; typeface=&quot;Arial&quot;/&gt;
+        &lt;a:font script=&quot;Uigh&quot; typeface=&quot;Microsoft Uighur&quot;/&gt;
+        &lt;a:font script=&quot;Geor&quot; typeface=&quot;Sylfaen&quot;/&gt;
+      &lt;/a:minorFont&gt;
+    &lt;/a:fontScheme&gt;
+    &lt;a:fmtScheme name=&quot;Office&quot;&gt;
+      &lt;a:fillStyleLst&gt;
+        &lt;a:solidFill&gt;
+          &lt;a:schemeClr val=&quot;phClr&quot;/&gt;
+        &lt;/a:solidFill&gt;
+        &lt;a:gradFill rotWithShape=&quot;1&quot;&gt;
+          &lt;a:gsLst&gt;
+            &lt;a:gs pos=&quot;0&quot;&gt;
+              &lt;a:schemeClr val=&quot;phClr&quot;&gt;
+                &lt;a:tint val=&quot;50000&quot;/&gt;
+                &lt;a:satMod val=&quot;300000&quot;/&gt;
+              &lt;/a:schemeClr&gt;
+            &lt;/a:gs&gt;
+            &lt;a:gs pos=&quot;35000&quot;&gt;
+              &lt;a:schemeClr val=&quot;phClr&quot;&gt;
+                &lt;a:tint val=&quot;37000&quot;/&gt;
+                &lt;a:satMod val=&quot;300000&quot;/&gt;
+              &lt;/a:schemeClr&gt;
+            &lt;/a:gs&gt;
+            &lt;a:gs pos=&quot;100000&quot;&gt;
+              &lt;a:schemeClr val=&quot;phClr&quot;&gt;
+                &lt;a:tint val=&quot;15000&quot;/&gt;
+                &lt;a:satMod val=&quot;350000&quot;/&gt;
+              &lt;/a:schemeClr&gt;
+            &lt;/a:gs&gt;
+          &lt;/a:gsLst&gt;
+          &lt;a:lin ang=&quot;16200000&quot; scaled=&quot;1&quot;/&gt;
+        &lt;/a:gradFill&gt;
+        &lt;a:gradFill rotWithShape=&quot;1&quot;&gt;
+          &lt;a:gsLst&gt;
+            &lt;a:gs pos=&quot;0&quot;&gt;
+              &lt;a:schemeClr val=&quot;phClr&quot;&gt;
+                &lt;a:tint val=&quot;100000&quot;/&gt;
+                &lt;a:shade val=&quot;100000&quot;/&gt;
+                &lt;a:satMod val=&quot;130000&quot;/&gt;
+              &lt;/a:schemeClr&gt;
+            &lt;/a:gs&gt;
+            &lt;a:gs pos=&quot;100000&quot;&gt;
+              &lt;a:schemeClr val=&quot;phClr&quot;&gt;
+                &lt;a:tint val=&quot;50000&quot;/&gt;
+                &lt;a:shade val=&quot;100000&quot;/&gt;
+                &lt;a:satMod val=&quot;350000&quot;/&gt;
+              &lt;/a:schemeClr&gt;
+            &lt;/a:gs&gt;
+          &lt;/a:gsLst&gt;
+          &lt;a:lin ang=&quot;16200000&quot; scaled=&quot;0&quot;/&gt;
+        &lt;/a:gradFill&gt;
+      &lt;/a:fillStyleLst&gt;
+      &lt;a:lnStyleLst&gt;
+        &lt;a:ln w=&quot;9525&quot; cap=&quot;flat&quot; cmpd=&quot;sng&quot; algn=&quot;ctr&quot;&gt;
+          &lt;a:solidFill&gt;
+            &lt;a:schemeClr val=&quot;phClr&quot;&gt;
+              &lt;a:shade val=&quot;95000&quot;/&gt;
+              &lt;a:satMod val=&quot;105000&quot;/&gt;
+            &lt;/a:schemeClr&gt;
+          &lt;/a:solidFill&gt;
+          &lt;a:prstDash val=&quot;solid&quot;/&gt;
+        &lt;/a:ln&gt;
+        &lt;a:ln w=&quot;25400&quot; cap=&quot;flat&quot; cmpd=&quot;sng&quot; algn=&quot;ctr&quot;&gt;
+          &lt;a:solidFill&gt;
+            &lt;a:schemeClr val=&quot;phClr&quot;/&gt;
+          &lt;/a:solidFill&gt;
+          &lt;a:prstDash val=&quot;solid&quot;/&gt;
+        &lt;/a:ln&gt;
+        &lt;a:ln w=&quot;38100&quot; cap=&quot;flat&quot; cmpd=&quot;sng&quot; algn=&quot;ctr&quot;&gt;
+          &lt;a:solidFill&gt;
+            &lt;a:schemeClr val=&quot;phClr&quot;/&gt;
+          &lt;/a:solidFill&gt;
+          &lt;a:prstDash val=&quot;solid&quot;/&gt;
+        &lt;/a:ln&gt;
+      &lt;/a:lnStyleLst&gt;
+      &lt;a:effectStyleLst&gt;
+        &lt;a:effectStyle&gt;
+          &lt;a:effectLst&gt;
+            &lt;a:outerShdw blurRad=&quot;40000&quot; dist=&quot;20000&quot; dir=&quot;5400000&quot; rotWithShape=&quot;0&quot;&gt;
+              &lt;a:srgbClr val=&quot;000000&quot;&gt;
+                &lt;a:alpha val=&quot;38000&quot;/&gt;
+              &lt;/a:srgbClr&gt;
+            &lt;/a:outerShdw&gt;
+          &lt;/a:effectLst&gt;
+        &lt;/a:effectStyle&gt;
+        &lt;a:effectStyle&gt;
+          &lt;a:effectLst&gt;
+            &lt;a:outerShdw blurRad=&quot;40000&quot; dist=&quot;23000&quot; dir=&quot;5400000&quot; rotWithShape=&quot;0&quot;&gt;
+              &lt;a:srgbClr val=&quot;000000&quot;&gt;
+                &lt;a:alpha val=&quot;35000&quot;/&gt;
+              &lt;/a:srgbClr&gt;
+            &lt;/a:outerShdw&gt;
+          &lt;/a:effectLst&gt;
+        &lt;/a:effectStyle&gt;
+        &lt;a:effectStyle&gt;
+          &lt;a:effectLst&gt;
+            &lt;a:outerShdw blurRad=&quot;40000&quot; dist=&quot;23000&quot; dir=&quot;5400000&quot; rotWithShape=&quot;0&quot;&gt;
+              &lt;a:srgbClr val=&quot;000000&quot;&gt;
+                &lt;a:alpha val=&quot;35000&quot;/&gt;
+              &lt;/a:srgbClr&gt;
+            &lt;/a:outerShdw&gt;
+          &lt;/a:effectLst&gt;
+          &lt;a:scene3d&gt;
+            &lt;a:camera prst=&quot;orthographicFront&quot;&gt;
+              &lt;a:rot lat=&quot;0&quot; lon=&quot;0&quot; rev=&quot;0&quot;/&gt;
+            &lt;/a:camera&gt;
+            &lt;a:lightRig rig=&quot;threePt&quot; dir=&quot;t&quot;&gt;
+              &lt;a:rot lat=&quot;0&quot; lon=&quot;0&quot; rev=&quot;1200000&quot;/&gt;
+            &lt;/a:lightRig&gt;
+          &lt;/a:scene3d&gt;
+          &lt;a:sp3d&gt;
+            &lt;a:bevelT w=&quot;63500&quot; h=&quot;25400&quot;/&gt;
+          &lt;/a:sp3d&gt;
+        &lt;/a:effectStyle&gt;
+      &lt;/a:effectStyleLst&gt;
+      &lt;a:bgFillStyleLst&gt;
+        &lt;a:solidFill&gt;
+          &lt;a:schemeClr val=&quot;phClr&quot;/&gt;
+        &lt;/a:solidFill&gt;
+        &lt;a:gradFill rotWithShape=&quot;1&quot;&gt;
+          &lt;a:gsLst&gt;
+            &lt;a:gs pos=&quot;0&quot;&gt;
+              &lt;a:schemeClr val=&quot;phClr&quot;&gt;
+                &lt;a:tint val=&quot;40000&quot;/&gt;
+                &lt;a:satMod val=&quot;350000&quot;/&gt;
+              &lt;/a:schemeClr&gt;
+            &lt;/a:gs&gt;
+            &lt;a:gs pos=&quot;40000&quot;&gt;
+              &lt;a:schemeClr val=&quot;phClr&quot;&gt;
+                &lt;a:tint val=&quot;45000&quot;/&gt;
+                &lt;a:shade val=&quot;99000&quot;/&gt;
+                &lt;a:satMod val=&quot;350000&quot;/&gt;
+              &lt;/a:schemeClr&gt;
+            &lt;/a:gs&gt;
+            &lt;a:gs pos=&quot;100000&quot;&gt;
+              &lt;a:schemeClr val=&quot;phClr&quot;&gt;
+                &lt;a:shade val=&quot;20000&quot;/&gt;
+                &lt;a:satMod val=&quot;255000&quot;/&gt;
+              &lt;/a:schemeClr&gt;
+            &lt;/a:gs&gt;
+          &lt;/a:gsLst&gt;
+          &lt;a:path path=&quot;circle&quot;&gt;
+            &lt;a:fillToRect l=&quot;50000&quot; t=&quot;-80000&quot; r=&quot;50000&quot; b=&quot;180000&quot;/&gt;
+          &lt;/a:path&gt;
+        &lt;/a:gradFill&gt;
+        &lt;a:gradFill rotWithShape=&quot;1&quot;&gt;
+          &lt;a:gsLst&gt;
+            &lt;a:gs pos=&quot;0&quot;&gt;
+              &lt;a:schemeClr val=&quot;phClr&quot;&gt;
+                &lt;a:tint val=&quot;80000&quot;/&gt;
+                &lt;a:satMod val=&quot;300000&quot;/&gt;
+              &lt;/a:schemeClr&gt;
+            &lt;/a:gs&gt;
+            &lt;a:gs pos=&quot;100000&quot;&gt;
+              &lt;a:schemeClr val=&quot;phClr&quot;&gt;
+                &lt;a:shade val=&quot;30000&quot;/&gt;
+                &lt;a:satMod val=&quot;200000&quot;/&gt;
+              &lt;/a:schemeClr&gt;
+            &lt;/a:gs&gt;
+          &lt;/a:gsLst&gt;
+          &lt;a:path path=&quot;circle&quot;&gt;
+            &lt;a:fillToRect l=&quot;50000&quot; t=&quot;50000&quot; r=&quot;50000&quot; b=&quot;50000&quot;/&gt;
+          &lt;/a:path&gt;
+        &lt;/a:gradFill&gt;
+      &lt;/a:bgFillStyleLst&gt;
+    &lt;/a:fmtScheme&gt;
+  &lt;/a:themeElements&gt;
+  &lt;a:objectDefaults&gt;
+    &lt;a:spDef&gt;
+      &lt;a:spPr/&gt;
+      &lt;a:bodyPr/&gt;
+      &lt;a:lstStyle/&gt;
+      &lt;a:style&gt;
+        &lt;a:lnRef idx=&quot;1&quot;&gt;
+          &lt;a:schemeClr val=&quot;accent1&quot;/&gt;
+        &lt;/a:lnRef&gt;
+        &lt;a:fillRef idx=&quot;3&quot;&gt;
+          &lt;a:schemeClr val=&quot;accent1&quot;/&gt;
+        &lt;/a:fillRef&gt;
+        &lt;a:effectRef idx=&quot;2&quot;&gt;
+          &lt;a:schemeClr val=&quot;accent1&quot;/&gt;
+        &lt;/a:effectRef&gt;
+        &lt;a:fontRef idx=&quot;minor&quot;&gt;
+          &lt;a:schemeClr val=&quot;lt1&quot;/&gt;
+        &lt;/a:fontRef&gt;
+      &lt;/a:style&gt;
+    &lt;/a:spDef&gt;
+    &lt;a:lnDef&gt;
+      &lt;a:spPr/&gt;
+      &lt;a:bodyPr/&gt;
+      &lt;a:lstStyle/&gt;
+      &lt;a:style&gt;
+        &lt;a:lnRef idx=&quot;2&quot;&gt;
+          &lt;a:schemeClr val=&quot;accent1&quot;/&gt;
+        &lt;/a:lnRef&gt;
+        &lt;a:fillRef idx=&quot;0&quot;&gt;
+          &lt;a:schemeClr val=&quot;accent1&quot;/&gt;
+        &lt;/a:fillRef&gt;
+        &lt;a:effectRef idx=&quot;1&quot;&gt;
+          &lt;a:schemeClr val=&quot;accent1&quot;/&gt;
+        &lt;/a:effectRef&gt;
+        &lt;a:fontRef idx=&quot;minor&quot;&gt;
+          &lt;a:schemeClr val=&quot;tx1&quot;/&gt;
+        &lt;/a:fontRef&gt;
+      &lt;/a:style&gt;
+    &lt;/a:lnDef&gt;
+  &lt;/a:objectDefaults&gt;
+  &lt;a:extraClrSchemeLst/&gt;
+&lt;/a:theme&gt;`;
+</code></pre>
+
 </div>
 
 <footer class="footer">
-  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.1)</span><img src="./image/esdoc-logo-mini-black.png"></a>
 </footer>
 
 <script src="script/search_index.js"></script>
