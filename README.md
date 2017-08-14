@@ -1,8 +1,6 @@
 better-xlsx
 ===========
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/d-band/better-xlsx.svg)](https://greenkeeper.io/)
-
 > A better xlsx lib for read / write / toTable / from Table
 
 [![NPM version](https://img.shields.io/npm/v/better-xlsx.svg)](https://www.npmjs.com/package/better-xlsx)
@@ -10,6 +8,7 @@ better-xlsx
 [![Build Status](https://travis-ci.org/d-band/better-xlsx.svg?branch=master)](https://travis-ci.org/d-band/better-xlsx)
 [![Coverage Status](https://coveralls.io/repos/github/d-band/better-xlsx/badge.svg?branch=master)](https://coveralls.io/github/d-band/better-xlsx?branch=master)
 [![Dependency Status](https://david-dm.org/d-band/better-xlsx.svg)](https://david-dm.org/d-band/better-xlsx)
+[![Greenkeeper badge](https://badges.greenkeeper.io/d-band/better-xlsx.svg)](https://greenkeeper.io/)
 
 ---
 
