@@ -6,3 +6,5 @@ examples
 coverage
 test
 esdoc
+docs
+.nyc_output
