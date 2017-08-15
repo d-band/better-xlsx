@@ -22,7 +22,7 @@ $ npm install better-xlsx
 
 - [More Examples](examples)
 
-```
+```javascript
 const fs = require('fs');
 const xlsx = require('better-xlsx');
 
