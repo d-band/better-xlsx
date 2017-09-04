@@ -3,14 +3,16 @@ import commonjs from 'rollup-plugin-commonjs';
 import nodeResolve from 'rollup-plugin-node-resolve';
 
 export default {
-  entry: 'src/index.js',
-  dest: 'dist/xlsx.js',
-  format: 'umd',
-  moduleName: 'xlsx',
-  external: ['jszip'],
-  globals: {
-    jszip: 'JSZip'
+  output: {
+    file: 'dist/xlsx.js',
+    format: 'umd',
+    name: 'xlsx',
+    globals: {
+      jszip: 'JSZip'
+    }
   },
+  input: 'src/index.js',
+  external: ['jszip'],
   plugins: [
     nodeResolve({
       jsnext: true,

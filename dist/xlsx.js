@@ -24,7 +24,7 @@ if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
 });
 
 var _core = createCommonjsModule(function (module) {
-var core = module.exports = { version: '2.5.0' };
+var core = module.exports = { version: '2.5.1' };
 if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 });
 
@@ -333,6 +333,7 @@ var _toObject = function (it) {
   return Object(_defined(it));
 };
 
+'use strict';
 // 19.1.2.1 Object.assign(target, source, ...)
 
 
@@ -377,6 +378,8 @@ var assign$2 = _core.Object.assign;
 var assign = createCommonjsModule(function (module) {
 module.exports = { "default": assign$2, __esModule: true };
 });
+
+unwrapExports(assign);
 
 var _extends = createCommonjsModule(function (module, exports) {
 "use strict";
@@ -555,6 +558,10 @@ var _setToStringTag = function (it, tag, stat) {
   if (it && !_has(it = stat ? it : it.prototype, TAG)) def(it, TAG, { configurable: true, value: tag });
 };
 
+'use strict';
+
+
+
 var IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
@@ -578,6 +585,16 @@ var _objectGpo = Object.getPrototypeOf || function (O) {
     return O.constructor.prototype;
   } return O instanceof Object ? ObjectProto : null;
 };
+
+'use strict';
+
+
+
+
+
+
+
+
 
 var ITERATOR = _wks('iterator');
 var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
@@ -640,6 +657,12 @@ var _iterDefine = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORC
   return methods;
 };
 
+'use strict';
+
+
+
+
+
 // 22.1.3.4 Array.prototype.entries()
 // 22.1.3.13 Array.prototype.keys()
 // 22.1.3.29 Array.prototype.values()
@@ -701,6 +724,7 @@ var _stringAt = function (TO_STRING) {
   };
 };
 
+'use strict';
 var $at = _stringAt(true);
 
 // 21.1.3.27 String.prototype[@@iterator]()
@@ -805,6 +829,8 @@ var iterator = createCommonjsModule(function (module) {
 module.exports = { "default": iterator$2, __esModule: true };
 });
 
+unwrapExports(iterator);
+
 var _meta = createCommonjsModule(function (module) {
 var META = _uid('meta');
 
@@ -865,15 +891,6 @@ var defineProperty$3 = _objectDp.f;
 var _wksDefine = function (name) {
   var $Symbol = _core.Symbol || (_core.Symbol = _library ? {} : _global.Symbol || {});
   if (name.charAt(0) != '_' && !(name in $Symbol)) defineProperty$3($Symbol, name, { value: _wksExt.f(name) });
-};
-
-var _keyof = function (object, el) {
-  var O = _toIobject(object);
-  var keys = _objectKeys(O);
-  var length = keys.length;
-  var index = 0;
-  var key;
-  while (length > index) if (O[key = keys[index++]] === el) return key;
 };
 
 // all enumerable object keys, includes symbols
@@ -949,6 +966,7 @@ var _objectGopd = {
 	f: f$6
 };
 
+'use strict';
 // ECMAScript 6 symbols shim
 
 
@@ -956,7 +974,6 @@ var _objectGopd = {
 
 
 var META = _meta.KEY;
-
 
 
 
@@ -1127,9 +1144,9 @@ _export(_export.S + _export.F * !USE_NATIVE, 'Symbol', {
       : SymbolRegistry[key] = $Symbol(key);
   },
   // 19.4.2.5 Symbol.keyFor(sym)
-  keyFor: function keyFor(key) {
-    if (isSymbol(key)) return _keyof(SymbolRegistry, key);
-    throw TypeError(key + ' is not a symbol!');
+  keyFor: function keyFor(sym) {
+    if (!isSymbol(sym)) throw TypeError(sym + ' is not a symbol!');
+    for (var key in SymbolRegistry) if (SymbolRegistry[key] === sym) return key;
   },
   useSetter: function () { setter = true; },
   useSimple: function () { setter = false; }
@@ -1188,10 +1205,10 @@ _wksDefine('asyncIterator');
 
 _wksDefine('observable');
 
-var index$1 = _core.Symbol;
+var symbol$1 = _core.Symbol;
 
 var symbol = createCommonjsModule(function (module) {
-module.exports = { "default": index$1, __esModule: true };
+module.exports = { "default": symbol$1, __esModule: true };
 });
 
 var _Symbol = unwrapExports(symbol);
@@ -1219,6 +1236,8 @@ exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.d
   return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
 };
 });
+
+unwrapExports(_typeof_1);
 
 var possibleConstructorReturn = createCommonjsModule(function (module, exports) {
 "use strict";
@@ -1260,6 +1279,8 @@ var getOwnPropertyDescriptor$2 = function getOwnPropertyDescriptor(it, key) {
 var getOwnPropertyDescriptor = createCommonjsModule(function (module) {
 module.exports = { "default": getOwnPropertyDescriptor$2, __esModule: true };
 });
+
+unwrapExports(getOwnPropertyDescriptor);
 
 var get$1 = createCommonjsModule(function (module, exports) {
 "use strict";
@@ -1340,6 +1361,8 @@ var setPrototypeOf = createCommonjsModule(function (module) {
 module.exports = { "default": setPrototypeOf$2, __esModule: true };
 });
 
+unwrapExports(setPrototypeOf);
+
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 _export(_export.S, 'Object', { create: _objectCreate });
 
@@ -1351,6 +1374,8 @@ var create$2 = function create(P, D) {
 var create = createCommonjsModule(function (module) {
 module.exports = { "default": create$2, __esModule: true };
 });
+
+unwrapExports(create);
 
 var inherits = createCommonjsModule(function (module, exports) {
 "use strict";
@@ -2605,7 +2630,7 @@ var toString$2 = Object.prototype.toString;
  * @return {*} Native javascript type
  */
 
-var index$3 = function kindOf(val) {
+var kindOf$1 = function kindOf(val) {
   var type = typeof val;
 
   // primitivies
@@ -2928,7 +2953,7 @@ var Cell = function () {
      */
     ,
     set: function set(v) {
-      var t = index$3(v);
+      var t = kindOf$1(v);
       if (t === 'null' || t === 'undefined') {
         return this.setString('');
       }
