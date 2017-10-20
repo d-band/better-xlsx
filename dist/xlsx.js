@@ -7,7 +7,7 @@
 Zip = Zip && Zip.hasOwnProperty('default') ? Zip['default'] : Zip;
 
 function unwrapExports (x) {
-	return x && x.__esModule ? x['default'] : x;
+	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
 }
 
 function createCommonjsModule(fn, module) {
@@ -469,8 +469,6 @@ exports.default = function () {
 
 var _createClass = unwrapExports(createClass);
 
-var _addToUnscopables = function () { /* empty */ };
-
 var _iterStep = function (done, value) {
   return { value: value, done: !!done };
 };
@@ -687,10 +685,6 @@ var es6_array_iterator = _iterDefine(Array, 'Array', function (iterated, kind) {
 
 // argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
 _iterators.Arguments = _iterators.Array;
-
-_addToUnscopables('keys');
-_addToUnscopables('values');
-_addToUnscopables('entries');
 
 var TO_STRING_TAG = _wks('toStringTag');
 
@@ -1450,34 +1444,34 @@ function props() {
   return function (clazz) {
     var target = clazz.prototype || clazz;
 
+    var _loop = function _loop(name) {
+      _Object$defineProperty(target, name, {
+        get: function get() {
+          if (this.attributes) {
+            return this.attributes[name];
+          }
+        },
+        set: function set(value) {
+          if (this.attributes === undefined) {
+            this.attributes = {};
+          }
+          this.attributes[name] = value;
+        },
+
+        configurable: true,
+        enumerable: true
+      });
+    };
+
     var _iteratorNormalCompletion = true;
     var _didIteratorError = false;
     var _iteratorError = undefined;
 
     try {
-      var _loop = function _loop() {
+      for (var _iterator = _getIterator(attrs), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
         var name = _step.value;
 
-        _Object$defineProperty(target, name, {
-          get: function get() {
-            if (this.attributes) {
-              return this.attributes[name];
-            }
-          },
-          set: function set(value) {
-            if (this.attributes === undefined) {
-              this.attributes = {};
-            }
-            this.attributes[name] = value;
-          },
-
-          configurable: true,
-          enumerable: true
-        });
-      };
-
-      for (var _iterator = _getIterator(attrs), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        _loop();
+        _loop(name);
       }
     } catch (err) {
       _didIteratorError = true;
@@ -2623,133 +2617,122 @@ var style = Object.freeze({
 
 var toString$2 = Object.prototype.toString;
 
-/**
- * Get the native `typeof` a value.
- *
- * @param  {*} `val`
- * @return {*} Native javascript type
- */
+var kindOf = function kindOf(val) {
+  if (val === void 0) return 'undefined';
+  if (val === null) return 'null';
 
-var kindOf$1 = function kindOf(val) {
   var type = typeof val;
-
-  // primitivies
-  if (type === 'undefined') {
-    return 'undefined';
-  }
-  if (val === null) {
-    return 'null';
-  }
-  if (val === true || val === false || val instanceof Boolean) {
-    return 'boolean';
-  }
-  if (type === 'string' || val instanceof String) {
-    return 'string';
-  }
-  if (type === 'number' || val instanceof Number) {
-    return 'number';
+  if (type === 'boolean') return 'boolean';
+  if (type === 'string') return 'string';
+  if (type === 'number') return 'number';
+  if (type === 'symbol') return 'symbol';
+  if (type === 'function') {
+    return isGeneratorFn(val) ? 'generatorfunction' : 'function';
   }
 
-  // functions
-  if (type === 'function' || val instanceof Function) {
-    if (typeof val.constructor.name !== 'undefined' && val.constructor.name.slice(0, 9) === 'Generator') {
-      return 'generatorfunction';
-    }
-    return 'function';
-  }
-
-  // array
-  if (typeof Array.isArray !== 'undefined' && Array.isArray(val)) {
+  if (Array.isArray) {
+    if (Array.isArray(val)) return 'array';
+  } else if (val instanceof Array) {
     return 'array';
   }
 
-  // check for instances of RegExp and Date before calling `toString`
-  if (val instanceof RegExp) {
-    return 'regexp';
-  }
-  if (val instanceof Date) {
-    return 'date';
+  if (isBuffer(val)) return 'buffer';
+  if (isArguments(val)) return 'arguments';
+  if (isDate(val)) return 'date';
+  if (isError(val)) return 'error';
+  if (isRegexp(val)) return 'regexp';
+
+  switch (ctorName(val)) {
+    case 'Symbol': return 'symbol';
+    case 'Promise': return 'promise';
+
+    // Set, Map, WeakSet, WeakMap
+    case 'WeakMap': return 'weakmap';
+    case 'WeakSet': return 'weakset';
+    case 'Map': return 'map';
+    case 'Set': return 'set';
+
+    // 8-bit typed arrays
+    case 'Int8Array': return 'int8array';
+    case 'Uint8Array': return 'uint8array';
+    case 'Uint8ClampedArray': return 'uint8clampedarray';
+
+    // 16-bit typed arrays
+    case 'Int16Array': return 'int16array';
+    case 'Uint16Array': return 'uint16array';
+
+    // 32-bit typed arrays
+    case 'Int32Array': return 'int32array';
+    case 'Uint32Array': return 'uint32array';
+    case 'Float32Array': return 'float32array';
+    case 'Float64Array': return 'float64array';
   }
 
-  // other objects
+  if (isGeneratorObj(val)) {
+    return 'generator';
+  }
+
+  // Non-plain objects
   type = toString$2.call(val);
-
-  if (type === '[object RegExp]') {
-    return 'regexp';
-  }
-  if (type === '[object Date]') {
-    return 'date';
-  }
-  if (type === '[object Arguments]') {
-    return 'arguments';
-  }
-  if (type === '[object Error]') {
-    return 'error';
-  }
-  if (type === '[object Promise]') {
-    return 'promise';
+  switch (type) {
+    case '[object Object]': return 'object';
+    // iterators
+    case '[object Map Iterator]': return 'mapiterator';
+    case '[object Set Iterator]': return 'setiterator';
+    case '[object String Iterator]': return 'stringiterator';
+    case '[object Array Iterator]': return 'arrayiterator';
   }
 
-  // buffer
-  if (isBuffer(val)) {
-    return 'buffer';
-  }
-
-  // es6: Map, WeakMap, Set, WeakSet
-  if (type === '[object Set]') {
-    return 'set';
-  }
-  if (type === '[object WeakSet]') {
-    return 'weakset';
-  }
-  if (type === '[object Map]') {
-    return 'map';
-  }
-  if (type === '[object WeakMap]') {
-    return 'weakmap';
-  }
-  if (type === '[object Symbol]') {
-    return 'symbol';
-  }
-  if (type === '[object Map Iterator]') {
-    return 'mapiterator';
-  }
-  if (type === '[object Set Iterator]') {
-    return 'setiterator';
-  }
-
-  // typed arrays
-  if (type === '[object Int8Array]') {
-    return 'int8array';
-  }
-  if (type === '[object Uint8Array]') {
-    return 'uint8array';
-  }
-  if (type === '[object Uint8ClampedArray]') {
-    return 'uint8clampedarray';
-  }
-  if (type === '[object Int16Array]') {
-    return 'int16array';
-  }
-  if (type === '[object Uint16Array]') {
-    return 'uint16array';
-  }
-  if (type === '[object Int32Array]') {
-    return 'int32array';
-  }
-  if (type === '[object Uint32Array]') {
-    return 'uint32array';
-  }
-  if (type === '[object Float32Array]') {
-    return 'float32array';
-  }
-  if (type === '[object Float64Array]') {
-    return 'float64array';
-  }
-
-  // must be a plain object
-  return 'object';
+  // other
+  return type.slice(8, -1).toLowerCase().replace(/\s/g, '');
 };
+
+function ctorName(val) {
+  return val.constructor ? val.constructor.name : null;
+}
+
+function isError(val) {
+  return typeof val.message === 'string' && val.constructor
+    && typeof val.constructor.stackTraceLimit === 'number';
+}
+
+function isDate(val) {
+  if (val instanceof Date) return true;
+  return typeof val.toDateString === 'function'
+    && typeof val.getDate === 'function'
+    && typeof val.setDate === 'function';
+}
+
+function isRegexp(val) {
+  if (val instanceof RegExp) return true;
+  return typeof val.flags === 'string'
+    && typeof val.ignoreCase === 'boolean'
+    && typeof val.multiline === 'boolean'
+    && typeof val.global === 'boolean';
+}
+
+function isGeneratorFn(name, val) {
+  return ctorName(name) === 'GeneratorFunction';
+}
+
+function isGeneratorObj(val) {
+  return typeof val.throw === 'function'
+    && typeof val.return === 'function'
+    && typeof val.next === 'function';
+}
+
+function isArguments(val) {
+  try {
+    if (typeof val.length === 'number' && typeof val.callee === 'function') {
+      return true;
+    }
+  } catch (err) {
+    if (err.message.indexOf('callee') !== -1) {
+      return true;
+    }
+  }
+  return false;
+}
 
 /**
  * If you need to support Safari 5-7 (8-10 yr-old browser),
@@ -2757,9 +2740,10 @@ var kindOf$1 = function kindOf(val) {
  */
 
 function isBuffer(val) {
-  return val.constructor
-    && typeof val.constructor.isBuffer === 'function'
-    && val.constructor.isBuffer(val);
+  if (val.constructor && typeof val.constructor.isBuffer === 'function') {
+    return val.constructor.isBuffer(val);
+  }
+  return false;
 }
 
 var CellType = {
@@ -2953,7 +2937,7 @@ var Cell = function () {
      */
     ,
     set: function set(v) {
-      var t = kindOf$1(v);
+      var t = kindOf(v);
       if (t === 'null' || t === 'undefined') {
         return this.setString('');
       }
@@ -3682,10 +3666,10 @@ var Sheet = function () {
 
       try {
         for (var _iterator = _getIterator(merged), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var _ref3 = _step.value;
-          var _r = _ref3.r,
-              _c = _ref3.c,
-              _cell = _ref3.cell;
+          var _ref2 = _step.value;
+          var _r = _ref2.r,
+              _c = _ref2.c,
+              _cell = _ref2.cell;
 
           var left = _cell.style.border.left;
           var right = _cell.style.border.right;

@@ -18,11 +18,13 @@ export default {
       jsnext: true,
       main: true
     }),
-    commonjs(),
+    commonjs({
+      include: 'node_modules/**'
+    }),
     babel({
       babelrc: false,
       presets: [
-        ['es2015', {
+        ['env', {
           modules: false
         }],
         'stage-0'
