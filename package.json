@@ -59,7 +59,7 @@
     "rimraf": "^2.5.4",
     "rollup": "^0.56.0",
     "rollup-plugin-babel": "^3.0.0",
-    "rollup-plugin-commonjs": "^8.2.4",
+    "rollup-plugin-commonjs": "^9.0.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "stream-equal": "^1.0.0",
     "uglify-js": "^3.0.7"
