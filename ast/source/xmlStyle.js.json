@@ -511,6 +511,7 @@
                     "column": 15
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -529,7 +530,6 @@
                   },
                   "name": "fonts"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 160,
@@ -560,6 +560,7 @@
                     "column": 15
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -578,7 +579,6 @@
                   },
                   "name": "fills"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 176,
@@ -609,6 +609,7 @@
                     "column": 17
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -627,7 +628,6 @@
                   },
                   "name": "borders"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 194,
@@ -658,6 +658,7 @@
                     "column": 20
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -676,7 +677,6 @@
                   },
                   "name": "cellStyles"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 215,
@@ -707,6 +707,7 @@
                     "column": 22
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -725,7 +726,6 @@
                   },
                   "name": "cellStyleXfs"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 238,
@@ -756,6 +756,7 @@
                     "column": 17
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -774,7 +775,6 @@
                   },
                   "name": "cellXfs"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 256,
@@ -805,6 +805,7 @@
                     "column": 17
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -823,7 +824,6 @@
                   },
                   "name": "numFmts"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 274,
@@ -854,6 +854,7 @@
                     "column": 22
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -872,7 +873,6 @@
                   },
                   "name": "numFmtRefTable"
                 },
-                "static": false,
                 "value": {
                   "type": "ObjectExpression",
                   "start": 299,
@@ -904,6 +904,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -922,7 +923,6 @@
                   },
                   "name": "constructor"
                 },
-                "static": false,
                 "kind": "constructor",
                 "id": null,
                 "generator": false,
@@ -1322,6 +1322,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1340,7 +1341,6 @@
                   },
                   "name": "render"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -3129,6 +3129,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -3147,7 +3148,6 @@
                   },
                   "name": "reset"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -4524,6 +4524,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -4542,7 +4543,6 @@
                   },
                   "name": "addFont"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -5630,6 +5630,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -5648,7 +5649,6 @@
                   },
                   "name": "addFill"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -6615,6 +6615,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -6633,7 +6634,6 @@
                   },
                   "name": "addBorder"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -7600,6 +7600,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -7618,7 +7619,6 @@
                   },
                   "name": "addCellXf"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -8585,6 +8585,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -8603,7 +8604,6 @@
                   },
                   "name": "addNumFmt"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -9508,6 +9508,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -9526,7 +9527,6 @@
                   },
                   "name": "newNumFmt"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -11393,6 +11393,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -11411,7 +11412,6 @@
                   },
                   "name": "render"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -11960,6 +11960,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -11978,7 +11979,6 @@
                   },
                   "name": "render"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -12492,6 +12492,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -12510,7 +12511,6 @@
                   },
                   "name": "render"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -14233,6 +14233,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -14251,7 +14252,6 @@
                   },
                   "name": "equals"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -15504,6 +15504,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -15522,7 +15523,6 @@
                   },
                   "name": "render"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -15896,6 +15896,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -15914,7 +15915,6 @@
                   },
                   "name": "render"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -16125,6 +16125,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -16143,7 +16144,6 @@
                   },
                   "name": "equals"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -17179,6 +17179,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -17197,7 +17198,6 @@
                   },
                   "name": "render"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -18056,6 +18056,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -18074,7 +18075,6 @@
                   },
                   "name": "render"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -18508,6 +18508,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -18526,7 +18527,6 @@
                   },
                   "name": "_renderLine"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -19313,6 +19313,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -19331,7 +19332,6 @@
                   },
                   "name": "render"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -20041,6 +20041,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -20059,7 +20060,6 @@
                   },
                   "name": "equals"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -21439,6 +21439,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -21457,7 +21458,6 @@
                   },
                   "name": "render"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -22086,6 +22086,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -22104,7 +22105,6 @@
                   },
                   "name": "render"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -22478,6 +22478,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -22496,7 +22497,6 @@
                   },
                   "name": "render"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -23070,6 +23070,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -23088,7 +23089,6 @@
                   },
                   "name": "constructor"
                 },
-                "static": false,
                 "kind": "constructor",
                 "id": null,
                 "generator": false,
@@ -24013,6 +24013,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -24031,7 +24032,6 @@
                   },
                   "name": "render"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -24376,6 +24376,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -24394,7 +24395,6 @@
                   },
                   "name": "equals"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -26171,6 +26171,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -26189,7 +26190,6 @@
                   },
                   "name": "constructor"
                 },
-                "static": false,
                 "kind": "constructor",
                 "id": null,
                 "generator": false,
@@ -26829,6 +26829,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -26847,7 +26848,6 @@
                   },
                   "name": "equals"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -27686,7 +27686,7 @@
         "label": "import",
         "keyword": "import",
         "beforeExpr": false,
-        "startsExpr": false,
+        "startsExpr": true,
         "rightAssociative": false,
         "isLoop": false,
         "isAssign": false,
@@ -27973,7 +27973,7 @@
         "label": "import",
         "keyword": "import",
         "beforeExpr": false,
-        "startsExpr": false,
+        "startsExpr": true,
         "rightAssociative": false,
         "isLoop": false,
         "isAssign": false,

@@ -957,6 +957,7 @@
                     "column": 14
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -975,7 +976,6 @@
                   },
                   "name": "_value"
                 },
-                "static": false,
                 "value": {
                   "type": "StringLiteral",
                   "start": 904,
@@ -1011,6 +1011,7 @@
                     "column": 16
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1029,7 +1030,6 @@
                   },
                   "name": "_style"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 919,
@@ -1060,6 +1060,7 @@
                     "column": 15
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1078,7 +1079,6 @@
                   },
                   "name": "formula"
                 },
-                "static": false,
                 "value": {
                   "type": "StringLiteral",
                   "start": 937,
@@ -1132,6 +1132,7 @@
                     "column": 14
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1151,7 +1152,6 @@
                   "name": "numFmt",
                   "leadingComments": null
                 },
-                "static": false,
                 "value": {
                   "type": "StringLiteral",
                   "start": 1023,
@@ -1205,6 +1205,7 @@
                     "column": 19
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1223,7 +1224,6 @@
                   },
                   "name": "date1904"
                 },
-                "static": false,
                 "value": {
                   "type": "BooleanLiteral",
                   "start": 1040,
@@ -1273,6 +1273,7 @@
                     "column": 17
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1292,7 +1293,6 @@
                   "name": "hidden",
                   "leadingComments": null
                 },
-                "static": false,
                 "value": {
                   "type": "BooleanLiteral",
                   "start": 1111,
@@ -1360,6 +1360,7 @@
                     "column": 13
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1379,7 +1380,6 @@
                   "name": "hMerge",
                   "leadingComments": null
                 },
-                "static": false,
                 "value": {
                   "type": "NumericLiteral",
                   "start": 1201,
@@ -1451,6 +1451,7 @@
                     "column": 13
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1470,7 +1471,6 @@
                   "name": "vMerge",
                   "leadingComments": null
                 },
-                "static": false,
                 "value": {
                   "type": "NumericLiteral",
                   "start": 1285,
@@ -1524,6 +1524,7 @@
                     "column": 26
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1542,7 +1543,6 @@
                   },
                   "name": "cellType"
                 },
-                "static": false,
                 "value": {
                   "type": "StringLiteral",
                   "start": 1301,
@@ -1596,6 +1596,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1615,7 +1616,6 @@
                   "name": "constructor",
                   "leadingComments": null
                 },
-                "static": false,
                 "kind": "constructor",
                 "id": null,
                 "generator": false,
@@ -1861,6 +1861,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1879,7 +1880,6 @@
                   },
                   "name": "style"
                 },
-                "static": false,
                 "kind": "get",
                 "id": null,
                 "generator": false,
@@ -2244,6 +2244,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -2262,7 +2263,6 @@
                   },
                   "name": "style"
                 },
-                "static": false,
                 "kind": "set",
                 "id": null,
                 "generator": false,
@@ -2453,6 +2453,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -2471,7 +2472,6 @@
                   },
                   "name": "value"
                 },
-                "static": false,
                 "kind": "get",
                 "id": null,
                 "generator": false,
@@ -2611,6 +2611,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -2629,7 +2630,6 @@
                   },
                   "name": "value"
                 },
-                "static": false,
                 "kind": "set",
                 "id": null,
                 "generator": false,
@@ -3963,6 +3963,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -3982,7 +3983,6 @@
                   "name": "setString",
                   "leadingComments": null
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -4371,6 +4371,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -4390,7 +4391,6 @@
                   "name": "setDate",
                   "leadingComments": null
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -4979,6 +4979,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -4998,7 +4999,6 @@
                   "name": "setDateTime",
                   "leadingComments": null
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -5553,6 +5553,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -5572,7 +5573,6 @@
                   "name": "setNumber",
                   "leadingComments": null
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -6093,6 +6093,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -6112,7 +6113,6 @@
                   "name": "setBool",
                   "leadingComments": null
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -6457,6 +6457,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -6476,7 +6477,6 @@
                   "name": "setFormula",
                   "leadingComments": null
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -7041,7 +7041,7 @@
         "label": "import",
         "keyword": "import",
         "beforeExpr": false,
-        "startsExpr": false,
+        "startsExpr": true,
         "rightAssociative": false,
         "isLoop": false,
         "isAssign": false,
@@ -7224,7 +7224,7 @@
         "label": "import",
         "keyword": "import",
         "beforeExpr": false,
-        "startsExpr": false,
+        "startsExpr": true,
         "rightAssociative": false,
         "isLoop": false,
         "isAssign": false,
@@ -7459,7 +7459,7 @@
         "label": "import",
         "keyword": "import",
         "beforeExpr": false,
-        "startsExpr": false,
+        "startsExpr": true,
         "rightAssociative": false,
         "isLoop": false,
         "isAssign": false,

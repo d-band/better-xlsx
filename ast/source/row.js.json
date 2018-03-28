@@ -210,6 +210,7 @@
                     "column": 13
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -228,7 +229,6 @@
                   },
                   "name": "cells"
                 },
-                "static": false,
                 "value": {
                   "type": "ArrayExpression",
                   "start": 162,
@@ -260,6 +260,7 @@
                     "column": 17
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -278,7 +279,6 @@
                   },
                   "name": "hidden"
                 },
-                "static": false,
                 "value": {
                   "type": "BooleanLiteral",
                   "start": 177,
@@ -328,6 +328,7 @@
                     "column": 13
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -347,7 +348,6 @@
                   "name": "height",
                   "leadingComments": null
                 },
-                "static": false,
                 "value": {
                   "type": "NumericLiteral",
                   "start": 243,
@@ -401,6 +401,7 @@
                     "column": 19
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -419,7 +420,6 @@
                   },
                   "name": "outlineLevel"
                 },
-                "static": false,
                 "value": {
                   "type": "NumericLiteral",
                   "start": 263,
@@ -455,6 +455,7 @@
                     "column": 19
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -473,7 +474,6 @@
                   },
                   "name": "isCustom"
                 },
-                "static": false,
                 "value": {
                   "type": "BooleanLiteral",
                   "start": 279,
@@ -505,6 +505,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -523,7 +524,6 @@
                   },
                   "name": "constructor"
                 },
-                "static": false,
                 "kind": "constructor",
                 "id": null,
                 "generator": false,
@@ -751,6 +751,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -770,7 +771,6 @@
                   "name": "setHeightCM",
                   "leadingComments": null
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -1092,6 +1092,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1111,7 +1112,6 @@
                   "name": "addCell",
                   "leadingComments": null
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -1778,7 +1778,7 @@
         "label": "import",
         "keyword": "import",
         "beforeExpr": false,
-        "startsExpr": false,
+        "startsExpr": true,
         "rightAssociative": false,
         "isLoop": false,
         "isAssign": false,

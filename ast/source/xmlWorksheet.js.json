@@ -396,6 +396,7 @@
                     "column": 17
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -414,7 +415,6 @@
                   },
                   "name": "sheetPr"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 123,
@@ -445,6 +445,7 @@
                     "column": 20
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -463,7 +464,6 @@
                   },
                   "name": "sheetViews"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 144,
@@ -494,6 +494,7 @@
                     "column": 23
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -512,7 +513,6 @@
                   },
                   "name": "sheetFormatPr"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 168,
@@ -543,6 +543,7 @@
                     "column": 22
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -561,7 +562,6 @@
                   },
                   "name": "printOptions"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 191,
@@ -592,6 +592,7 @@
                     "column": 21
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -610,7 +611,6 @@
                   },
                   "name": "pageMargins"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 213,
@@ -641,6 +641,7 @@
                     "column": 19
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -659,7 +660,6 @@
                   },
                   "name": "pageSetup"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 233,
@@ -690,6 +690,7 @@
                     "column": 22
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -708,7 +709,6 @@
                   },
                   "name": "headerFooter"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 256,
@@ -739,6 +739,7 @@
                     "column": 20
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -757,7 +758,6 @@
                   },
                   "name": "mergeCells"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 277,
@@ -788,6 +788,7 @@
                     "column": 19
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -806,7 +807,6 @@
                   },
                   "name": "dimension"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 297,
@@ -837,6 +837,7 @@
                     "column": 14
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -855,7 +856,6 @@
                   },
                   "name": "cols"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 312,
@@ -886,6 +886,7 @@
                     "column": 19
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -904,7 +905,6 @@
                   },
                   "name": "sheetData"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 332,
@@ -935,6 +935,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -953,7 +954,6 @@
                   },
                   "name": "constructor"
                 },
-                "static": false,
                 "kind": "constructor",
                 "id": null,
                 "generator": false,
@@ -1585,6 +1585,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1603,7 +1604,6 @@
                   },
                   "name": "render"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -6875,6 +6875,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -6893,7 +6894,6 @@
                   },
                   "name": "constructor"
                 },
-                "static": false,
                 "kind": "constructor",
                 "id": null,
                 "generator": false,
@@ -7237,6 +7237,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -7255,7 +7256,6 @@
                   },
                   "name": "render"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -9579,6 +9579,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -9597,7 +9598,6 @@
                   },
                   "name": "constructor"
                 },
-                "static": false,
                 "kind": "constructor",
                 "id": null,
                 "generator": false,
@@ -9941,6 +9941,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -9959,7 +9960,6 @@
                   },
                   "name": "render"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -14930,7 +14930,7 @@
         "label": "import",
         "keyword": "import",
         "beforeExpr": false,
-        "startsExpr": false,
+        "startsExpr": true,
         "rightAssociative": false,
         "isLoop": false,
         "isAssign": false,

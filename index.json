@@ -1288,7 +1288,7 @@
     "__docId__": 106,
     "kind": "file",
     "name": "src/file.js",
-    "content": "import { Sheet } from './sheet';\nimport * as templates from './templates';\nimport { RefTable } from './reftable';\nimport { makeXworkbook, Xsheets, Xsheet, makeWorkbookRels } from './xmlWorkbook';\nimport { makeXTypes, XOverride } from './xmlContentTypes';\nimport { XstyleSheet } from './xmlStyle';\nimport Zip from 'jszip';\n\n/**\n * This is the main class, use it:\n * \n * ```js\n * import { File } from 'better-xlsx';\n * const file = new File();\n * const sheet = file.addSheet('Sheet-1');\n * ```\n * \n * @class File\n */\nexport class File {\n  /**\n   * @private\n   */\n  sheet = {};\n  /**\n   * @private\n   */\n  sheets = [];\n  /**\n   * @private\n   */\n  definedNames = [];\n\n  constructor () {\n    /**\n     * @private\n     */\n    this.styles = new XstyleSheet({});\n  }\n  /**\n   * Add a new Sheet, with the provided name, to a File\n   * @param {String} name Name of the Sheet\n   * @return {Sheet}\n   */\n  addSheet (name) {\n    if (this.sheet[name]) {\n      throw new Error(`duplicate sheet name ${name}.`);\n    }\n    const sheet = new Sheet({\n      name,\n      file: this,\n      selected: this.sheets.length === 0\n    });\n    this.sheet[name] = sheet;\n    this.sheets.push(sheet);\n    return sheet;\n  }\n  /**\n   * Save the File to an xlsx file.\n   * @param  {String} [type='nodebuffer'] For Node.js use `nodebuffer` and browser use `blob` or `base64`.\n   * @return {Promise|stream} For Node.js return `stream` and browser return Promise.\n   */\n  saveAs (type = 'nodebuffer') {\n    const parts = this.makeParts();\n    const zip = new Zip();\n    for (const key of Object.keys(parts)) {\n      zip.file(key, parts[key]);\n    }\n    if (type === 'blob' || type === 'base64') {\n      return zip.generateAsync({ type });\n    } else {\n      return zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true });\n    }\n  }\n  /**\n   * @private\n   * @return {Object} XML files mapping object\n   */\n  makeParts () {\n    const parts = {};\n    const refTable = new RefTable();\n    const types = makeXTypes();\n    const workbook = makeXworkbook();\n\n    this.styles.reset();\n\n    let i = 1;\n    const sheets = new Xsheets();\n    for (const sheet of this.sheets) {\n      const xSheet = sheet.makeXSheet(refTable, this.styles);\n      types.children.push(new XOverride({\n        PartName: `/xl/worksheets/sheet${i}.xml`,\n        ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml'\n      }));\n      sheets.children.push(new Xsheet({\n        name: sheet.name,\n        sheetId: i,\n        'r:id': `rId${i}`,\n        state: 'visible'\n      }));\n      parts[`xl/worksheets/sheet${i}.xml`] = xSheet.render();\n      i++;\n    }\n    workbook.sheets = sheets;\n\n    parts['xl/workbook.xml'] = workbook.render();\n    parts['_rels/.rels'] = templates.DOT_RELS;\n    parts['docProps/app.xml'] = templates.DOCPROPS_APP;\n    parts['docProps/core.xml'] = templates.DOCPROPS_CORE;\n    parts['xl/theme/theme1.xml'] = templates.XL_THEME_THEME;\n\n    parts['xl/sharedStrings.xml'] = refTable.makeXsst().render();\n    parts['xl/_rels/workbook.xml.rels'] = makeWorkbookRels(this.sheets.length).render();\n    parts['[Content_Types].xml'] = types.render();\n    parts['xl/styles.xml'] = this.styles.render();\n\n    return parts;\n  }\n}\n",
+    "content": "import { Sheet } from './sheet';\nimport * as templates from './templates';\nimport { RefTable } from './reftable';\nimport { makeXworkbook, Xsheets, Xsheet, makeWorkbookRels } from './xmlWorkbook';\nimport { makeXTypes, XOverride } from './xmlContentTypes';\nimport { XstyleSheet } from './xmlStyle';\nimport Zip from 'jszip';\n\n/**\n * This is the main class, use it:\n *\n * ```js\n * import { File } from 'better-xlsx';\n * const file = new File();\n * const sheet = file.addSheet('Sheet-1');\n * ```\n *\n * @class File\n */\nexport class File {\n  /**\n   * @private\n   */\n  sheet = {};\n  /**\n   * @private\n   */\n  sheets = [];\n  /**\n   * @private\n   */\n  definedNames = [];\n\n  constructor () {\n    /**\n     * @private\n     */\n    this.styles = new XstyleSheet({});\n  }\n  /**\n   * Add a new Sheet, with the provided name, to a File\n   * @param {String} name Name of the Sheet\n   * @return {Sheet}\n   */\n  addSheet (name) {\n    if (this.sheet[name]) {\n      throw new Error(`duplicate sheet name ${name}.`);\n    }\n    const sheet = new Sheet({\n      name,\n      file: this,\n      selected: this.sheets.length === 0\n    });\n    this.sheet[name] = sheet;\n    this.sheets.push(sheet);\n    return sheet;\n  }\n  /**\n   * Save the File to an xlsx file.\n   * @param  {String} [type='nodebuffer'] For Node.js use `nodebuffer` and browser use `blob` or `base64`.\n   * @return {Promise|stream} For Node.js return `stream` and browser return Promise.\n   */\n  saveAs (type = 'nodebuffer') {\n    const parts = this.makeParts();\n    const zip = new Zip();\n    for (const key of Object.keys(parts)) {\n      zip.file(key, parts[key]);\n    }\n    if (type === 'blob' || type === 'base64') {\n      return zip.generateAsync({ type });\n    } else {\n      return zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true });\n    }\n  }\n  /**\n   * @private\n   * @return {Object} XML files mapping object\n   */\n  makeParts () {\n    const parts = {};\n    const refTable = new RefTable();\n    const types = makeXTypes();\n    const workbook = makeXworkbook();\n\n    this.styles.reset();\n\n    let i = 1;\n    const sheets = new Xsheets();\n    for (const sheet of this.sheets) {\n      const xSheet = sheet.makeXSheet(refTable, this.styles);\n      types.children.push(new XOverride({\n        PartName: `/xl/worksheets/sheet${i}.xml`,\n        ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml'\n      }));\n      sheets.children.push(new Xsheet({\n        name: sheet.name,\n        sheetId: i,\n        'r:id': `rId${i}`,\n        state: 'visible'\n      }));\n      parts[`xl/worksheets/sheet${i}.xml`] = xSheet.render();\n      i++;\n    }\n    workbook.sheets = sheets;\n\n    parts['xl/workbook.xml'] = workbook.render();\n    parts['_rels/.rels'] = templates.DOT_RELS;\n    parts['docProps/app.xml'] = templates.DOCPROPS_APP;\n    parts['docProps/core.xml'] = templates.DOCPROPS_CORE;\n    parts['xl/theme/theme1.xml'] = templates.XL_THEME_THEME;\n\n    parts['xl/sharedStrings.xml'] = refTable.makeXsst().render();\n    parts['xl/_rels/workbook.xml.rels'] = makeWorkbookRels(this.sheets.length).render();\n    parts['[Content_Types].xml'] = types.render();\n    parts['xl/styles.xml'] = this.styles.render();\n\n    return parts;\n  }\n}\n",
     "static": true,
     "longname": "/Users/helloyou/Documents/js_pro/better-xlsx/src/file.js",
     "access": "public",
@@ -1501,7 +1501,7 @@
     "__docId__": 117,
     "kind": "file",
     "name": "src/lib.js",
-    "content": "import { Xfill, XpatternFill, Xxf } from './xmlStyle';\nconst NumFmtsCount = 163;\n/**\n * Number format table\n * \n * ```js\n * {\n *   0: 'general',\n *   1: '0',\n *   2: '0.00',\n *   3: '#,##0',\n *   4: '#,##0.00',\n *   9: '0%',\n *   10: '0.00%',\n *   11: '0.00e+00',\n *   12: '# ?/?',\n *   13: '# ??/??',\n *   14: 'mm-dd-yy',\n *   15: 'd-mmm-yy',\n *   16: 'd-mmm',\n *   17: 'mmm-yy',\n *   18: 'h:mm am/pm',\n *   19: 'h:mm:ss am/pm',\n *   20: 'h:mm',\n *   21: 'h:mm:ss',\n *   22: 'm/d/yy h:mm',\n *   37: '#,##0 ;(#,##0)',\n *   38: '#,##0 ;[red](#,##0)',\n *   39: '#,##0.00;(#,##0.00)',\n *   40: '#,##0.00;[red](#,##0.00)',\n *   41: '_(* #,##0_);_(* (#,##0);_(* \"-\"_);_(@_)',\n *   42: '_(\"$\"* #,##0_);_(\"$* (#,##0);_(\"$\"* \"-\"_);_(@_)',\n *   43: '_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)',\n *   44: '_(\"$\"* #,##0.00_);_(\"$\"* (#,##0.00);_(\"$\"* \"-\"??_);_(@_)',\n *   45: 'mm:ss',\n *   46: '[h]:mm:ss',\n *   47: 'mmss.0',\n *   48: '##0.0e+0',\n *   49: '@'\n * }\n * ```\n * \n * @type {Object}\n */\nconst NumFmt = {\n  0: 'general',\n  1: '0',\n  2: '0.00',\n  3: '#,##0',\n  4: '#,##0.00',\n  9: '0%',\n  10: '0.00%',\n  11: '0.00e+00',\n  12: '# ?/?',\n  13: '# ??/??',\n  14: 'mm-dd-yy',\n  15: 'd-mmm-yy',\n  16: 'd-mmm',\n  17: 'mmm-yy',\n  18: 'h:mm am/pm',\n  19: 'h:mm:ss am/pm',\n  20: 'h:mm',\n  21: 'h:mm:ss',\n  22: 'm/d/yy h:mm',\n  37: '#,##0 ;(#,##0)',\n  38: '#,##0 ;[red](#,##0)',\n  39: '#,##0.00;(#,##0.00)',\n  40: '#,##0.00;[red](#,##0.00)',\n  41: '_(* #,##0_);_(* (#,##0);_(* \"-\"_);_(@_)',\n  42: '_(\"$\"* #,##0_);_(\"$* (#,##0);_(\"$\"* \"-\"_);_(@_)',\n  43: '_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)',\n  44: '_(\"$\"* #,##0.00_);_(\"$\"* (#,##0.00);_(\"$\"* \"-\"??_);_(@_)',\n  45: 'mm:ss',\n  46: '[h]:mm:ss',\n  47: 'mmss.0',\n  48: '##0.0e+0',\n  49: '@'\n};\n\nconst NumFmtInv = {};\nfor (const k of Object.keys(NumFmt)) {\n  NumFmtInv[NumFmt[k]] = k;\n}\n// AA => 26\nfunction col2num (colstr) {\n  let d = 0;\n  for (let i = 0; i !== colstr.length; ++i) {\n    d = 26 * d + colstr.charCodeAt(i) - 64;\n  }\n  return d - 1;\n}\n// 26 => AA\nfunction num2col (col) {\n  let s = '';\n  for (++col; col; col = Math.floor((col - 1) / 26)) {\n    s = String.fromCharCode(((col - 1) % 26) + 65) + s;\n  }\n  return s;\n}\n// B3 => {x: 1, y: 2}\nfunction cid2coord (cid) {\n  const temp = cid.match(/([A-Z]+)(\\d+)/);\n  return {\n    x: col2num(temp[1]),\n    y: parseInt(temp[2], 10) - 1\n  };\n}\n\nfunction handleStyle (style, numFmtId, styles) {\n  const { xFont, xFill, xBorder, xXf } = style.makeXStyleElements();\n\n  const fontId = styles.addFont(xFont);\n  const fillId = styles.addFill(xFill);\n\n  // HACK - adding light grey fill, as in OO and Google\n  const greyfill = new Xfill({\n    patternFill: new XpatternFill({ patternType: 'lightGray' })\n  });\n  styles.addFill(greyfill);\n\n  const borderId = styles.addBorder(xBorder);\n  xXf.fontId = fontId;\n  xXf.fillId = fillId;\n  xXf.borderId = borderId;\n  xXf.numFmtId = numFmtId;\n  // apply the numFmtId when it is not the default cellxf\n  if (xXf.numFmtId > 0) {\n    xXf.applyNumberFormat = true;\n  }\n\n  xXf.alignment.horizontal = style.align.h;\n  xXf.alignment.indent = style.align.indent;\n  xXf.alignment.shrinkToFit = style.align.shrinkToFit;\n  xXf.alignment.textRotation = style.align.textRotation;\n  xXf.alignment.vertical = style.align.v;\n  xXf.alignment.wrapText = style.align.wrapText;\n\n  return styles.addCellXf(xXf);\n}\n\nfunction handleNumFmtId (numFmtId, styles) {\n  const xf = new Xxf({ numFmtId });\n  if (numFmtId > 0) {\n    xf.applyNumberFormat = true;\n  }\n  return styles.addCellXf(xf);\n}\n\nfunction toExcelTime (d) {\n  const unix = d.getTime() / 1000;\n  return unix / 86400.0 + 25569.0;\n}\n\nexport { NumFmt, NumFmtInv, NumFmtsCount, col2num, num2col, cid2coord, handleStyle, handleNumFmtId, toExcelTime };\n",
+    "content": "const NumFmtsCount = 163;\n/**\n * Number format table\n *\n * ```js\n * {\n *   0: 'general',\n *   1: '0',\n *   2: '0.00',\n *   3: '#,##0',\n *   4: '#,##0.00',\n *   9: '0%',\n *   10: '0.00%',\n *   11: '0.00e+00',\n *   12: '# ?/?',\n *   13: '# ??/??',\n *   14: 'mm-dd-yy',\n *   15: 'd-mmm-yy',\n *   16: 'd-mmm',\n *   17: 'mmm-yy',\n *   18: 'h:mm am/pm',\n *   19: 'h:mm:ss am/pm',\n *   20: 'h:mm',\n *   21: 'h:mm:ss',\n *   22: 'm/d/yy h:mm',\n *   37: '#,##0 ;(#,##0)',\n *   38: '#,##0 ;[red](#,##0)',\n *   39: '#,##0.00;(#,##0.00)',\n *   40: '#,##0.00;[red](#,##0.00)',\n *   41: '_(* #,##0_);_(* (#,##0);_(* \"-\"_);_(@_)',\n *   42: '_(\"$\"* #,##0_);_(\"$* (#,##0);_(\"$\"* \"-\"_);_(@_)',\n *   43: '_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)',\n *   44: '_(\"$\"* #,##0.00_);_(\"$\"* (#,##0.00);_(\"$\"* \"-\"??_);_(@_)',\n *   45: 'mm:ss',\n *   46: '[h]:mm:ss',\n *   47: 'mmss.0',\n *   48: '##0.0e+0',\n *   49: '@'\n * }\n * ```\n *\n * @type {Object}\n */\nconst NumFmt = {\n  0: 'general',\n  1: '0',\n  2: '0.00',\n  3: '#,##0',\n  4: '#,##0.00',\n  9: '0%',\n  10: '0.00%',\n  11: '0.00e+00',\n  12: '# ?/?',\n  13: '# ??/??',\n  14: 'mm-dd-yy',\n  15: 'd-mmm-yy',\n  16: 'd-mmm',\n  17: 'mmm-yy',\n  18: 'h:mm am/pm',\n  19: 'h:mm:ss am/pm',\n  20: 'h:mm',\n  21: 'h:mm:ss',\n  22: 'm/d/yy h:mm',\n  37: '#,##0 ;(#,##0)',\n  38: '#,##0 ;[red](#,##0)',\n  39: '#,##0.00;(#,##0.00)',\n  40: '#,##0.00;[red](#,##0.00)',\n  41: '_(* #,##0_);_(* (#,##0);_(* \"-\"_);_(@_)',\n  42: '_(\"$\"* #,##0_);_(\"$* (#,##0);_(\"$\"* \"-\"_);_(@_)',\n  43: '_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)',\n  44: '_(\"$\"* #,##0.00_);_(\"$\"* (#,##0.00);_(\"$\"* \"-\"??_);_(@_)',\n  45: 'mm:ss',\n  46: '[h]:mm:ss',\n  47: 'mmss.0',\n  48: '##0.0e+0',\n  49: '@'\n};\n\nconst NumFmtInv = {};\nfor (const k of Object.keys(NumFmt)) {\n  NumFmtInv[NumFmt[k]] = k;\n}\n// AA => 26\nfunction col2num (colstr) {\n  let d = 0;\n  for (let i = 0; i !== colstr.length; ++i) {\n    d = 26 * d + colstr.charCodeAt(i) - 64;\n  }\n  return d - 1;\n}\n// 26 => AA\nfunction num2col (col) {\n  let s = '';\n  for (++col; col; col = Math.floor((col - 1) / 26)) {\n    s = String.fromCharCode(((col - 1) % 26) + 65) + s;\n  }\n  return s;\n}\n// B3 => {x: 1, y: 2}\nfunction cid2coord (cid) {\n  const temp = cid.match(/([A-Z]+)(\\d+)/);\n  return {\n    x: col2num(temp[1]),\n    y: parseInt(temp[2], 10) - 1\n  };\n}\n\nfunction toExcelTime (d) {\n  const unix = d.getTime() / 1000;\n  return unix / 86400.0 + 25569.0;\n}\n\nexport { NumFmt, NumFmtInv, NumFmtsCount, col2num, num2col, cid2coord, toExcelTime };\n",
     "static": true,
     "longname": "/Users/helloyou/Documents/js_pro/better-xlsx/src/lib.js",
     "access": "public",
@@ -1520,7 +1520,7 @@
     "importPath": "better-xlsx/src/lib.js",
     "importStyle": "{NumFmt}",
     "description": "Number format table\n\n```js\n{\n  0: 'general',\n  1: '0',\n  2: '0.00',\n  3: '#,##0',\n  4: '#,##0.00',\n  9: '0%',\n  10: '0.00%',\n  11: '0.00e+00',\n  12: '# ?/?',\n  13: '# ??/??',\n  14: 'mm-dd-yy',\n  15: 'd-mmm-yy',\n  16: 'd-mmm',\n  17: 'mmm-yy',\n  18: 'h:mm am/pm',\n  19: 'h:mm:ss am/pm',\n  20: 'h:mm',\n  21: 'h:mm:ss',\n  22: 'm/d/yy h:mm',\n  37: '#,##0 ;(#,##0)',\n  38: '#,##0 ;[red](#,##0)',\n  39: '#,##0.00;(#,##0.00)',\n  40: '#,##0.00;[red](#,##0.00)',\n  41: '_(* #,##0_);_(* (#,##0);_(* \"-\"_);_(@_)',\n  42: '_(\"$\"* #,##0_);_(\"$* (#,##0);_(\"$\"* \"-\"_);_(@_)',\n  43: '_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)',\n  44: '_(\"$\"* #,##0.00_);_(\"$\"* (#,##0.00);_(\"$\"* \"-\"??_);_(@_)',\n  45: 'mm:ss',\n  46: '[h]:mm:ss',\n  47: 'mmss.0',\n  48: '##0.0e+0',\n  49: '@'\n}\n```",
-    "lineNumber": 45,
+    "lineNumber": 44,
     "type": {
       "nullable": null,
       "types": [
@@ -1542,7 +1542,7 @@
     "importPath": "better-xlsx/src/lib.js",
     "importStyle": "{NumFmtInv}",
     "description": null,
-    "lineNumber": 80,
+    "lineNumber": 79,
     "undocument": true,
     "type": {
       "types": [
@@ -1563,7 +1563,7 @@
     "importPath": "better-xlsx/src/lib.js",
     "importStyle": "{NumFmtsCount}",
     "description": null,
-    "lineNumber": 2,
+    "lineNumber": 1,
     "undocument": true,
     "type": {
       "types": [
@@ -1586,7 +1586,7 @@
     "importPath": "better-xlsx/src/lib.js",
     "importStyle": "{col2num}",
     "description": null,
-    "lineNumber": 85,
+    "lineNumber": 84,
     "undocument": true,
     "params": [
       {
@@ -1617,7 +1617,7 @@
     "importPath": "better-xlsx/src/lib.js",
     "importStyle": "{num2col}",
     "description": null,
-    "lineNumber": 93,
+    "lineNumber": 92,
     "undocument": true,
     "params": [
       {
@@ -1648,7 +1648,7 @@
     "importPath": "better-xlsx/src/lib.js",
     "importStyle": "{cid2coord}",
     "description": null,
-    "lineNumber": 101,
+    "lineNumber": 100,
     "undocument": true,
     "params": [
       {
@@ -1668,86 +1668,6 @@
   {
     "__docId__": 124,
     "kind": "function",
-    "name": "handleStyle",
-    "memberof": "src/lib.js",
-    "generator": false,
-    "async": false,
-    "static": true,
-    "longname": "src/lib.js~handleStyle",
-    "access": "public",
-    "export": true,
-    "importPath": "better-xlsx/src/lib.js",
-    "importStyle": "{handleStyle}",
-    "description": null,
-    "lineNumber": 109,
-    "undocument": true,
-    "params": [
-      {
-        "name": "style",
-        "types": [
-          "*"
-        ]
-      },
-      {
-        "name": "numFmtId",
-        "types": [
-          "*"
-        ]
-      },
-      {
-        "name": "styles",
-        "types": [
-          "*"
-        ]
-      }
-    ],
-    "return": {
-      "types": [
-        "*"
-      ]
-    },
-    "ignore": true
-  },
-  {
-    "__docId__": 125,
-    "kind": "function",
-    "name": "handleNumFmtId",
-    "memberof": "src/lib.js",
-    "generator": false,
-    "async": false,
-    "static": true,
-    "longname": "src/lib.js~handleNumFmtId",
-    "access": "public",
-    "export": true,
-    "importPath": "better-xlsx/src/lib.js",
-    "importStyle": "{handleNumFmtId}",
-    "description": null,
-    "lineNumber": 141,
-    "undocument": true,
-    "params": [
-      {
-        "name": "numFmtId",
-        "types": [
-          "*"
-        ]
-      },
-      {
-        "name": "styles",
-        "types": [
-          "*"
-        ]
-      }
-    ],
-    "return": {
-      "types": [
-        "*"
-      ]
-    },
-    "ignore": true
-  },
-  {
-    "__docId__": 126,
-    "kind": "function",
     "name": "toExcelTime",
     "memberof": "src/lib.js",
     "generator": false,
@@ -1759,7 +1679,7 @@
     "importPath": "better-xlsx/src/lib.js",
     "importStyle": "{toExcelTime}",
     "description": null,
-    "lineNumber": 149,
+    "lineNumber": 108,
     "undocument": true,
     "params": [
       {
@@ -1777,7 +1697,7 @@
     "ignore": true
   },
   {
-    "__docId__": 127,
+    "__docId__": 125,
     "kind": "file",
     "name": "src/node.js",
     "content": "function attrEscape (str) {\n  return str.replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/\"/g, '&quot;')\n    .replace(/\\t/g, '&#x9;')\n    .replace(/\\n/g, '&#xA;')\n    .replace(/\\r/g, '&#xD;');\n}\nfunction escape (str) {\n  return str.replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;')\n    .replace(/\\r/g, '&#xD;');\n}\n\nexport const HEAD = Symbol('head');\n\nexport function props (...attrs) {\n  return function (clazz) {\n    const target = clazz.prototype || clazz;\n\n    for (const name of attrs) {\n      Object.defineProperty(target, name, {\n        get () {\n          if (this.attributes) {\n            return this.attributes[name];\n          }\n        },\n        set (value) {\n          if (this.attributes === undefined) {\n            this.attributes = {};\n          }\n          this.attributes[name] = value;\n        },\n        configurable: true,\n        enumerable: true\n      });\n    }\n\n    return clazz;\n  };\n}\n\nexport class Node {\n  constructor (attributes = {}, children = [], xmlName) {\n    for (const key of Object.keys(attributes)) {\n      this[key] = attributes[key];\n    }\n    this.children = children;\n    this._xmlName = xmlName || this.constructor.name.substring(1);\n  }\n  render () {\n    function walk (tree) {\n      const name = tree._xmlName;\n      const { attributes, children } = tree;\n      const tokens = [];\n\n      if (tree[HEAD]) {\n        tokens.push(tree[HEAD]);\n      }\n      tokens.push(`<${name}`);\n\n      for (const key of Object.keys(attributes || {})) {\n        let v = attributes[key];\n        if (v === undefined) continue;\n        if (typeof v === 'string') {\n          v = attrEscape(v);\n        }\n        if (typeof v === 'boolean') {\n          v = v ? 1 : 0;\n        }\n        tokens.push(` ${key}=\"${v}\"`);\n      }\n\n      if (!children.length) {\n        tokens.push('/>');\n        return tokens;\n      }\n      tokens.push('>');\n      for (const child of children) {\n        if (child instanceof Node) {\n          tokens.push(child.render());\n        } else if (typeof child === 'string') {\n          tokens.push(escape(child));\n        } else {\n          tokens.push(child.toString());\n        }\n      }\n      tokens.push(`</${name}>`);\n      return tokens;\n    }\n    return walk(this).join('');\n  }\n}\n",
@@ -1788,7 +1708,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 128,
+    "__docId__": 126,
     "kind": "function",
     "name": "attrEscape",
     "memberof": "src/node.js",
@@ -1819,7 +1739,7 @@
     "ignore": true
   },
   {
-    "__docId__": 129,
+    "__docId__": 127,
     "kind": "function",
     "name": "escape",
     "memberof": "src/node.js",
@@ -1850,7 +1770,7 @@
     "ignore": true
   },
   {
-    "__docId__": 130,
+    "__docId__": 128,
     "kind": "variable",
     "name": "HEAD",
     "memberof": "src/node.js",
@@ -1871,7 +1791,7 @@
     "ignore": true
   },
   {
-    "__docId__": 131,
+    "__docId__": 129,
     "kind": "function",
     "name": "props",
     "memberof": "src/node.js",
@@ -1903,7 +1823,7 @@
     "ignore": true
   },
   {
-    "__docId__": 132,
+    "__docId__": 130,
     "kind": "class",
     "name": "Node",
     "memberof": "src/node.js",
@@ -1920,7 +1840,7 @@
     "ignore": true
   },
   {
-    "__docId__": 133,
+    "__docId__": 131,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/node.js~Node",
@@ -1935,7 +1855,7 @@
     "ignore": true
   },
   {
-    "__docId__": 134,
+    "__docId__": 132,
     "kind": "member",
     "name": "[key]",
     "memberof": "src/node.js~Node",
@@ -1953,7 +1873,7 @@
     "ignore": true
   },
   {
-    "__docId__": 135,
+    "__docId__": 133,
     "kind": "member",
     "name": "children",
     "memberof": "src/node.js~Node",
@@ -1971,7 +1891,7 @@
     "ignore": true
   },
   {
-    "__docId__": 136,
+    "__docId__": 134,
     "kind": "member",
     "name": "_xmlName",
     "memberof": "src/node.js~Node",
@@ -1989,7 +1909,7 @@
     "ignore": true
   },
   {
-    "__docId__": 137,
+    "__docId__": 135,
     "kind": "method",
     "name": "render",
     "memberof": "src/node.js~Node",
@@ -2010,7 +1930,7 @@
     "ignore": true
   },
   {
-    "__docId__": 138,
+    "__docId__": 136,
     "kind": "file",
     "name": "src/reftable.js",
     "content": "import { Xsst, Xsi, Xt } from './xmlSharedStrings';\n\nexport class RefTable {\n  constructor () {\n    this.strings = [];\n    this.known = {};\n  }\n  makeXsst () {\n    const len = this.strings.length;\n    const sst = new Xsst({\n      count: len,\n      uniqueCount: len\n    });\n    for (const str of this.strings) {\n      const si = new Xsi({}, [new Xt({}, [str])]);\n      sst.children.push(si);\n    }\n    return sst;\n  }\n  addString (str) {\n    if (this.known[str] === undefined) {\n      const index = this.strings.length;\n      this.strings.push(str);\n      this.known[str] = index;\n      return index;\n    }\n    return this.known[str];\n  }\n  getString (index) {\n    return this.strings[index];\n  }\n  length () {\n    return this.strings.length;\n  }\n}\n",
@@ -2021,7 +1941,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 139,
+    "__docId__": 137,
     "kind": "class",
     "name": "RefTable",
     "memberof": "src/reftable.js",
@@ -2038,7 +1958,7 @@
     "ignore": true
   },
   {
-    "__docId__": 140,
+    "__docId__": 138,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/reftable.js~RefTable",
@@ -2053,7 +1973,7 @@
     "ignore": true
   },
   {
-    "__docId__": 141,
+    "__docId__": 139,
     "kind": "member",
     "name": "strings",
     "memberof": "src/reftable.js~RefTable",
@@ -2071,7 +1991,7 @@
     "ignore": true
   },
   {
-    "__docId__": 142,
+    "__docId__": 140,
     "kind": "member",
     "name": "known",
     "memberof": "src/reftable.js~RefTable",
@@ -2089,7 +2009,7 @@
     "ignore": true
   },
   {
-    "__docId__": 143,
+    "__docId__": 141,
     "kind": "method",
     "name": "makeXsst",
     "memberof": "src/reftable.js~RefTable",
@@ -2110,7 +2030,7 @@
     "ignore": true
   },
   {
-    "__docId__": 144,
+    "__docId__": 142,
     "kind": "method",
     "name": "addString",
     "memberof": "src/reftable.js~RefTable",
@@ -2138,7 +2058,7 @@
     "ignore": true
   },
   {
-    "__docId__": 145,
+    "__docId__": 143,
     "kind": "method",
     "name": "getString",
     "memberof": "src/reftable.js~RefTable",
@@ -2166,7 +2086,7 @@
     "ignore": true
   },
   {
-    "__docId__": 146,
+    "__docId__": 144,
     "kind": "method",
     "name": "length",
     "memberof": "src/reftable.js~RefTable",
@@ -2187,7 +2107,7 @@
     "ignore": true
   },
   {
-    "__docId__": 147,
+    "__docId__": 145,
     "kind": "file",
     "name": "src/row.js",
     "content": "import { Cell } from './cell';\n\n/**\n * Row of the sheet.\n * ```js\n * const row = sheet.addRow();\n * row.setHeightCM(0.8);\n * ```\n */\nexport class Row {\n  cells = [];\n  hidden = false;\n  /**\n   * Row height\n   * @type {Number}\n   */\n  height = 0;\n  outlineLevel = 0;\n  isCustom = false;\n\n  constructor ({ sheet }) {\n    this.sheet = sheet;\n  }\n  /**\n   * Set height of the Row with `cm` unit.\n   * @param {Number} ht Height with `cm` unit\n   */\n  setHeightCM (ht) {\n    this.height = ht * 28.3464567;\n    this.isCustom = true;\n  }\n  /**\n   * Create a cell and add it into the Row.\n   * @return {Cell}\n   */\n  addCell () {\n    const cell = new Cell({ row: this });\n    this.cells.push(cell);\n    this.sheet.maybeAddCol(this.cells.length);\n    return cell;\n  }\n}\n",
@@ -2198,7 +2118,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 148,
+    "__docId__": 146,
     "kind": "class",
     "name": "Row",
     "memberof": "src/row.js",
@@ -2213,7 +2133,7 @@
     "interface": false
   },
   {
-    "__docId__": 149,
+    "__docId__": 147,
     "kind": "member",
     "name": "cells",
     "memberof": "src/row.js~Row",
@@ -2231,7 +2151,7 @@
     "ignore": true
   },
   {
-    "__docId__": 150,
+    "__docId__": 148,
     "kind": "member",
     "name": "hidden",
     "memberof": "src/row.js~Row",
@@ -2249,7 +2169,7 @@
     "ignore": true
   },
   {
-    "__docId__": 151,
+    "__docId__": 149,
     "kind": "member",
     "name": "height",
     "memberof": "src/row.js~Row",
@@ -2268,7 +2188,7 @@
     }
   },
   {
-    "__docId__": 152,
+    "__docId__": 150,
     "kind": "member",
     "name": "outlineLevel",
     "memberof": "src/row.js~Row",
@@ -2286,7 +2206,7 @@
     "ignore": true
   },
   {
-    "__docId__": 153,
+    "__docId__": 151,
     "kind": "member",
     "name": "isCustom",
     "memberof": "src/row.js~Row",
@@ -2304,7 +2224,7 @@
     "ignore": true
   },
   {
-    "__docId__": 154,
+    "__docId__": 152,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/row.js~Row",
@@ -2319,7 +2239,7 @@
     "ignore": true
   },
   {
-    "__docId__": 155,
+    "__docId__": 153,
     "kind": "member",
     "name": "sheet",
     "memberof": "src/row.js~Row",
@@ -2337,7 +2257,7 @@
     "ignore": true
   },
   {
-    "__docId__": 156,
+    "__docId__": 154,
     "kind": "method",
     "name": "setHeightCM",
     "memberof": "src/row.js~Row",
@@ -2363,7 +2283,7 @@
     "return": null
   },
   {
-    "__docId__": 159,
+    "__docId__": 157,
     "kind": "method",
     "name": "addCell",
     "memberof": "src/row.js~Row",
@@ -2385,10 +2305,10 @@
     "params": []
   },
   {
-    "__docId__": 160,
+    "__docId__": 158,
     "kind": "file",
     "name": "src/sheet.js",
-    "content": "import { Row } from './row';\nimport { Col } from './col';\nimport { num2col, handleStyle, handleNumFmtId } from './lib';\nimport { makeXworksheet, XsheetData, Xpane, Xcols, Xcol, Xrow, Xdimension, Xc, Xf, XmergeCells, XmergeCell } from './xmlWorksheet';\n\n/**\n * Sheet of the xlsx file.\n * ```js\n * import { File } from 'better-xlsx';\n * const file = new File();\n * const sheet = file.addSheet('Sheet-1');\n * const row = sheet.addRow();\n * const cell = row.addCell();\n * ```\n */\nexport class Sheet {\n  rows = [];\n  cols = [];\n  maxRow = 0;\n  maxCol = 0;\n  hidden = false;\n  sheetViews = [];\n  sheetFormat = {\n    defaultColWidth: 0,\n    defaultRowHeight: 0,\n    outlineLevelCol: 0,\n    outlineLevelRow: 0\n  };\n  constructor ({ name, file, selected }) {\n    this.name = name;\n    this.file = file;\n    this.selected = selected;\n  }\n  /**\n   * Create a Row and add it into the Sheet.\n   * @return {Row}\n   */\n  addRow () {\n    const row = new Row({ sheet: this });\n    this.rows.push(row);\n    if (this.rows.length > this.maxRow) {\n      this.maxRow = this.rows.length;\n    }\n    return row;\n  }\n  maybeAddCol (cellCount) {\n    if (cellCount > this.maxCol) {\n      const col = new Col({\n        min: cellCount,\n        max: cellCount,\n        hidden: false,\n        collapsed: false\n      });\n      this.cols.push(col);\n      this.maxCol = cellCount;\n    }\n  }\n  /**\n   * Get Col of the sheet with index and create cols when `index > maxCol`.\n   * @param  {Number} idx Index of the Col [from 0].\n   * @return {Col}\n   */\n  col (idx) {\n    this.maybeAddCol(idx + 1);\n    return this.cols[idx];\n  }\n  /**\n   * Get Row of the sheet with index and create rows when `index > maxRow`.\n   * @param  {Number} idx Index of the Row [from 0].\n   * @return {Row}\n   */\n  row (idx) {\n    for (let len = this.rows.length; len <= idx; len++) {\n      this.addRow();\n    }\n    return this.rows[idx];\n  }\n  /**\n   * Get Cell of the sheet with `(row, col)` and create cell when out of range.\n   * @param  {Number} row\n   * @param {Number} col\n   * @return {Cell}\n   */\n  cell (row, col) {\n    for (let len = this.rows.length; len <= row; len++) {\n      this.addRow();\n    }\n    const r = this.rows[row];\n    for (let len = r.cells.length; len <= col; len++) {\n      r.addCell();\n    }\n    return r.cells[col];\n  }\n  /**\n   * Set columns width from `startcol` to `endcol`.\n   * @param {Number} startcol\n   * @param {Number} endcol\n   * @param {Number} width\n   */\n  setColWidth (startcol, endcol, width) {\n    if (startcol > endcol) {\n      throw new Error(`Could not set width for range ${startcol}-${endcol}: startcol must be less than endcol.`);\n    }\n    const col = new Col({\n      min: startcol + 1,\n      max: endcol + 1,\n      hidden: false,\n      collapsed: false,\n      width: width\n    });\n    this.cols.push(col);\n    if (endcol + 1 > this.maxCol) {\n      this.maxCol = endcol + 1;\n    }\n  }\n  handleMerged () {\n    const merged = [];\n    for (let r = 0; r < this.rows.length; r++) {\n      const row = this.rows[r];\n      for (let c = 0; c < row.cells.length; c++) {\n        const cell = row.cells[c];\n        if (cell.hMerge > 0 || cell.vMerge > 0) {\n          merged.push({ r, c, cell });\n        }\n      }\n    }\n    for (const { r, c, cell } of merged) {\n      const left = cell.style.border.left;\n      const right = cell.style.border.right;\n      const top = cell.style.border.top;\n      const bottom = cell.style.border.bottom;\n\n      cell.style.border.left = 'none';\n      cell.style.border.right = 'none';\n      cell.style.border.top = 'none';\n      cell.style.border.bottom = 'none';\n\n      for (let rownum = 0; rownum <= cell.vMerge; rownum++) {\n        for (let colnum = 0; colnum <= cell.hMerge; colnum++) {\n          const tmpcell = this.cell(r + rownum, c + colnum);\n          tmpcell.style.applyBorder = true;\n          if (rownum === 0) {\n            tmpcell.style.border.top = top;\n          }\n          if (rownum === cell.vMerge) {\n            tmpcell.style.border.bottom = bottom;\n          }\n          if (colnum === 0) {\n            tmpcell.style.border.left = left;\n          }\n          if (colnum === cell.hMerge) {\n            tmpcell.style.border.right = right;\n          }\n        }\n      }\n    }\n  }\n  makeXSheet (refTable, styles) {\n    const sheet = makeXworksheet();\n    const xSheet = new XsheetData();\n    let maxRow = 0;\n    let maxCell = 0;\n    let maxLevelCol;\n    let maxLevelRow;\n\n    this.handleMerged();\n\n    for (let i = 0; i < this.sheetViews.length; i++) {\n      const view = this.sheetViews[i];\n      if (view && view.pane) {\n        sheet.sheetViews.children[i].children.push(new Xpane({\n          xSplit: view.pane.xSplit,\n          ySplit: view.pane.ySplit,\n          topLeftCell: view.pane.topLeftCell,\n          activePane: view.pane.activePane,\n          state: view.pane.state\n        }));\n      }\n    }\n    if (this.selected) {\n      sheet.sheetViews.children[0].tabSelected = true;\n    }\n    if (this.sheetFormat.defaultRowHeight !== 0) {\n      sheet.sheetFormatPr.defaultRowHeight = this.sheetFormat.defaultRowHeight;\n    }\n    if (this.sheetFormat.defaultColWidth !== 0) {\n      sheet.sheetFormatPr.defaultColWidth = this.sheetFormat.defaultColWidth;\n    }\n\n    const fIdList = [];\n    sheet.cols = new Xcols();\n    for (let c = 0; c < this.cols.length; c++) {\n      const col = this.cols[c];\n      col.min = col.min || 1;\n      col.max = col.max || 1;\n      const xNumFmt = styles.newNumFmt(col.numFmt);\n      const fId = handleStyle(col.style, xNumFmt.numFmtId, styles);\n\n      fIdList.push(fId);\n\n      let customWidth = 0;\n      if (col.width === 0) {\n        col.width = 9.5;\n      } else {\n        customWidth = 1;\n      }\n      sheet.cols.children.push(new Xcol({\n        min: col.min,\n        max: col.max,\n        hidden: col.hidden,\n        width: col.width,\n        customWidth: customWidth,\n        collapsed: col.collapsed,\n        outlineLevel: col.outlineLevel,\n        style: fId\n      }));\n\n      if (col.outlineLevel > maxLevelCol) {\n        maxLevelCol = col.outlineLevel;\n      }\n    }\n    for (let r = 0; r < this.rows.length; r++) {\n      const row = this.rows[r];\n      if (r > maxRow) maxRow = r;\n      const xRow = new Xrow({ r: r + 1 });\n      if (row.isCustom) {\n        xRow.customHeight = true;\n        xRow.ht = row.height;\n      }\n      xRow.outlineLevel = row.outlineLevel;\n      if (row.outlineLevel > maxLevelRow) {\n        maxLevelRow = row.outlineLevel;\n      }\n      for (let c = 0; c < row.cells.length; c++) {\n        let fId = fIdList[c];\n        const cell = row.cells[c];\n        const xNumFmt = styles.newNumFmt(cell.numFmt);\n        const style = cell.style;\n        if (style !== null) {\n          fId = handleStyle(style, xNumFmt.numFmtId, styles);\n        } else if (cell.numFmt && this.cols[c].numFmt !== cell.numFmt) {\n          fId = handleNumFmtId(xNumFmt.NumFmtId, styles);\n        }\n\n        if (c > maxCell) maxCell = c;\n\n        const xC = new Xc({ r: `${num2col(c)}${r + 1}` });\n        switch (cell.cellType) {\n          case 'TypeString':\n            if (cell.value) {\n              xC.v = refTable.addString(cell.value);\n            }\n            xC.t = 's';\n            xC.s = fId;\n            break;\n          case 'TypeBool':\n            xC.v = cell.value;\n            xC.t = 'b';\n            xC.s = fId;\n            break;\n          case 'TypeNumeric':\n            xC.v = cell.value;\n            xC.s = fId;\n            break;\n          case 'TypeDate':\n            xC.v = cell.value;\n            xC.s = fId;\n            break;\n          case 'TypeFormula':\n            xC.v = cell.value;\n            xC.f = new Xf({}, [cell.formula]);\n            xC.s = fId;\n            break;\n          case 'TypeError':\n            xC.v = cell.value;\n            xC.f = new Xf({}, [cell.formula]);\n            xC.t = 'e';\n            xC.s = fId;\n            break;\n          case 'TypeGeneral':\n            xC.v = cell.value;\n            xC.s = fId;\n            break;\n        }\n        xRow.children.push(xC);\n        if (cell.hMerge > 0 || cell.vMerge > 0) {\n          // r == rownum, c == colnum\n          const start = `${num2col(c)}${r + 1}`;\n          const endcol = c + cell.hMerge;\n          const endrow = r + cell.vMerge + 1;\n          const end = `${num2col(endcol)}${endrow}`;\n          const mc = new XmergeCell({ ref: start + ':' + end });\n          if (sheet.mergeCells === null) {\n            sheet.mergeCells = new XmergeCells();\n          }\n          sheet.mergeCells.children.push(mc);\n        }\n      }\n      xSheet.children.push(xRow);\n    }\n    // Update sheet format with the freshly determined max levels\n    this.sheetFormat.outlineLevelCol = maxLevelCol;\n    this.sheetFormat.outlineLevelRow = maxLevelRow;\n    // .. and then also apply this to the xml worksheet\n    sheet.sheetFormatPr.outlineLevelCol = this.sheetFormat.outlineLevelCol;\n    sheet.sheetFormatPr.outlineLevelRow = this.sheetFormat.outlineLevelRow;\n\n    if (sheet.mergeCells !== null) {\n      sheet.mergeCells.count = sheet.mergeCells.children.length;\n    }\n\n    sheet.sheetData = xSheet;\n\n    const dimension = new Xdimension({\n      ref: `A1:${num2col(maxCell)}${maxRow + 1}`\n    });\n    if (dimension.ref === 'A1:A1') {\n      dimension.ref = 'A1';\n    }\n    sheet.dimension = dimension;\n    return sheet;\n  }\n}\n",
+    "content": "import { Row } from './row';\nimport { Col } from './col';\nimport { handleStyle, handleNumFmtId } from './style';\nimport { num2col } from './lib';\nimport { makeXworksheet, XsheetData, Xpane, Xcols, Xcol, Xrow, Xdimension, Xc, Xf, XmergeCells, XmergeCell } from './xmlWorksheet';\n\n/**\n * Sheet of the xlsx file.\n * ```js\n * import { File } from 'better-xlsx';\n * const file = new File();\n * const sheet = file.addSheet('Sheet-1');\n * const row = sheet.addRow();\n * const cell = row.addCell();\n * ```\n */\nexport class Sheet {\n  rows = [];\n  cols = [];\n  maxRow = 0;\n  maxCol = 0;\n  hidden = false;\n  sheetViews = [];\n  sheetFormat = {\n    defaultColWidth: 0,\n    defaultRowHeight: 0,\n    outlineLevelCol: 0,\n    outlineLevelRow: 0\n  };\n  constructor ({ name, file, selected }) {\n    this.name = name;\n    this.file = file;\n    this.selected = selected;\n  }\n  /**\n   * Create a Row and add it into the Sheet.\n   * @return {Row}\n   */\n  addRow () {\n    const row = new Row({ sheet: this });\n    this.rows.push(row);\n    if (this.rows.length > this.maxRow) {\n      this.maxRow = this.rows.length;\n    }\n    return row;\n  }\n  maybeAddCol (cellCount) {\n    if (cellCount > this.maxCol) {\n      const col = new Col({\n        min: cellCount,\n        max: cellCount,\n        hidden: false,\n        collapsed: false\n      });\n      this.cols.push(col);\n      this.maxCol = cellCount;\n    }\n  }\n  /**\n   * Get Col of the sheet with index and create cols when `index > maxCol`.\n   * @param  {Number} idx Index of the Col [from 0].\n   * @return {Col}\n   */\n  col (idx) {\n    this.maybeAddCol(idx + 1);\n    return this.cols[idx];\n  }\n  /**\n   * Get Row of the sheet with index and create rows when `index > maxRow`.\n   * @param  {Number} idx Index of the Row [from 0].\n   * @return {Row}\n   */\n  row (idx) {\n    for (let len = this.rows.length; len <= idx; len++) {\n      this.addRow();\n    }\n    return this.rows[idx];\n  }\n  /**\n   * Get Cell of the sheet with `(row, col)` and create cell when out of range.\n   * @param  {Number} row\n   * @param {Number} col\n   * @return {Cell}\n   */\n  cell (row, col) {\n    for (let len = this.rows.length; len <= row; len++) {\n      this.addRow();\n    }\n    const r = this.rows[row];\n    for (let len = r.cells.length; len <= col; len++) {\n      r.addCell();\n    }\n    return r.cells[col];\n  }\n  /**\n   * Set columns width from `startcol` to `endcol`.\n   * @param {Number} startcol\n   * @param {Number} endcol\n   * @param {Number} width\n   */\n  setColWidth (startcol, endcol, width) {\n    if (startcol > endcol) {\n      throw new Error(`Could not set width for range ${startcol}-${endcol}: startcol must be less than endcol.`);\n    }\n    const col = new Col({\n      min: startcol + 1,\n      max: endcol + 1,\n      hidden: false,\n      collapsed: false,\n      width: width\n    });\n    this.cols.push(col);\n    if (endcol + 1 > this.maxCol) {\n      this.maxCol = endcol + 1;\n    }\n  }\n  handleMerged () {\n    const merged = [];\n    for (let r = 0; r < this.rows.length; r++) {\n      const row = this.rows[r];\n      for (let c = 0; c < row.cells.length; c++) {\n        const cell = row.cells[c];\n        if (cell.hMerge > 0 || cell.vMerge > 0) {\n          merged.push({ r, c, cell });\n        }\n      }\n    }\n    for (const { r, c, cell } of merged) {\n      const left = cell.style.border.left;\n      const right = cell.style.border.right;\n      const top = cell.style.border.top;\n      const bottom = cell.style.border.bottom;\n\n      cell.style.border.left = 'none';\n      cell.style.border.right = 'none';\n      cell.style.border.top = 'none';\n      cell.style.border.bottom = 'none';\n\n      for (let rownum = 0; rownum <= cell.vMerge; rownum++) {\n        for (let colnum = 0; colnum <= cell.hMerge; colnum++) {\n          const tmpcell = this.cell(r + rownum, c + colnum);\n          tmpcell.style.applyBorder = true;\n          if (rownum === 0) {\n            tmpcell.style.border.top = top;\n          }\n          if (rownum === cell.vMerge) {\n            tmpcell.style.border.bottom = bottom;\n          }\n          if (colnum === 0) {\n            tmpcell.style.border.left = left;\n          }\n          if (colnum === cell.hMerge) {\n            tmpcell.style.border.right = right;\n          }\n        }\n      }\n    }\n  }\n  makeXSheet (refTable, styles) {\n    const sheet = makeXworksheet();\n    const xSheet = new XsheetData();\n    let maxRow = 0;\n    let maxCell = 0;\n    let maxLevelCol;\n    let maxLevelRow;\n\n    this.handleMerged();\n\n    for (let i = 0; i < this.sheetViews.length; i++) {\n      const view = this.sheetViews[i];\n      if (view && view.pane) {\n        sheet.sheetViews.children[i].children.push(new Xpane({\n          xSplit: view.pane.xSplit,\n          ySplit: view.pane.ySplit,\n          topLeftCell: view.pane.topLeftCell,\n          activePane: view.pane.activePane,\n          state: view.pane.state\n        }));\n      }\n    }\n    if (this.selected) {\n      sheet.sheetViews.children[0].tabSelected = true;\n    }\n    if (this.sheetFormat.defaultRowHeight !== 0) {\n      sheet.sheetFormatPr.defaultRowHeight = this.sheetFormat.defaultRowHeight;\n    }\n    if (this.sheetFormat.defaultColWidth !== 0) {\n      sheet.sheetFormatPr.defaultColWidth = this.sheetFormat.defaultColWidth;\n    }\n\n    const fIdList = [];\n    sheet.cols = new Xcols();\n    for (let c = 0; c < this.cols.length; c++) {\n      const col = this.cols[c];\n      col.min = col.min || 1;\n      col.max = col.max || 1;\n      const xNumFmt = styles.newNumFmt(col.numFmt);\n      const fId = handleStyle(col.style, xNumFmt.numFmtId, styles);\n\n      fIdList.push(fId);\n\n      let customWidth = 0;\n      if (col.width === 0) {\n        col.width = 9.5;\n      } else {\n        customWidth = 1;\n      }\n      sheet.cols.children.push(new Xcol({\n        min: col.min,\n        max: col.max,\n        hidden: col.hidden,\n        width: col.width,\n        customWidth: customWidth,\n        collapsed: col.collapsed,\n        outlineLevel: col.outlineLevel,\n        style: fId\n      }));\n\n      if (col.outlineLevel > maxLevelCol) {\n        maxLevelCol = col.outlineLevel;\n      }\n    }\n    for (let r = 0; r < this.rows.length; r++) {\n      const row = this.rows[r];\n      if (r > maxRow) maxRow = r;\n      const xRow = new Xrow({ r: r + 1 });\n      if (row.isCustom) {\n        xRow.customHeight = true;\n        xRow.ht = row.height;\n      }\n      xRow.outlineLevel = row.outlineLevel;\n      if (row.outlineLevel > maxLevelRow) {\n        maxLevelRow = row.outlineLevel;\n      }\n      for (let c = 0; c < row.cells.length; c++) {\n        let fId = fIdList[c];\n        const cell = row.cells[c];\n        const xNumFmt = styles.newNumFmt(cell.numFmt);\n        const style = cell.style;\n        if (style !== null) {\n          fId = handleStyle(style, xNumFmt.numFmtId, styles);\n        } else if (cell.numFmt && this.cols[c].numFmt !== cell.numFmt) {\n          fId = handleNumFmtId(xNumFmt.NumFmtId, styles);\n        }\n\n        if (c > maxCell) maxCell = c;\n\n        const xC = new Xc({ r: `${num2col(c)}${r + 1}` });\n        switch (cell.cellType) {\n          case 'TypeString':\n            if (cell.value) {\n              xC.v = refTable.addString(cell.value);\n            }\n            xC.t = 's';\n            xC.s = fId;\n            break;\n          case 'TypeBool':\n            xC.v = cell.value;\n            xC.t = 'b';\n            xC.s = fId;\n            break;\n          case 'TypeNumeric':\n            xC.v = cell.value;\n            xC.s = fId;\n            break;\n          case 'TypeDate':\n            xC.v = cell.value;\n            xC.s = fId;\n            break;\n          case 'TypeFormula':\n            xC.v = cell.value;\n            xC.f = new Xf({}, [cell.formula]);\n            xC.s = fId;\n            break;\n          case 'TypeError':\n            xC.v = cell.value;\n            xC.f = new Xf({}, [cell.formula]);\n            xC.t = 'e';\n            xC.s = fId;\n            break;\n          case 'TypeGeneral':\n            xC.v = cell.value;\n            xC.s = fId;\n            break;\n        }\n        xRow.children.push(xC);\n        if (cell.hMerge > 0 || cell.vMerge > 0) {\n          // r == rownum, c == colnum\n          const start = `${num2col(c)}${r + 1}`;\n          const endcol = c + cell.hMerge;\n          const endrow = r + cell.vMerge + 1;\n          const end = `${num2col(endcol)}${endrow}`;\n          const mc = new XmergeCell({ ref: start + ':' + end });\n          if (sheet.mergeCells === null) {\n            sheet.mergeCells = new XmergeCells();\n          }\n          sheet.mergeCells.children.push(mc);\n        }\n      }\n      xSheet.children.push(xRow);\n    }\n    // Update sheet format with the freshly determined max levels\n    this.sheetFormat.outlineLevelCol = maxLevelCol;\n    this.sheetFormat.outlineLevelRow = maxLevelRow;\n    // .. and then also apply this to the xml worksheet\n    sheet.sheetFormatPr.outlineLevelCol = this.sheetFormat.outlineLevelCol;\n    sheet.sheetFormatPr.outlineLevelRow = this.sheetFormat.outlineLevelRow;\n\n    if (sheet.mergeCells !== null) {\n      sheet.mergeCells.count = sheet.mergeCells.children.length;\n    }\n\n    sheet.sheetData = xSheet;\n\n    const dimension = new Xdimension({\n      ref: `A1:${num2col(maxCell)}${maxRow + 1}`\n    });\n    if (dimension.ref === 'A1:A1') {\n      dimension.ref = 'A1';\n    }\n    sheet.dimension = dimension;\n    return sheet;\n  }\n}\n",
     "static": true,
     "longname": "/Users/helloyou/Documents/js_pro/better-xlsx/src/sheet.js",
     "access": "public",
@@ -2396,7 +2316,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 161,
+    "__docId__": 159,
     "kind": "class",
     "name": "Sheet",
     "memberof": "src/sheet.js",
@@ -2407,34 +2327,16 @@
     "importPath": "better-xlsx/src/sheet.js",
     "importStyle": "{Sheet}",
     "description": "Sheet of the xlsx file.\n```js\nimport { File } from 'better-xlsx';\nconst file = new File();\nconst sheet = file.addSheet('Sheet-1');\nconst row = sheet.addRow();\nconst cell = row.addCell();\n```",
-    "lineNumber": 16,
+    "lineNumber": 17,
     "interface": false
   },
   {
-    "__docId__": 162,
+    "__docId__": 160,
     "kind": "member",
     "name": "rows",
     "memberof": "src/sheet.js~Sheet",
     "static": false,
     "longname": "src/sheet.js~Sheet#rows",
-    "access": "public",
-    "description": null,
-    "lineNumber": 17,
-    "undocument": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    },
-    "ignore": true
-  },
-  {
-    "__docId__": 163,
-    "kind": "member",
-    "name": "cols",
-    "memberof": "src/sheet.js~Sheet",
-    "static": false,
-    "longname": "src/sheet.js~Sheet#cols",
     "access": "public",
     "description": null,
     "lineNumber": 18,
@@ -2447,12 +2349,12 @@
     "ignore": true
   },
   {
-    "__docId__": 164,
+    "__docId__": 161,
     "kind": "member",
-    "name": "maxRow",
+    "name": "cols",
     "memberof": "src/sheet.js~Sheet",
     "static": false,
-    "longname": "src/sheet.js~Sheet#maxRow",
+    "longname": "src/sheet.js~Sheet#cols",
     "access": "public",
     "description": null,
     "lineNumber": 19,
@@ -2465,12 +2367,12 @@
     "ignore": true
   },
   {
-    "__docId__": 165,
+    "__docId__": 162,
     "kind": "member",
-    "name": "maxCol",
+    "name": "maxRow",
     "memberof": "src/sheet.js~Sheet",
     "static": false,
-    "longname": "src/sheet.js~Sheet#maxCol",
+    "longname": "src/sheet.js~Sheet#maxRow",
     "access": "public",
     "description": null,
     "lineNumber": 20,
@@ -2483,12 +2385,12 @@
     "ignore": true
   },
   {
-    "__docId__": 166,
+    "__docId__": 163,
     "kind": "member",
-    "name": "hidden",
+    "name": "maxCol",
     "memberof": "src/sheet.js~Sheet",
     "static": false,
-    "longname": "src/sheet.js~Sheet#hidden",
+    "longname": "src/sheet.js~Sheet#maxCol",
     "access": "public",
     "description": null,
     "lineNumber": 21,
@@ -2501,12 +2403,12 @@
     "ignore": true
   },
   {
-    "__docId__": 167,
+    "__docId__": 164,
     "kind": "member",
-    "name": "sheetViews",
+    "name": "hidden",
     "memberof": "src/sheet.js~Sheet",
     "static": false,
-    "longname": "src/sheet.js~Sheet#sheetViews",
+    "longname": "src/sheet.js~Sheet#hidden",
     "access": "public",
     "description": null,
     "lineNumber": 22,
@@ -2519,12 +2421,12 @@
     "ignore": true
   },
   {
-    "__docId__": 168,
+    "__docId__": 165,
     "kind": "member",
-    "name": "sheetFormat",
+    "name": "sheetViews",
     "memberof": "src/sheet.js~Sheet",
     "static": false,
-    "longname": "src/sheet.js~Sheet#sheetFormat",
+    "longname": "src/sheet.js~Sheet#sheetViews",
     "access": "public",
     "description": null,
     "lineNumber": 23,
@@ -2537,30 +2439,15 @@
     "ignore": true
   },
   {
-    "__docId__": 169,
-    "kind": "constructor",
-    "name": "constructor",
-    "memberof": "src/sheet.js~Sheet",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/sheet.js~Sheet#constructor",
-    "access": "public",
-    "description": null,
-    "lineNumber": 29,
-    "undocument": true,
-    "ignore": true
-  },
-  {
-    "__docId__": 170,
+    "__docId__": 166,
     "kind": "member",
-    "name": "name",
+    "name": "sheetFormat",
     "memberof": "src/sheet.js~Sheet",
     "static": false,
-    "longname": "src/sheet.js~Sheet#name",
+    "longname": "src/sheet.js~Sheet#sheetFormat",
     "access": "public",
     "description": null,
-    "lineNumber": 30,
+    "lineNumber": 24,
     "undocument": true,
     "type": {
       "types": [
@@ -2570,12 +2457,27 @@
     "ignore": true
   },
   {
-    "__docId__": 171,
+    "__docId__": 167,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/sheet.js~Sheet",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/sheet.js~Sheet#constructor",
+    "access": "public",
+    "description": null,
+    "lineNumber": 30,
+    "undocument": true,
+    "ignore": true
+  },
+  {
+    "__docId__": 168,
     "kind": "member",
-    "name": "file",
+    "name": "name",
     "memberof": "src/sheet.js~Sheet",
     "static": false,
-    "longname": "src/sheet.js~Sheet#file",
+    "longname": "src/sheet.js~Sheet#name",
     "access": "public",
     "description": null,
     "lineNumber": 31,
@@ -2588,12 +2490,12 @@
     "ignore": true
   },
   {
-    "__docId__": 172,
+    "__docId__": 169,
     "kind": "member",
-    "name": "selected",
+    "name": "file",
     "memberof": "src/sheet.js~Sheet",
     "static": false,
-    "longname": "src/sheet.js~Sheet#selected",
+    "longname": "src/sheet.js~Sheet#file",
     "access": "public",
     "description": null,
     "lineNumber": 32,
@@ -2606,7 +2508,25 @@
     "ignore": true
   },
   {
-    "__docId__": 173,
+    "__docId__": 170,
+    "kind": "member",
+    "name": "selected",
+    "memberof": "src/sheet.js~Sheet",
+    "static": false,
+    "longname": "src/sheet.js~Sheet#selected",
+    "access": "public",
+    "description": null,
+    "lineNumber": 33,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 171,
     "kind": "method",
     "name": "addRow",
     "memberof": "src/sheet.js~Sheet",
@@ -2616,7 +2536,7 @@
     "longname": "src/sheet.js~Sheet#addRow",
     "access": "public",
     "description": "Create a Row and add it into the Sheet.",
-    "lineNumber": 38,
+    "lineNumber": 39,
     "return": {
       "nullable": null,
       "types": [
@@ -2628,7 +2548,7 @@
     "params": []
   },
   {
-    "__docId__": 175,
+    "__docId__": 173,
     "kind": "method",
     "name": "maybeAddCol",
     "memberof": "src/sheet.js~Sheet",
@@ -2638,7 +2558,7 @@
     "longname": "src/sheet.js~Sheet#maybeAddCol",
     "access": "public",
     "description": null,
-    "lineNumber": 46,
+    "lineNumber": 47,
     "undocument": true,
     "params": [
       {
@@ -2652,7 +2572,7 @@
     "ignore": true
   },
   {
-    "__docId__": 177,
+    "__docId__": 175,
     "kind": "method",
     "name": "col",
     "memberof": "src/sheet.js~Sheet",
@@ -2662,7 +2582,7 @@
     "longname": "src/sheet.js~Sheet#col",
     "access": "public",
     "description": "Get Col of the sheet with index and create cols when `index > maxCol`.",
-    "lineNumber": 63,
+    "lineNumber": 64,
     "params": [
       {
         "nullable": null,
@@ -2685,7 +2605,7 @@
     }
   },
   {
-    "__docId__": 178,
+    "__docId__": 176,
     "kind": "method",
     "name": "row",
     "memberof": "src/sheet.js~Sheet",
@@ -2695,7 +2615,7 @@
     "longname": "src/sheet.js~Sheet#row",
     "access": "public",
     "description": "Get Row of the sheet with index and create rows when `index > maxRow`.",
-    "lineNumber": 72,
+    "lineNumber": 73,
     "params": [
       {
         "nullable": null,
@@ -2718,7 +2638,7 @@
     }
   },
   {
-    "__docId__": 179,
+    "__docId__": 177,
     "kind": "method",
     "name": "cell",
     "memberof": "src/sheet.js~Sheet",
@@ -2728,7 +2648,7 @@
     "longname": "src/sheet.js~Sheet#cell",
     "access": "public",
     "description": "Get Cell of the sheet with `(row, col)` and create cell when out of range.",
-    "lineNumber": 84,
+    "lineNumber": 85,
     "params": [
       {
         "nullable": null,
@@ -2761,7 +2681,7 @@
     }
   },
   {
-    "__docId__": 180,
+    "__docId__": 178,
     "kind": "method",
     "name": "setColWidth",
     "memberof": "src/sheet.js~Sheet",
@@ -2771,7 +2691,7 @@
     "longname": "src/sheet.js~Sheet#setColWidth",
     "access": "public",
     "description": "Set columns width from `startcol` to `endcol`.",
-    "lineNumber": 100,
+    "lineNumber": 101,
     "params": [
       {
         "nullable": null,
@@ -2807,7 +2727,7 @@
     "return": null
   },
   {
-    "__docId__": 182,
+    "__docId__": 180,
     "kind": "method",
     "name": "handleMerged",
     "memberof": "src/sheet.js~Sheet",
@@ -2817,14 +2737,14 @@
     "longname": "src/sheet.js~Sheet#handleMerged",
     "access": "public",
     "description": null,
-    "lineNumber": 116,
+    "lineNumber": 117,
     "undocument": true,
     "params": [],
     "return": null,
     "ignore": true
   },
   {
-    "__docId__": 183,
+    "__docId__": 181,
     "kind": "method",
     "name": "makeXSheet",
     "memberof": "src/sheet.js~Sheet",
@@ -2834,7 +2754,7 @@
     "longname": "src/sheet.js~Sheet#makeXSheet",
     "access": "public",
     "description": null,
-    "lineNumber": 158,
+    "lineNumber": 159,
     "undocument": true,
     "params": [
       {
@@ -2858,15 +2778,95 @@
     "ignore": true
   },
   {
-    "__docId__": 184,
+    "__docId__": 182,
     "kind": "file",
     "name": "src/style.js",
-    "content": "import { Xfont, Xfill, XpatternFill, Xborder, Xxf, Xalignment } from './xmlStyle';\n\n/**\n * Style class for set Cell styles.\n */\nexport class Style {\n  applyBorder = false;\n  applyFill = false;\n  applyFont = false;\n  applyAlignment = false;\n  namedStyleIndex = null;\n\n  constructor () {\n    /**\n     * Cell border\n     * @type {Border}\n     */\n    this.border = new Border({});\n    /**\n     * Cell fill background or foreground\n     * @type {Fill}\n     */\n    this.fill = new Fill({});\n    /**\n     * Cell font\n     * @type {Font}\n     */\n    this.font = new Font({});\n    /**\n     * Cell alignment\n     * @type {Alignment}\n     */\n    this.align = new Alignment({});\n  }\n  makeXStyleElements () {\n    const xFont = new Xfont({\n      sz: this.font.size,\n      name: this.font.name,\n      family: this.font.family,\n      charset: this.font.charset,\n      color: this.font.color,\n      b: this.font.bold,\n      i: this.font.italic,\n      u: this.font.underline\n    });\n    const xFill = new Xfill({\n      patternFill: new XpatternFill({\n        patternType: this.fill.patternType,\n        fgColor: this.fill.fgColor,\n        bgColor: this.fill.bgColor\n      })\n    });\n    const xBorder = new Xborder({\n      left: { style: this.border.left, color: this.border.leftColor },\n      right: { style: this.border.right, color: this.border.rightColor },\n      top: { style: this.border.top, color: this.border.topColor },\n      bottom: { style: this.border.bottom, color: this.border.bottomColor }\n    });\n    const xXf = new Xxf({\n      numFmtId: 0,\n      applyBorder: this.applyBorder,\n      applyFill: this.applyFill,\n      applyFont: this.applyFont,\n      applyAlignment: this.applyAlignment\n    });\n\n    xXf.alignment = new Xalignment({\n      horizontal: this.align.h,\n      indent: this.align.indent,\n      shrinkToFit: this.align.shrinkToFit,\n      textRotation: this.align.textRotation,\n      vertical: this.align.v,\n      wrapText: this.align.wrapText\n    });\n\n    if (this.namedStyleIndex !== null) {\n      xXf.xfId = this.namedStyleIndex;\n    }\n\n    return { xFont, xFill, xBorder, xXf };\n  }\n}\n\n/**\n * Border of the Style and border type have: `none`, `thin`, `medium`, `thick`, `dashed`, `dotted`, `double`\n * \n */\nexport class Border {\n  /**\n   * left border color\n   * @type {String}\n   */\n  leftColor = undefined;\n  /**\n   * right border color\n   * @type {String}\n   */\n  rightColor = undefined;\n  /**\n   * top border color\n   * @type {String}\n   */\n  topColor = undefined;\n  /**\n   * bottom border color\n   * @type {String}\n   */\n  bottomColor = undefined;\n\n  constructor ({ left = 'none', right = 'none', top = 'none', bottom = 'none' }) {\n    /**\n     * left border type\n     * @type {String}\n     */\n    this.left = left;\n    /**\n     * right border type\n     * @type {String}\n     */\n    this.right = right;\n    /**\n     * top border type\n     * @type {String}\n     */\n    this.top = top;\n    /**\n     * bottom border type\n     * @type {String}\n     */\n    this.bottom = bottom;\n  }\n}\n/**\n * Fill of the Style\n */\nexport class Fill {\n  constructor ({ patternType = 'none', fgColor = 'FFFFFFFF', bgColor = '00000000' }) {\n    /**\n     * pattern type of the fill\n     * @type {String}\n     */\n    this.patternType = patternType;\n    /**\n     * foreground color of the fill\n     * @type {String}\n     */\n    this.fgColor = fgColor;\n    /**\n     * background color of the fill\n     * @type {String}\n     */\n    this.bgColor = bgColor;\n  }\n}\n/**\n * Font of the Style\n */\nexport class Font {\n  family = 0;\n  charset = 0;\n  /**\n   * font color\n   * @type {String}\n   */\n  color = undefined;\n  /**\n   * Is bold style\n   * @type {Boolean}\n   */\n  bold = false;\n  /**\n   * Is italic style\n   * @type {Boolean}\n   */\n  italic = false;\n  /**\n   * IS underline style\n   * @type {Boolean}\n   */\n  underline = false;\n\n  constructor ({ size = 12, name = 'Verdana' }) {\n    /**\n     * font size [default 12]\n     * @type {Number}\n     */\n    this.size = size;\n    this.name = name;\n  }\n}\n/**\n * Alignment of the Style.\n */\nexport class Alignment {\n  indent = 0;\n  shrinkToFit = false;\n  textRotation = 0;\n  wrapText = false;\n\n  constructor ({ h = 'general', v = 'bottom' }) {\n    /**\n     * Horizontal align: `general`, `center`, `left`, `right`\n     * @type {String}\n     */\n    this.h = h;\n    /**\n     * Vertical align: `general`, `top`, `bottom`, `center`\n     * @type {String}\n     */\n    this.v = v;\n  }\n}\n",
+    "content": "import { Xfont, Xfill, XpatternFill, Xborder, Xxf, Xalignment } from './xmlStyle';\n\nexport function handleStyle (style, numFmtId, styles) {\n  const { xFont, xFill, xBorder, xXf } = style.makeXStyleElements();\n\n  const fontId = styles.addFont(xFont);\n  const fillId = styles.addFill(xFill);\n\n  // HACK - adding light grey fill, as in OO and Google\n  const greyfill = new Xfill({\n    patternFill: new XpatternFill({ patternType: 'lightGray' })\n  });\n  styles.addFill(greyfill);\n\n  const borderId = styles.addBorder(xBorder);\n  xXf.fontId = fontId;\n  xXf.fillId = fillId;\n  xXf.borderId = borderId;\n  xXf.numFmtId = numFmtId;\n  // apply the numFmtId when it is not the default cellxf\n  if (xXf.numFmtId > 0) {\n    xXf.applyNumberFormat = true;\n  }\n\n  xXf.alignment.horizontal = style.align.h;\n  xXf.alignment.indent = style.align.indent;\n  xXf.alignment.shrinkToFit = style.align.shrinkToFit;\n  xXf.alignment.textRotation = style.align.textRotation;\n  xXf.alignment.vertical = style.align.v;\n  xXf.alignment.wrapText = style.align.wrapText;\n\n  return styles.addCellXf(xXf);\n}\n\nexport function handleNumFmtId (numFmtId, styles) {\n  const xf = new Xxf({ numFmtId });\n  if (numFmtId > 0) {\n    xf.applyNumberFormat = true;\n  }\n  return styles.addCellXf(xf);\n}\n\n/**\n * Style class for set Cell styles.\n */\nexport class Style {\n  applyBorder = false;\n  applyFill = false;\n  applyFont = false;\n  applyAlignment = false;\n  namedStyleIndex = null;\n\n  constructor () {\n    /**\n     * Cell border\n     * @type {Border}\n     */\n    this.border = new Border({});\n    /**\n     * Cell fill background or foreground\n     * @type {Fill}\n     */\n    this.fill = new Fill({});\n    /**\n     * Cell font\n     * @type {Font}\n     */\n    this.font = new Font({});\n    /**\n     * Cell alignment\n     * @type {Alignment}\n     */\n    this.align = new Alignment({});\n  }\n  makeXStyleElements () {\n    const xFont = new Xfont({\n      sz: this.font.size,\n      name: this.font.name,\n      family: this.font.family,\n      charset: this.font.charset,\n      color: this.font.color,\n      b: this.font.bold,\n      i: this.font.italic,\n      u: this.font.underline\n    });\n    const xFill = new Xfill({\n      patternFill: new XpatternFill({\n        patternType: this.fill.patternType,\n        fgColor: this.fill.fgColor,\n        bgColor: this.fill.bgColor\n      })\n    });\n    const xBorder = new Xborder({\n      left: { style: this.border.left, color: this.border.leftColor },\n      right: { style: this.border.right, color: this.border.rightColor },\n      top: { style: this.border.top, color: this.border.topColor },\n      bottom: { style: this.border.bottom, color: this.border.bottomColor }\n    });\n    const xXf = new Xxf({\n      numFmtId: 0,\n      applyBorder: this.applyBorder,\n      applyFill: this.applyFill,\n      applyFont: this.applyFont,\n      applyAlignment: this.applyAlignment\n    });\n\n    xXf.alignment = new Xalignment({\n      horizontal: this.align.h,\n      indent: this.align.indent,\n      shrinkToFit: this.align.shrinkToFit,\n      textRotation: this.align.textRotation,\n      vertical: this.align.v,\n      wrapText: this.align.wrapText\n    });\n\n    if (this.namedStyleIndex !== null) {\n      xXf.xfId = this.namedStyleIndex;\n    }\n\n    return { xFont, xFill, xBorder, xXf };\n  }\n}\n\n/**\n * Border of the Style and border type have: `none`, `thin`, `medium`, `thick`, `dashed`, `dotted`, `double`\n *\n */\nexport class Border {\n  /**\n   * left border color\n   * @type {String}\n   */\n  leftColor = undefined;\n  /**\n   * right border color\n   * @type {String}\n   */\n  rightColor = undefined;\n  /**\n   * top border color\n   * @type {String}\n   */\n  topColor = undefined;\n  /**\n   * bottom border color\n   * @type {String}\n   */\n  bottomColor = undefined;\n\n  constructor ({ left = 'none', right = 'none', top = 'none', bottom = 'none' }) {\n    /**\n     * left border type\n     * @type {String}\n     */\n    this.left = left;\n    /**\n     * right border type\n     * @type {String}\n     */\n    this.right = right;\n    /**\n     * top border type\n     * @type {String}\n     */\n    this.top = top;\n    /**\n     * bottom border type\n     * @type {String}\n     */\n    this.bottom = bottom;\n  }\n}\n/**\n * Fill of the Style\n */\nexport class Fill {\n  constructor ({ patternType = 'none', fgColor = 'FFFFFFFF', bgColor = '00000000' }) {\n    /**\n     * pattern type of the fill\n     * @type {String}\n     */\n    this.patternType = patternType;\n    /**\n     * foreground color of the fill\n     * @type {String}\n     */\n    this.fgColor = fgColor;\n    /**\n     * background color of the fill\n     * @type {String}\n     */\n    this.bgColor = bgColor;\n  }\n}\n/**\n * Font of the Style\n */\nexport class Font {\n  family = 0;\n  charset = 0;\n  /**\n   * font color\n   * @type {String}\n   */\n  color = undefined;\n  /**\n   * Is bold style\n   * @type {Boolean}\n   */\n  bold = false;\n  /**\n   * Is italic style\n   * @type {Boolean}\n   */\n  italic = false;\n  /**\n   * IS underline style\n   * @type {Boolean}\n   */\n  underline = false;\n\n  constructor ({ size = 12, name = 'Verdana' }) {\n    /**\n     * font size [default 12]\n     * @type {Number}\n     */\n    this.size = size;\n    this.name = name;\n  }\n}\n/**\n * Alignment of the Style.\n */\nexport class Alignment {\n  indent = 0;\n  shrinkToFit = false;\n  textRotation = 0;\n  wrapText = false;\n\n  constructor ({ h = 'general', v = 'bottom' }) {\n    /**\n     * Horizontal align: `general`, `center`, `left`, `right`\n     * @type {String}\n     */\n    this.h = h;\n    /**\n     * Vertical align: `general`, `top`, `bottom`, `center`\n     * @type {String}\n     */\n    this.v = v;\n  }\n}\n",
     "static": true,
     "longname": "/Users/helloyou/Documents/js_pro/better-xlsx/src/style.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
+  },
+  {
+    "__docId__": 183,
+    "kind": "function",
+    "name": "handleStyle",
+    "memberof": "src/style.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/style.js~handleStyle",
+    "access": "public",
+    "export": true,
+    "importPath": "better-xlsx/src/style.js",
+    "importStyle": "{handleStyle}",
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "params": [
+      {
+        "name": "style",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "numFmtId",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "styles",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 184,
+    "kind": "function",
+    "name": "handleNumFmtId",
+    "memberof": "src/style.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/style.js~handleNumFmtId",
+    "access": "public",
+    "export": true,
+    "importPath": "better-xlsx/src/style.js",
+    "importStyle": "{handleNumFmtId}",
+    "description": null,
+    "lineNumber": 35,
+    "undocument": true,
+    "params": [
+      {
+        "name": "numFmtId",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "styles",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
   },
   {
     "__docId__": 185,
@@ -2880,7 +2880,7 @@
     "importPath": "better-xlsx/src/style.js",
     "importStyle": "{Style}",
     "description": "Style class for set Cell styles.",
-    "lineNumber": 6,
+    "lineNumber": 46,
     "interface": false
   },
   {
@@ -2892,7 +2892,7 @@
     "longname": "src/style.js~Style#applyBorder",
     "access": "public",
     "description": null,
-    "lineNumber": 7,
+    "lineNumber": 47,
     "undocument": true,
     "type": {
       "types": [
@@ -2910,7 +2910,7 @@
     "longname": "src/style.js~Style#applyFill",
     "access": "public",
     "description": null,
-    "lineNumber": 8,
+    "lineNumber": 48,
     "undocument": true,
     "type": {
       "types": [
@@ -2928,7 +2928,7 @@
     "longname": "src/style.js~Style#applyFont",
     "access": "public",
     "description": null,
-    "lineNumber": 9,
+    "lineNumber": 49,
     "undocument": true,
     "type": {
       "types": [
@@ -2946,7 +2946,7 @@
     "longname": "src/style.js~Style#applyAlignment",
     "access": "public",
     "description": null,
-    "lineNumber": 10,
+    "lineNumber": 50,
     "undocument": true,
     "type": {
       "types": [
@@ -2964,7 +2964,7 @@
     "longname": "src/style.js~Style#namedStyleIndex",
     "access": "public",
     "description": null,
-    "lineNumber": 11,
+    "lineNumber": 51,
     "undocument": true,
     "type": {
       "types": [
@@ -2984,7 +2984,7 @@
     "longname": "src/style.js~Style#constructor",
     "access": "public",
     "description": null,
-    "lineNumber": 13,
+    "lineNumber": 53,
     "undocument": true,
     "ignore": true
   },
@@ -2997,7 +2997,7 @@
     "longname": "src/style.js~Style#border",
     "access": "public",
     "description": "Cell border",
-    "lineNumber": 18,
+    "lineNumber": 58,
     "type": {
       "nullable": null,
       "types": [
@@ -3016,7 +3016,7 @@
     "longname": "src/style.js~Style#fill",
     "access": "public",
     "description": "Cell fill background or foreground",
-    "lineNumber": 23,
+    "lineNumber": 63,
     "type": {
       "nullable": null,
       "types": [
@@ -3035,7 +3035,7 @@
     "longname": "src/style.js~Style#font",
     "access": "public",
     "description": "Cell font",
-    "lineNumber": 28,
+    "lineNumber": 68,
     "type": {
       "nullable": null,
       "types": [
@@ -3054,7 +3054,7 @@
     "longname": "src/style.js~Style#align",
     "access": "public",
     "description": "Cell alignment",
-    "lineNumber": 33,
+    "lineNumber": 73,
     "type": {
       "nullable": null,
       "types": [
@@ -3075,7 +3075,7 @@
     "longname": "src/style.js~Style#makeXStyleElements",
     "access": "public",
     "description": null,
-    "lineNumber": 35,
+    "lineNumber": 75,
     "undocument": true,
     "params": [],
     "return": {
@@ -3097,7 +3097,7 @@
     "importPath": "better-xlsx/src/style.js",
     "importStyle": "{Border}",
     "description": "Border of the Style and border type have: `none`, `thin`, `medium`, `thick`, `dashed`, `dotted`, `double`",
-    "lineNumber": 88,
+    "lineNumber": 128,
     "interface": false
   },
   {
@@ -3109,7 +3109,7 @@
     "longname": "src/style.js~Border#leftColor",
     "access": "public",
     "description": "left border color",
-    "lineNumber": 93,
+    "lineNumber": 133,
     "type": {
       "nullable": null,
       "types": [
@@ -3128,7 +3128,7 @@
     "longname": "src/style.js~Border#rightColor",
     "access": "public",
     "description": "right border color",
-    "lineNumber": 98,
+    "lineNumber": 138,
     "type": {
       "nullable": null,
       "types": [
@@ -3147,7 +3147,7 @@
     "longname": "src/style.js~Border#topColor",
     "access": "public",
     "description": "top border color",
-    "lineNumber": 103,
+    "lineNumber": 143,
     "type": {
       "nullable": null,
       "types": [
@@ -3166,7 +3166,7 @@
     "longname": "src/style.js~Border#bottomColor",
     "access": "public",
     "description": "bottom border color",
-    "lineNumber": 108,
+    "lineNumber": 148,
     "type": {
       "nullable": null,
       "types": [
@@ -3187,7 +3187,7 @@
     "longname": "src/style.js~Border#constructor",
     "access": "public",
     "description": null,
-    "lineNumber": 110,
+    "lineNumber": 150,
     "undocument": true,
     "ignore": true
   },
@@ -3200,7 +3200,7 @@
     "longname": "src/style.js~Border#left",
     "access": "public",
     "description": "left border type",
-    "lineNumber": 115,
+    "lineNumber": 155,
     "type": {
       "nullable": null,
       "types": [
@@ -3219,7 +3219,7 @@
     "longname": "src/style.js~Border#right",
     "access": "public",
     "description": "right border type",
-    "lineNumber": 120,
+    "lineNumber": 160,
     "type": {
       "nullable": null,
       "types": [
@@ -3238,7 +3238,7 @@
     "longname": "src/style.js~Border#top",
     "access": "public",
     "description": "top border type",
-    "lineNumber": 125,
+    "lineNumber": 165,
     "type": {
       "nullable": null,
       "types": [
@@ -3257,7 +3257,7 @@
     "longname": "src/style.js~Border#bottom",
     "access": "public",
     "description": "bottom border type",
-    "lineNumber": 130,
+    "lineNumber": 170,
     "type": {
       "nullable": null,
       "types": [
@@ -3279,7 +3279,7 @@
     "importPath": "better-xlsx/src/style.js",
     "importStyle": "{Fill}",
     "description": "Fill of the Style",
-    "lineNumber": 136,
+    "lineNumber": 176,
     "interface": false
   },
   {
@@ -3293,7 +3293,7 @@
     "longname": "src/style.js~Fill#constructor",
     "access": "public",
     "description": null,
-    "lineNumber": 137,
+    "lineNumber": 177,
     "undocument": true,
     "ignore": true
   },
@@ -3306,7 +3306,7 @@
     "longname": "src/style.js~Fill#patternType",
     "access": "public",
     "description": "pattern type of the fill",
-    "lineNumber": 142,
+    "lineNumber": 182,
     "type": {
       "nullable": null,
       "types": [
@@ -3325,7 +3325,7 @@
     "longname": "src/style.js~Fill#fgColor",
     "access": "public",
     "description": "foreground color of the fill",
-    "lineNumber": 147,
+    "lineNumber": 187,
     "type": {
       "nullable": null,
       "types": [
@@ -3344,7 +3344,7 @@
     "longname": "src/style.js~Fill#bgColor",
     "access": "public",
     "description": "background color of the fill",
-    "lineNumber": 152,
+    "lineNumber": 192,
     "type": {
       "nullable": null,
       "types": [
@@ -3366,7 +3366,7 @@
     "importPath": "better-xlsx/src/style.js",
     "importStyle": "{Font}",
     "description": "Font of the Style",
-    "lineNumber": 158,
+    "lineNumber": 198,
     "interface": false
   },
   {
@@ -3378,7 +3378,7 @@
     "longname": "src/style.js~Font#family",
     "access": "public",
     "description": null,
-    "lineNumber": 159,
+    "lineNumber": 199,
     "undocument": true,
     "type": {
       "types": [
@@ -3396,7 +3396,7 @@
     "longname": "src/style.js~Font#charset",
     "access": "public",
     "description": null,
-    "lineNumber": 160,
+    "lineNumber": 200,
     "undocument": true,
     "type": {
       "types": [
@@ -3414,7 +3414,7 @@
     "longname": "src/style.js~Font#color",
     "access": "public",
     "description": "font color",
-    "lineNumber": 165,
+    "lineNumber": 205,
     "type": {
       "nullable": null,
       "types": [
@@ -3433,7 +3433,7 @@
     "longname": "src/style.js~Font#bold",
     "access": "public",
     "description": "Is bold style",
-    "lineNumber": 170,
+    "lineNumber": 210,
     "type": {
       "nullable": null,
       "types": [
@@ -3452,7 +3452,7 @@
     "longname": "src/style.js~Font#italic",
     "access": "public",
     "description": "Is italic style",
-    "lineNumber": 175,
+    "lineNumber": 215,
     "type": {
       "nullable": null,
       "types": [
@@ -3471,7 +3471,7 @@
     "longname": "src/style.js~Font#underline",
     "access": "public",
     "description": "IS underline style",
-    "lineNumber": 180,
+    "lineNumber": 220,
     "type": {
       "nullable": null,
       "types": [
@@ -3492,7 +3492,7 @@
     "longname": "src/style.js~Font#constructor",
     "access": "public",
     "description": null,
-    "lineNumber": 182,
+    "lineNumber": 222,
     "undocument": true,
     "ignore": true
   },
@@ -3505,7 +3505,7 @@
     "longname": "src/style.js~Font#size",
     "access": "public",
     "description": "font size [default 12]",
-    "lineNumber": 187,
+    "lineNumber": 227,
     "type": {
       "nullable": null,
       "types": [
@@ -3524,7 +3524,7 @@
     "longname": "src/style.js~Font#name",
     "access": "public",
     "description": null,
-    "lineNumber": 188,
+    "lineNumber": 228,
     "undocument": true,
     "type": {
       "types": [
@@ -3545,7 +3545,7 @@
     "importPath": "better-xlsx/src/style.js",
     "importStyle": "{Alignment}",
     "description": "Alignment of the Style.",
-    "lineNumber": 194,
+    "lineNumber": 234,
     "interface": false
   },
   {
@@ -3557,7 +3557,7 @@
     "longname": "src/style.js~Alignment#indent",
     "access": "public",
     "description": null,
-    "lineNumber": 195,
+    "lineNumber": 235,
     "undocument": true,
     "type": {
       "types": [
@@ -3575,7 +3575,7 @@
     "longname": "src/style.js~Alignment#shrinkToFit",
     "access": "public",
     "description": null,
-    "lineNumber": 196,
+    "lineNumber": 236,
     "undocument": true,
     "type": {
       "types": [
@@ -3593,7 +3593,7 @@
     "longname": "src/style.js~Alignment#textRotation",
     "access": "public",
     "description": null,
-    "lineNumber": 197,
+    "lineNumber": 237,
     "undocument": true,
     "type": {
       "types": [
@@ -3611,7 +3611,7 @@
     "longname": "src/style.js~Alignment#wrapText",
     "access": "public",
     "description": null,
-    "lineNumber": 198,
+    "lineNumber": 238,
     "undocument": true,
     "type": {
       "types": [
@@ -3631,7 +3631,7 @@
     "longname": "src/style.js~Alignment#constructor",
     "access": "public",
     "description": null,
-    "lineNumber": 200,
+    "lineNumber": 240,
     "undocument": true,
     "ignore": true
   },
@@ -3644,7 +3644,7 @@
     "longname": "src/style.js~Alignment#h",
     "access": "public",
     "description": "Horizontal align: `general`, `center`, `left`, `right`",
-    "lineNumber": 205,
+    "lineNumber": 245,
     "type": {
       "nullable": null,
       "types": [
@@ -3663,7 +3663,7 @@
     "longname": "src/style.js~Alignment#v",
     "access": "public",
     "description": "Vertical align: `general`, `top`, `bottom`, `center`",
-    "lineNumber": 210,
+    "lineNumber": 250,
     "type": {
       "nullable": null,
       "types": [
@@ -6884,7 +6884,7 @@
   },
   {
     "kind": "index",
-    "content": "better-xlsx\n===========\n\n> A better xlsx lib for read / write / toTable / from Table\n\n[![NPM version](https://img.shields.io/npm/v/better-xlsx.svg)](https://www.npmjs.com/package/better-xlsx)\n[![NPM downloads](https://img.shields.io/npm/dm/better-xlsx.svg)](https://www.npmjs.com/package/better-xlsx)\n[![Build Status](https://travis-ci.org/d-band/better-xlsx.svg?branch=master)](https://travis-ci.org/d-band/better-xlsx)\n[![Coverage Status](https://coveralls.io/repos/github/d-band/better-xlsx/badge.svg?branch=master)](https://coveralls.io/github/d-band/better-xlsx?branch=master)\n[![Dependency Status](https://david-dm.org/d-band/better-xlsx.svg)](https://david-dm.org/d-band/better-xlsx)\n[![Greenkeeper badge](https://badges.greenkeeper.io/d-band/better-xlsx.svg)](https://greenkeeper.io/)\n\n---\n\n## Install\n\n```bash\n$ npm install better-xlsx\n```\n\n## Usage\n\n- [More Examples](examples)\n\n```\nconst fs = require('fs');\nconst xlsx = require('better-xlsx');\n\nconst file = new xlsx.File();\n\nconst sheet = file.addSheet('Sheet1');\nconst row = sheet.addRow();\nconst cell = row.addCell();\n\ncell.value = 'I am a cell!';\ncell.hMerge = 2;\ncell.vMerge = 1;\n\nconst style = new xlsx.Style();\n\nstyle.fill.patternType = 'solid';\nstyle.fill.fgColor = '00FF0000';\nstyle.fill.bgColor = 'FF000000';\nstyle.align.h = 'center';\nstyle.align.v = 'center';\n\ncell.style = style;\n\nfile\n  .saveAs()\n  .pipe(fs.createWriteStream('test.xlsx'))\n  .on('finish', () => console.log('Done.'));\n```\n\n## Todo\n\n- [ ] xlsx parser\n- [ ] read excel file\n- [x] write excel file\n- [x] transform html table to excel file [html2xlsx](https://github.com/d-band/html2xlsx)\n\n## Report a issue\n\n* [All issues](https://github.com/d-band/better-xlsx/issues)\n* [New issue](https://github.com/d-band/better-xlsx/issues/new)\n\n## Reference\n\n- http://www.ecma-international.org/publications/standards/Ecma-376.htm\n- https://github.com/tealeg/xlsx\n\n## License\n\nbetter-xlsx is available under the terms of the MIT License.",
+    "content": "better-xlsx\n===========\n\n> A better xlsx lib for read / write / toTable / from Table\n\n[![NPM version](https://img.shields.io/npm/v/better-xlsx.svg)](https://www.npmjs.com/package/better-xlsx)\n[![NPM downloads](https://img.shields.io/npm/dm/better-xlsx.svg)](https://www.npmjs.com/package/better-xlsx)\n[![Build Status](https://travis-ci.org/d-band/better-xlsx.svg?branch=master)](https://travis-ci.org/d-band/better-xlsx)\n[![Coverage Status](https://coveralls.io/repos/github/d-band/better-xlsx/badge.svg?branch=master)](https://coveralls.io/github/d-band/better-xlsx?branch=master)\n[![Dependency Status](https://david-dm.org/d-band/better-xlsx.svg)](https://david-dm.org/d-band/better-xlsx)\n[![Greenkeeper badge](https://badges.greenkeeper.io/d-band/better-xlsx.svg)](https://greenkeeper.io/)\n\n---\n\n## Install\n\n```bash\n$ npm install better-xlsx\n```\n\n## Usage\n\n- [More Examples](examples)\n\n```javascript\nconst fs = require('fs');\nconst xlsx = require('better-xlsx');\n\nconst file = new xlsx.File();\n\nconst sheet = file.addSheet('Sheet1');\nconst row = sheet.addRow();\nconst cell = row.addCell();\n\ncell.value = 'I am a cell!';\ncell.hMerge = 2;\ncell.vMerge = 1;\n\nconst style = new xlsx.Style();\n\nstyle.fill.patternType = 'solid';\nstyle.fill.fgColor = '00FF0000';\nstyle.fill.bgColor = 'FF000000';\nstyle.align.h = 'center';\nstyle.align.v = 'center';\n\ncell.style = style;\n\nfile\n  .saveAs()\n  .pipe(fs.createWriteStream('test.xlsx'))\n  .on('finish', () => console.log('Done.'));\n```\n\n## Todo\n\n- [ ] xlsx parser\n- [ ] read excel file\n- [x] write excel file\n- [x] transform html table to excel file [html2xlsx](https://github.com/d-band/html2xlsx)\n\n## Report a issue\n\n* [All issues](https://github.com/d-band/better-xlsx/issues)\n* [New issue](https://github.com/d-band/better-xlsx/issues/new)\n\n## Reference\n\n- http://www.ecma-international.org/publications/standards/Ecma-376.htm\n- https://github.com/tealeg/xlsx\n\n## License\n\nbetter-xlsx is available under the terms of the MIT License.",
     "longname": "/Users/helloyou/Documents/js_pro/better-xlsx/README.md",
     "name": "./README.md",
     "static": true,
@@ -6892,7 +6892,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"better-xlsx\",\n  \"version\": \"0.3.7\",\n  \"description\": \"A better xlsx lib for read / write / toTable / from Table\",\n  \"main\": \"lib/index.js\",\n  \"scripts\": {\n    \"lint\": \"eslint --ext .js src test\",\n    \"build\": \"npm run build:node && npm run build:dist\",\n    \"build:node\": \"rimraf lib && NODE_ENV=production babel --out-dir=lib src\",\n    \"build:dist\": \"rimraf dist && NODE_ENV=production rollup -c && uglifyjs -o dist/xlsx.min.js dist/xlsx.js\",\n    \"prepublish\": \"npm run build\",\n    \"test\": \"NODE_ENV=test nyc mocha --no-timeouts\",\n    \"report\": \"nyc report --reporter=html\",\n    \"coveralls\": \"nyc report --reporter=text-lcov | coveralls\",\n    \"doc\": \"rimraf esdoc && esdoc\",\n    \"pages\": \"npm run doc && gh-pages -d esdoc\"\n  },\n  \"nyc\": {\n    \"include\": [\n      \"src/**/*.js\"\n    ],\n    \"require\": [\n      \"babel-register\"\n    ],\n    \"sourceMap\": false,\n    \"instrument\": false\n  },\n  \"pre-commit\": [\n    \"lint\"\n  ],\n  \"devDependencies\": {\n    \"babel-cli\": \"^6.18.0\",\n    \"babel-eslint\": \"^7.1.1\",\n    \"babel-plugin-add-module-exports\": \"^0.2.1\",\n    \"babel-plugin-external-helpers\": \"^6.18.0\",\n    \"babel-plugin-istanbul\": \"^4.1.3\",\n    \"babel-plugin-transform-decorators-legacy\": \"^1.3.4\",\n    \"babel-plugin-transform-runtime\": \"^6.15.0\",\n    \"babel-preset-env\": \"^1.1.4\",\n    \"babel-preset-es2015\": \"^6.18.0\",\n    \"babel-preset-stage-0\": \"^6.16.0\",\n    \"babel-preset-stage-2\": \"^6.18.0\",\n    \"babel-register\": \"^6.18.0\",\n    \"babel-runtime\": \"^6.20.0\",\n    \"chai\": \"^4.0.0\",\n    \"coveralls\": \"^2.11.14\",\n    \"esdoc\": \"^1.0.1\",\n    \"esdoc-ecmascript-proposal-plugin\": \"^1.0.0\",\n    \"esdoc-inject-style-plugin\": \"^1.0.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint\": \"^4.1.0\",\n    \"eslint-config-standard\": \"^10.2.1\",\n    \"eslint-plugin-import\": \"^2.3.0\",\n    \"eslint-plugin-node\": \"^5.0.0\",\n    \"eslint-plugin-promise\": \"^3.3.1\",\n    \"eslint-plugin-standard\": \"^3.0.1\",\n    \"gh-pages\": \"^1.0.0\",\n    \"mocha\": \"^3.1.2\",\n    \"nyc\": \"^11.0.0\",\n    \"pre-commit\": \"^1.1.3\",\n    \"rimraf\": \"^2.5.4\",\n    \"rollup\": \"^0.47.3\",\n    \"rollup-plugin-babel\": \"^3.0.0\",\n    \"rollup-plugin-commonjs\": \"^8.0.2\",\n    \"rollup-plugin-node-resolve\": \"^3.0.0\",\n    \"stream-equal\": \"^1.0.0\",\n    \"uglify-js\": \"^3.0.7\"\n  },\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+https://github.com/d-band/better-xlsx.git\"\n  },\n  \"engines\": {\n    \"node\": \">= 4\"\n  },\n  \"keywords\": [\n    \"xlsx\",\n    \"excel\",\n    \"html\",\n    \"read\",\n    \"write\"\n  ],\n  \"author\": \"d-band\",\n  \"license\": \"MIT\",\n  \"bugs\": {\n    \"url\": \"https://github.com/d-band/better-xlsx/issues\"\n  },\n  \"homepage\": \"https://github.com/d-band/better-xlsx#readme\",\n  \"dependencies\": {\n    \"jszip\": \"^3.1.3\",\n    \"kind-of\": \"^5.0.0\"\n  }\n}\n",
+    "content": "{\n  \"name\": \"better-xlsx\",\n  \"version\": \"0.5.0\",\n  \"description\": \"A better xlsx lib for read / write / toTable / from Table\",\n  \"main\": \"lib/index.js\",\n  \"scripts\": {\n    \"lint\": \"eslint --ext .js src test\",\n    \"build\": \"npm run build:node && npm run build:dist\",\n    \"build:node\": \"rimraf lib && NODE_ENV=production babel --out-dir=lib src\",\n    \"build:dist\": \"rimraf dist && NODE_ENV=production rollup -c && uglifyjs -o dist/xlsx.min.js dist/xlsx.js\",\n    \"prepublish\": \"npm run build\",\n    \"test\": \"NODE_ENV=test nyc mocha --no-timeouts\",\n    \"report\": \"nyc report --reporter=html\",\n    \"coveralls\": \"nyc report --reporter=text-lcov | coveralls\",\n    \"doc\": \"rimraf esdoc && esdoc\",\n    \"pages\": \"npm run doc && gh-pages -d esdoc\"\n  },\n  \"nyc\": {\n    \"include\": [\n      \"src/**/*.js\"\n    ],\n    \"require\": [\n      \"babel-register\"\n    ],\n    \"sourceMap\": false,\n    \"instrument\": false\n  },\n  \"pre-commit\": [\n    \"lint\"\n  ],\n  \"devDependencies\": {\n    \"babel-cli\": \"^6.18.0\",\n    \"babel-eslint\": \"^8.0.0\",\n    \"babel-plugin-add-module-exports\": \"^0.2.1\",\n    \"babel-plugin-external-helpers\": \"^6.18.0\",\n    \"babel-plugin-istanbul\": \"^4.1.3\",\n    \"babel-plugin-transform-decorators-legacy\": \"^1.3.4\",\n    \"babel-plugin-transform-runtime\": \"^6.15.0\",\n    \"babel-preset-env\": \"^1.1.4\",\n    \"babel-preset-stage-0\": \"^6.16.0\",\n    \"babel-register\": \"^6.18.0\",\n    \"babel-runtime\": \"^6.20.0\",\n    \"chai\": \"^4.0.0\",\n    \"coveralls\": \"^3.0.0\",\n    \"esdoc\": \"^1.0.1\",\n    \"esdoc-ecmascript-proposal-plugin\": \"^1.0.0\",\n    \"esdoc-inject-style-plugin\": \"^1.0.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint\": \"^4.1.0\",\n    \"eslint-config-standard\": \"^11.0.0\",\n    \"eslint-plugin-import\": \"^2.3.0\",\n    \"eslint-plugin-node\": \"^6.0.0\",\n    \"eslint-plugin-promise\": \"^3.3.1\",\n    \"eslint-plugin-standard\": \"^3.0.1\",\n    \"gh-pages\": \"^1.0.0\",\n    \"mocha\": \"^5.0.0\",\n    \"nyc\": \"^11.0.0\",\n    \"pre-commit\": \"^1.1.3\",\n    \"rimraf\": \"^2.5.4\",\n    \"rollup\": \"^0.57.0\",\n    \"rollup-plugin-babel\": \"^3.0.0\",\n    \"rollup-plugin-commonjs\": \"^9.0.0\",\n    \"rollup-plugin-node-resolve\": \"^3.0.0\",\n    \"stream-equal\": \"^1.0.0\",\n    \"uglify-js\": \"^3.0.7\"\n  },\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+https://github.com/d-band/better-xlsx.git\"\n  },\n  \"engines\": {\n    \"node\": \">= 4\"\n  },\n  \"keywords\": [\n    \"xlsx\",\n    \"excel\",\n    \"html\",\n    \"read\",\n    \"write\"\n  ],\n  \"author\": \"d-band\",\n  \"license\": \"MIT\",\n  \"bugs\": {\n    \"url\": \"https://github.com/d-band/better-xlsx/issues\"\n  },\n  \"homepage\": \"https://github.com/d-band/better-xlsx#readme\",\n  \"dependencies\": {\n    \"jszip\": \"^3.1.3\",\n    \"kind-of\": \"^6.0.0\"\n  }\n}\n",
     "longname": "/Users/helloyou/Documents/js_pro/better-xlsx/package.json",
     "name": "package.json",
     "static": true,

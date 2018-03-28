@@ -376,6 +376,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -394,7 +395,6 @@
                   },
                   "name": "constructor"
                 },
-                "static": false,
                 "kind": "constructor",
                 "id": null,
                 "generator": false,
@@ -1165,6 +1165,7 @@
                     "column": 21
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1183,7 +1184,6 @@
                   },
                   "name": "fileVersion"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 461,
@@ -1214,6 +1214,7 @@
                     "column": 20
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1232,7 +1233,6 @@
                   },
                   "name": "workbookPr"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 482,
@@ -1263,6 +1263,7 @@
                     "column": 19
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1281,7 +1282,6 @@
                   },
                   "name": "bookViews"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 502,
@@ -1312,6 +1312,7 @@
                     "column": 16
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1330,7 +1331,6 @@
                   },
                   "name": "sheets"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 519,
@@ -1361,6 +1361,7 @@
                     "column": 16
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1379,7 +1380,6 @@
                   },
                   "name": "calcPr"
                 },
-                "static": false,
                 "value": {
                   "type": "NullLiteral",
                   "start": 536,
@@ -1410,6 +1410,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1428,7 +1429,6 @@
                   },
                   "name": "constructor"
                 },
-                "static": false,
                 "kind": "constructor",
                 "id": null,
                 "generator": false,
@@ -2060,6 +2060,7 @@
                     "column": 3
                   }
                 },
+                "static": false,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -2078,7 +2079,6 @@
                   },
                   "name": "render"
                 },
-                "static": false,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -8545,7 +8545,7 @@
         "label": "import",
         "keyword": "import",
         "beforeExpr": false,
-        "startsExpr": false,
+        "startsExpr": true,
         "rightAssociative": false,
         "isLoop": false,
         "isAssign": false,
