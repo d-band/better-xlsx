@@ -1,9 +1,9 @@
 'use strict';
 
 import { expect } from 'chai';
-import { Style } from '../src/style';
+import { Style, handleStyle, handleNumFmtId } from '../src/style';
 import { XstyleSheet } from '../src/xmlStyle';
-import { col2num, num2col, cid2coord, handleStyle, handleNumFmtId } from '../src/lib';
+import { col2num, num2col, cid2coord } from '../src/lib';
 
 describe('Test: lib.js', () => {
   it('should col2num ok', () => {

@@ -1,8 +1,7 @@
-import { Xfill, XpatternFill, Xxf } from './xmlStyle';
 const NumFmtsCount = 163;
 /**
  * Number format table
- * 
+ *
  * ```js
  * {
  *   0: 'general',
@@ -39,7 +38,7 @@ const NumFmtsCount = 163;
  *   49: '@'
  * }
  * ```
- * 
+ *
  * @type {Object}
  */
 const NumFmt = {
@@ -106,49 +105,9 @@ function cid2coord (cid) {
   };
 }
 
-function handleStyle (style, numFmtId, styles) {
-  const { xFont, xFill, xBorder, xXf } = style.makeXStyleElements();
-
-  const fontId = styles.addFont(xFont);
-  const fillId = styles.addFill(xFill);
-
-  // HACK - adding light grey fill, as in OO and Google
-  const greyfill = new Xfill({
-    patternFill: new XpatternFill({ patternType: 'lightGray' })
-  });
-  styles.addFill(greyfill);
-
-  const borderId = styles.addBorder(xBorder);
-  xXf.fontId = fontId;
-  xXf.fillId = fillId;
-  xXf.borderId = borderId;
-  xXf.numFmtId = numFmtId;
-  // apply the numFmtId when it is not the default cellxf
-  if (xXf.numFmtId > 0) {
-    xXf.applyNumberFormat = true;
-  }
-
-  xXf.alignment.horizontal = style.align.h;
-  xXf.alignment.indent = style.align.indent;
-  xXf.alignment.shrinkToFit = style.align.shrinkToFit;
-  xXf.alignment.textRotation = style.align.textRotation;
-  xXf.alignment.vertical = style.align.v;
-  xXf.alignment.wrapText = style.align.wrapText;
-
-  return styles.addCellXf(xXf);
-}
-
-function handleNumFmtId (numFmtId, styles) {
-  const xf = new Xxf({ numFmtId });
-  if (numFmtId > 0) {
-    xf.applyNumberFormat = true;
-  }
-  return styles.addCellXf(xf);
-}
-
 function toExcelTime (d) {
   const unix = d.getTime() / 1000;
   return unix / 86400.0 + 25569.0;
 }
 
-export { NumFmt, NumFmtInv, NumFmtsCount, col2num, num2col, cid2coord, handleStyle, handleNumFmtId, toExcelTime };
+export { NumFmt, NumFmtInv, NumFmtsCount, col2num, num2col, cid2coord, toExcelTime };

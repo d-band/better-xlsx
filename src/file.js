@@ -8,13 +8,13 @@ import Zip from 'jszip';
 
 /**
  * This is the main class, use it:
- * 
+ *
  * ```js
  * import { File } from 'better-xlsx';
  * const file = new File();
  * const sheet = file.addSheet('Sheet-1');
  * ```
- * 
+ *
  * @class File
  */
 export class File {

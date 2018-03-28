@@ -1,6 +1,7 @@
 import { Row } from './row';
 import { Col } from './col';
-import { num2col, handleStyle, handleNumFmtId } from './lib';
+import { handleStyle, handleNumFmtId } from './style';
+import { num2col } from './lib';
 import { makeXworksheet, XsheetData, Xpane, Xcols, Xcol, Xrow, Xdimension, Xc, Xf, XmergeCells, XmergeCell } from './xmlWorksheet';
 
 /**

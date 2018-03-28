@@ -1,5 +1,45 @@
 import { Xfont, Xfill, XpatternFill, Xborder, Xxf, Xalignment } from './xmlStyle';
 
+export function handleStyle (style, numFmtId, styles) {
+  const { xFont, xFill, xBorder, xXf } = style.makeXStyleElements();
+
+  const fontId = styles.addFont(xFont);
+  const fillId = styles.addFill(xFill);
+
+  // HACK - adding light grey fill, as in OO and Google
+  const greyfill = new Xfill({
+    patternFill: new XpatternFill({ patternType: 'lightGray' })
+  });
+  styles.addFill(greyfill);
+
+  const borderId = styles.addBorder(xBorder);
+  xXf.fontId = fontId;
+  xXf.fillId = fillId;
+  xXf.borderId = borderId;
+  xXf.numFmtId = numFmtId;
+  // apply the numFmtId when it is not the default cellxf
+  if (xXf.numFmtId > 0) {
+    xXf.applyNumberFormat = true;
+  }
+
+  xXf.alignment.horizontal = style.align.h;
+  xXf.alignment.indent = style.align.indent;
+  xXf.alignment.shrinkToFit = style.align.shrinkToFit;
+  xXf.alignment.textRotation = style.align.textRotation;
+  xXf.alignment.vertical = style.align.v;
+  xXf.alignment.wrapText = style.align.wrapText;
+
+  return styles.addCellXf(xXf);
+}
+
+export function handleNumFmtId (numFmtId, styles) {
+  const xf = new Xxf({ numFmtId });
+  if (numFmtId > 0) {
+    xf.applyNumberFormat = true;
+  }
+  return styles.addCellXf(xf);
+}
+
 /**
  * Style class for set Cell styles.
  */
@@ -83,7 +123,7 @@ export class Style {
 
 /**
  * Border of the Style and border type have: `none`, `thin`, `medium`, `thick`, `dashed`, `dotted`, `double`
- * 
+ *
  */
 export class Border {
   /**
