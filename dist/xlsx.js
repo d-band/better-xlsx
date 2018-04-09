@@ -4365,6 +4365,7 @@
 	    /**
 	     * Save the File to an xlsx file.
 	     * @param  {String} [type='nodebuffer'] For Node.js use `nodebuffer` and browser use `blob` or `base64`.
+	     * @param {Boolean} [compress=false] For file compression.
 	     * @return {Promise|stream} For Node.js return `stream` and browser return Promise.
 	     */
 
@@ -4372,6 +4373,7 @@
 	    key: 'saveAs',
 	    value: function saveAs() {
 	      var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'nodebuffer';
+	      var compress = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
 	      var parts = this.makeParts();
 	      var zip = new Zip();
@@ -4400,10 +4402,11 @@
 	        }
 	      }
 
+	      var compression = compress ? 'DEFLATE' : 'STORE';
 	      if (type === 'blob' || type === 'base64') {
-	        return zip.generateAsync({ type: type });
+	        return zip.generateAsync({ type: type, compression: compression });
 	      } else {
-	        return zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true });
+	        return zip.generateNodeStream({ type: 'nodebuffer', compression: compression });
 	      }
 	    }
 	    /**

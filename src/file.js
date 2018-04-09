@@ -58,6 +58,7 @@ export class File {
   /**
    * Save the File to an xlsx file.
    * @param  {String} [type='nodebuffer'] For Node.js use `nodebuffer` and browser use `blob` or `base64`.
+   * @param {Boolean} [compress=false] For file compression.
    * @return {Promise|stream} For Node.js return `stream` and browser return Promise.
    */
   saveAs (type = 'nodebuffer', compress = false) {
