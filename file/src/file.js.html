@@ -105,18 +105,20 @@ export class File {
   /**
    * Save the File to an xlsx file.
    * @param  {String} [type=&apos;nodebuffer&apos;] For Node.js use `nodebuffer` and browser use `blob` or `base64`.
+   * @param {Boolean} [compress=false] For file compression.
    * @return {Promise|stream} For Node.js return `stream` and browser return Promise.
    */
-  saveAs (type = &apos;nodebuffer&apos;) {
+  saveAs (type = &apos;nodebuffer&apos;, compress = false) {
     const parts = this.makeParts();
     const zip = new Zip();
     for (const key of Object.keys(parts)) {
       zip.file(key, parts[key]);
     }
+    const compression = compress ? &apos;DEFLATE&apos; : &apos;STORE&apos;;
     if (type === &apos;blob&apos; || type === &apos;base64&apos;) {
-      return zip.generateAsync({ type });
+      return zip.generateAsync({ type, compression });
     } else {
-      return zip.generateNodeStream({ type: &apos;nodebuffer&apos;, streamFiles: true });
+      return zip.generateNodeStream({ type: &apos;nodebuffer&apos;, compression });
     }
   }
   /**

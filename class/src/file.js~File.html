@@ -257,7 +257,7 @@ const sheet = file.addSheet(&apos;Sheet-1&apos;);</code>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/file.js~File.html#instance-method-saveAs">saveAs</a></span></span><span class="code" data-ice="signature">(type: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span> | <span>stream</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/file.js~File.html#instance-method-saveAs">saveAs</a></span></span><span class="code" data-ice="signature">(type: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, compress: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span> | <span>stream</span></span>
         </p>
       </div>
       <div>
@@ -573,11 +573,11 @@ const sheet = file.addSheet(&apos;Sheet-1&apos;);</code>
     
     
     
-    <span class="code" data-ice="name">saveAs</span><span class="code" data-ice="signature">(type: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span> | <span>stream</span></span>
+    <span class="code" data-ice="name">saveAs</span><span class="code" data-ice="signature">(type: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, compress: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span> | <span>stream</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/file.js.html#lineNumber63">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/file.js.html#lineNumber64">source</a></span></span>
     </span>
   </h3>
 
@@ -603,6 +603,14 @@ const sheet = file.addSheet(&apos;Sheet-1&apos;);</code>
       <td data-ice="appendix"><ul><li>optional</li>
 <li>default: &apos;nodebuffer&apos;</li></ul></td>
       <td data-ice="description"><p>For Node.js use <code>nodebuffer</code> and browser use <code>blob</code> or <code>base64</code>.</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">compress</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></span></td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: false</li></ul></td>
+      <td data-ice="description"><p>For file compression.</p>
 </td>
     </tr>
 </tbody>
@@ -654,7 +662,7 @@ const sheet = file.addSheet(&apos;Sheet-1&apos;);</code>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/file.js.html#lineNumber79">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/file.js.html#lineNumber81">source</a></span></span>
     </span>
   </h3>
 
