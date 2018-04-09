@@ -60,16 +60,17 @@ export class File {
    * @param  {String} [type='nodebuffer'] For Node.js use `nodebuffer` and browser use `blob` or `base64`.
    * @return {Promise|stream} For Node.js return `stream` and browser return Promise.
    */
-  saveAs (type = 'nodebuffer') {
+  saveAs (type = 'nodebuffer', compress = false) {
     const parts = this.makeParts();
     const zip = new Zip();
     for (const key of Object.keys(parts)) {
       zip.file(key, parts[key]);
     }
+    const compression = compress ? 'DEFLATE' : 'STORE';
     if (type === 'blob' || type === 'base64') {
-      return zip.generateAsync({ type });
+      return zip.generateAsync({ type, compression });
     } else {
-      return zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true });
+      return zip.generateNodeStream({ type: 'nodebuffer', compression });
     }
   }
   /**
