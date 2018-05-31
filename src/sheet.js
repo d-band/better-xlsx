@@ -319,6 +319,9 @@ export class Sheet {
       dimension.ref = 'A1';
     }
     sheet.dimension = dimension;
+    if (this.afterMake) {
+      this.afterMake(sheet);
+    }
     return sheet;
   }
 }
