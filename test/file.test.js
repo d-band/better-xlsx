@@ -156,6 +156,7 @@ describe('Test: file.js', () => {
       st.pageSetup.fitToHeight = 3;
       st.pageSetup.orientation = 'landscape';
       st.pageSetup.usePrinterDefaults = true;
+      st.headerFooter.oddHeader = '';
     };
     for (let i = 0; i < 100; i++) {
       for (let j = 0; j < 50; j++) {
