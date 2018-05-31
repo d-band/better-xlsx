@@ -146,6 +146,39 @@ describe('Test: file.js', () => {
         });
       });
   });
+  it('should saveAs simple excel file with page setup', (done) => {
+    const file = new File();
+    const sheet = file.addSheet('hello');
+    sheet.afterMake = (st) => {
+      st.sheetPr.children.forEach(v => {
+        v.fitToPage = true;
+      });
+      st.pageSetup.fitToHeight = 3;
+      st.pageSetup.orientation = 'landscape';
+      st.pageSetup.usePrinterDefaults = true;
+    };
+    for (let i = 0; i < 100; i++) {
+      for (let j = 0; j < 50; j++) {
+        const cell = sheet.cell(i, j);
+        cell.value = `${i}-${j}`;
+      }
+    }
+
+    const tmpfile = join(tmpdir(), 'simple5.xlsx');
+    const expfile = join(__dirname, 'expect/simple5.xlsx');
+    file
+      .saveAs()
+      .pipe(fs.createWriteStream(tmpfile))
+      .on('finish', () => {
+        const expectFile = fs.createReadStream(expfile);
+        const actualFile = fs.createReadStream(tmpfile);
+        streamEqual(expectFile, actualFile, function (err, ok) {
+          expect(err).to.be.null;
+          expect(ok).to.be.true;
+          done();
+        });
+      });
+  });
   it('should saveAs complex excel file', (done) => {
     const file = new File();
     const sheet = file.addSheet('Sheet1');
