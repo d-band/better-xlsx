@@ -47,7 +47,7 @@
     "esdoc-ecmascript-proposal-plugin": "^1.0.0",
     "esdoc-inject-style-plugin": "^1.0.0",
     "esdoc-standard-plugin": "^1.0.0",
-    "eslint": "^4.1.0",
+    "eslint": "^5.0.0",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.3.0",
     "eslint-plugin-node": "^6.0.0",
