@@ -1,7 +1,7 @@
 import { props, Node, HEAD } from './node';
 
-@props('xmlns', 'xmlns:r')
-export class Xworksheet extends Node {
+export @props('xmlns', 'xmlns:r')
+class Xworksheet extends Node {
   sheetPr = null;
   sheetViews = null;
   sheetFormatPr = null;
@@ -37,41 +37,41 @@ export class Xworksheet extends Node {
   }
 }
 
-@props('filterMode')
-export class XsheetPr extends Node {}
+export @props('filterMode')
+class XsheetPr extends Node {}
 
-@props('fitToPage')
-export class XpageSetUpPr extends Node {}
+export @props('fitToPage')
+class XpageSetUpPr extends Node {}
 
-@props('ref')
-export class Xdimension extends Node {}
+export @props('ref')
+class Xdimension extends Node {}
 
 export class XsheetViews extends Node {}
 
-@props('windowProtection', 'showFormulas', 'showGridLines', 'showRowColHeaders', 'showZeros', 'rightToLeft', 'tabSelected', 'showOutlineSymbols', 'defaultGridColor', 'view', 'topLeftCell', 'colorId', 'zoomScale', 'zoomScaleNormal', 'zoomScalePageLayoutView', 'workbookViewId')
-export class XsheetView extends Node {}
+export @props('windowProtection', 'showFormulas', 'showGridLines', 'showRowColHeaders', 'showZeros', 'rightToLeft', 'tabSelected', 'showOutlineSymbols', 'defaultGridColor', 'view', 'topLeftCell', 'colorId', 'zoomScale', 'zoomScaleNormal', 'zoomScalePageLayoutView', 'workbookViewId')
+class XsheetView extends Node {}
 
-@props('pane', 'activeCell', 'activeCellId', 'sqref')
-export class Xselection extends Node {}
+export @props('pane', 'activeCell', 'activeCellId', 'sqref')
+class Xselection extends Node {}
 
-@props('xSplit', 'ySplit', 'topLeftCell', 'activePane', 'state')
-export class Xpane extends Node {}
+export @props('xSplit', 'ySplit', 'topLeftCell', 'activePane', 'state')
+class Xpane extends Node {}
 
-@props('defaultColWidth', 'defaultRowHeight', 'outlineLevelCol', 'outlineLevelRow')
-export class XsheetFormatPr extends Node {}
+export @props('defaultColWidth', 'defaultRowHeight', 'outlineLevelCol', 'outlineLevelRow')
+class XsheetFormatPr extends Node {}
 
 export class Xcols extends Node {}
 
-@props('collapsed', 'hidden', 'max', 'min', 'style', 'width', 'customWidth', 'outlineLevel')
-export class Xcol extends Node {}
+export @props('collapsed', 'hidden', 'max', 'min', 'style', 'width', 'customWidth', 'outlineLevel')
+class Xcol extends Node {}
 
 export class XsheetData extends Node {}
 
-@props('r', 'spans', 'hidden', 'ht', 'customHeight', 'outlineLevel')
-export class Xrow extends Node {}
+export @props('r', 'spans', 'hidden', 'ht', 'customHeight', 'outlineLevel')
+class Xrow extends Node {}
 
-@props('r', 's', 't')
-export class Xc extends Node {
+export @props('r', 's', 't')
+class Xc extends Node {
   constructor (attrs, children) {
     super(attrs, children);
     this.f = null;
@@ -84,26 +84,26 @@ export class Xc extends Node {
   }
 }
 
-@props('t', 'ref', 'si')
-export class Xf extends Node {}
+export @props('t', 'ref', 'si')
+class Xf extends Node {}
 
-@props('count')
-export class XmergeCells extends Node {}
+export @props('count')
+class XmergeCells extends Node {}
 
-@props('ref')
-export class XmergeCell extends Node {}
+export @props('ref')
+class XmergeCell extends Node {}
 
-@props('headings', 'gridLines', 'gridLinesSet', 'horizontalCentered', 'verticalCentered')
-export class XprintOptions extends Node {}
+export @props('headings', 'gridLines', 'gridLinesSet', 'horizontalCentered', 'verticalCentered')
+class XprintOptions extends Node {}
 
-@props('left', 'right', 'top', 'bottom', 'header', 'footer')
-export class XpageMargins extends Node {}
+export @props('left', 'right', 'top', 'bottom', 'header', 'footer')
+class XpageMargins extends Node {}
 
-@props('paperSize', 'scale', 'firstPageNumber', 'fitToWidth', 'fitToHeight', 'pageOrder', 'orientation', 'usePrinterDefaults', 'blackAndWhite', 'draft', 'cellComments', 'useFirstPageNumber', 'horizontalDpi', 'verticalDpi', 'copies')
-export class XpageSetup extends Node {}
+export @props('paperSize', 'scale', 'firstPageNumber', 'fitToWidth', 'fitToHeight', 'pageOrder', 'orientation', 'usePrinterDefaults', 'blackAndWhite', 'draft', 'cellComments', 'useFirstPageNumber', 'horizontalDpi', 'verticalDpi', 'copies')
+class XpageSetup extends Node {}
 
-@props('differentFirst', 'differentOddEven')
-export class XheaderFooter extends Node {
+export @props('differentFirst', 'differentOddEven')
+class XheaderFooter extends Node {
   constructor (attrs, children) {
     super(attrs, children);
     this.oddHeader = null;

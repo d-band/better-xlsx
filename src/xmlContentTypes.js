@@ -1,18 +1,18 @@
 import { props, Node, HEAD } from './node';
 
-@props('xmlns')
-export class XTypes extends Node {
+export @props('xmlns')
+class XTypes extends Node {
   constructor ({ xmlns = 'http://schemas.openxmlformats.org/package/2006/content-types' }, children) {
     super({ xmlns }, children);
     this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
   }
 }
 
-@props('Extension', 'ContentType')
-export class XDefault extends Node {}
+export @props('Extension', 'ContentType')
+class XDefault extends Node {}
 
-@props('PartName', 'ContentType')
-export class XOverride extends Node {}
+export @props('PartName', 'ContentType')
+class XOverride extends Node {}
 
 export function makeXTypes (types = new XTypes({})) {
   const defaults = [{

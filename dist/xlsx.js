@@ -1,4497 +1,4578 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('jszip')) :
-	typeof define === 'function' && define.amd ? define(['jszip'], factory) :
-	(global.xlsx = factory(global.JSZip));
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('jszip')) :
+  typeof define === 'function' && define.amd ? define(['jszip'], factory) :
+  (global.xlsx = factory(global.JSZip));
 }(this, (function (Zip) { 'use strict';
 
-	Zip = Zip && Zip.hasOwnProperty('default') ? Zip['default'] : Zip;
-
-	function unwrapExports (x) {
-		return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
-	}
-
-	function createCommonjsModule(fn, module) {
-		return module = { exports: {} }, fn(module, module.exports), module.exports;
-	}
-
-	var _global = createCommonjsModule(function (module) {
-	// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
-	var global = module.exports = typeof window != 'undefined' && window.Math == Math
-	  ? window : typeof self != 'undefined' && self.Math == Math ? self
-	  // eslint-disable-next-line no-new-func
-	  : Function('return this')();
-	if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
-	});
-
-	var _core = createCommonjsModule(function (module) {
-	var core = module.exports = { version: '2.5.4' };
-	if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
-	});
-	var _core_1 = _core.version;
-
-	var _aFunction = function (it) {
-	  if (typeof it != 'function') throw TypeError(it + ' is not a function!');
-	  return it;
-	};
-
-	// optional / simple context binding
-
-	var _ctx = function (fn, that, length) {
-	  _aFunction(fn);
-	  if (that === undefined) return fn;
-	  switch (length) {
-	    case 1: return function (a) {
-	      return fn.call(that, a);
-	    };
-	    case 2: return function (a, b) {
-	      return fn.call(that, a, b);
-	    };
-	    case 3: return function (a, b, c) {
-	      return fn.call(that, a, b, c);
-	    };
-	  }
-	  return function (/* ...args */) {
-	    return fn.apply(that, arguments);
-	  };
-	};
-
-	var _isObject = function (it) {
-	  return typeof it === 'object' ? it !== null : typeof it === 'function';
-	};
-
-	var _anObject = function (it) {
-	  if (!_isObject(it)) throw TypeError(it + ' is not an object!');
-	  return it;
-	};
-
-	var _fails = function (exec) {
-	  try {
-	    return !!exec();
-	  } catch (e) {
-	    return true;
-	  }
-	};
-
-	// Thank's IE8 for his funny defineProperty
-	var _descriptors = !_fails(function () {
-	  return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
-	});
-
-	var document = _global.document;
-	// typeof document.createElement is 'object' in old IE
-	var is = _isObject(document) && _isObject(document.createElement);
-	var _domCreate = function (it) {
-	  return is ? document.createElement(it) : {};
-	};
-
-	var _ie8DomDefine = !_descriptors && !_fails(function () {
-	  return Object.defineProperty(_domCreate('div'), 'a', { get: function () { return 7; } }).a != 7;
-	});
-
-	// 7.1.1 ToPrimitive(input [, PreferredType])
-
-	// instead of the ES6 spec version, we didn't implement @@toPrimitive case
-	// and the second argument - flag - preferred type is a string
-	var _toPrimitive = function (it, S) {
-	  if (!_isObject(it)) return it;
-	  var fn, val;
-	  if (S && typeof (fn = it.toString) == 'function' && !_isObject(val = fn.call(it))) return val;
-	  if (typeof (fn = it.valueOf) == 'function' && !_isObject(val = fn.call(it))) return val;
-	  if (!S && typeof (fn = it.toString) == 'function' && !_isObject(val = fn.call(it))) return val;
-	  throw TypeError("Can't convert object to primitive value");
-	};
-
-	var dP = Object.defineProperty;
-
-	var f = _descriptors ? Object.defineProperty : function defineProperty(O, P, Attributes) {
-	  _anObject(O);
-	  P = _toPrimitive(P, true);
-	  _anObject(Attributes);
-	  if (_ie8DomDefine) try {
-	    return dP(O, P, Attributes);
-	  } catch (e) { /* empty */ }
-	  if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported!');
-	  if ('value' in Attributes) O[P] = Attributes.value;
-	  return O;
-	};
-
-	var _objectDp = {
-		f: f
-	};
-
-	var _propertyDesc = function (bitmap, value) {
-	  return {
-	    enumerable: !(bitmap & 1),
-	    configurable: !(bitmap & 2),
-	    writable: !(bitmap & 4),
-	    value: value
-	  };
-	};
-
-	var _hide = _descriptors ? function (object, key, value) {
-	  return _objectDp.f(object, key, _propertyDesc(1, value));
-	} : function (object, key, value) {
-	  object[key] = value;
-	  return object;
-	};
-
-	var hasOwnProperty = {}.hasOwnProperty;
-	var _has = function (it, key) {
-	  return hasOwnProperty.call(it, key);
-	};
-
-	var PROTOTYPE = 'prototype';
-
-	var $export = function (type, name, source) {
-	  var IS_FORCED = type & $export.F;
-	  var IS_GLOBAL = type & $export.G;
-	  var IS_STATIC = type & $export.S;
-	  var IS_PROTO = type & $export.P;
-	  var IS_BIND = type & $export.B;
-	  var IS_WRAP = type & $export.W;
-	  var exports = IS_GLOBAL ? _core : _core[name] || (_core[name] = {});
-	  var expProto = exports[PROTOTYPE];
-	  var target = IS_GLOBAL ? _global : IS_STATIC ? _global[name] : (_global[name] || {})[PROTOTYPE];
-	  var key, own, out;
-	  if (IS_GLOBAL) source = name;
-	  for (key in source) {
-	    // contains in native
-	    own = !IS_FORCED && target && target[key] !== undefined;
-	    if (own && _has(exports, key)) continue;
-	    // export native or passed
-	    out = own ? target[key] : source[key];
-	    // prevent global pollution for namespaces
-	    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
-	    // bind timers to global for call from export context
-	    : IS_BIND && own ? _ctx(out, _global)
-	    // wrap global constructors for prevent change them in library
-	    : IS_WRAP && target[key] == out ? (function (C) {
-	      var F = function (a, b, c) {
-	        if (this instanceof C) {
-	          switch (arguments.length) {
-	            case 0: return new C();
-	            case 1: return new C(a);
-	            case 2: return new C(a, b);
-	          } return new C(a, b, c);
-	        } return C.apply(this, arguments);
-	      };
-	      F[PROTOTYPE] = C[PROTOTYPE];
-	      return F;
-	    // make static versions for prototype methods
-	    })(out) : IS_PROTO && typeof out == 'function' ? _ctx(Function.call, out) : out;
-	    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
-	    if (IS_PROTO) {
-	      (exports.virtual || (exports.virtual = {}))[key] = out;
-	      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
-	      if (type & $export.R && expProto && !expProto[key]) _hide(expProto, key, out);
-	    }
-	  }
-	};
-	// type bitmap
-	$export.F = 1;   // forced
-	$export.G = 2;   // global
-	$export.S = 4;   // static
-	$export.P = 8;   // proto
-	$export.B = 16;  // bind
-	$export.W = 32;  // wrap
-	$export.U = 64;  // safe
-	$export.R = 128; // real proto method for `library`
-	var _export = $export;
-
-	var toString = {}.toString;
-
-	var _cof = function (it) {
-	  return toString.call(it).slice(8, -1);
-	};
-
-	// fallback for non-array-like ES3 and non-enumerable old V8 strings
-
-	// eslint-disable-next-line no-prototype-builtins
-	var _iobject = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
-	  return _cof(it) == 'String' ? it.split('') : Object(it);
-	};
-
-	// 7.2.1 RequireObjectCoercible(argument)
-	var _defined = function (it) {
-	  if (it == undefined) throw TypeError("Can't call method on  " + it);
-	  return it;
-	};
-
-	// to indexed object, toObject with fallback for non-array-like ES3 strings
-
-
-	var _toIobject = function (it) {
-	  return _iobject(_defined(it));
-	};
-
-	// 7.1.4 ToInteger
-	var ceil = Math.ceil;
-	var floor = Math.floor;
-	var _toInteger = function (it) {
-	  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
-	};
-
-	// 7.1.15 ToLength
-
-	var min = Math.min;
-	var _toLength = function (it) {
-	  return it > 0 ? min(_toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
-	};
-
-	var max = Math.max;
-	var min$1 = Math.min;
-	var _toAbsoluteIndex = function (index, length) {
-	  index = _toInteger(index);
-	  return index < 0 ? max(index + length, 0) : min$1(index, length);
-	};
-
-	// false -> Array#indexOf
-	// true  -> Array#includes
-
-
-
-	var _arrayIncludes = function (IS_INCLUDES) {
-	  return function ($this, el, fromIndex) {
-	    var O = _toIobject($this);
-	    var length = _toLength(O.length);
-	    var index = _toAbsoluteIndex(fromIndex, length);
-	    var value;
-	    // Array#includes uses SameValueZero equality algorithm
-	    // eslint-disable-next-line no-self-compare
-	    if (IS_INCLUDES && el != el) while (length > index) {
-	      value = O[index++];
-	      // eslint-disable-next-line no-self-compare
-	      if (value != value) return true;
-	    // Array#indexOf ignores holes, Array#includes - not
-	    } else for (;length > index; index++) if (IS_INCLUDES || index in O) {
-	      if (O[index] === el) return IS_INCLUDES || index || 0;
-	    } return !IS_INCLUDES && -1;
-	  };
-	};
-
-	var SHARED = '__core-js_shared__';
-	var store = _global[SHARED] || (_global[SHARED] = {});
-	var _shared = function (key) {
-	  return store[key] || (store[key] = {});
-	};
-
-	var id = 0;
-	var px = Math.random();
-	var _uid = function (key) {
-	  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
-	};
-
-	var shared = _shared('keys');
-
-	var _sharedKey = function (key) {
-	  return shared[key] || (shared[key] = _uid(key));
-	};
-
-	var arrayIndexOf = _arrayIncludes(false);
-	var IE_PROTO = _sharedKey('IE_PROTO');
-
-	var _objectKeysInternal = function (object, names) {
-	  var O = _toIobject(object);
-	  var i = 0;
-	  var result = [];
-	  var key;
-	  for (key in O) if (key != IE_PROTO) _has(O, key) && result.push(key);
-	  // Don't enum bug & hidden keys
-	  while (names.length > i) if (_has(O, key = names[i++])) {
-	    ~arrayIndexOf(result, key) || result.push(key);
-	  }
-	  return result;
-	};
-
-	// IE 8- don't enum bug keys
-	var _enumBugKeys = (
-	  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
-	).split(',');
-
-	// 19.1.2.14 / 15.2.3.14 Object.keys(O)
-
-
-
-	var _objectKeys = Object.keys || function keys(O) {
-	  return _objectKeysInternal(O, _enumBugKeys);
-	};
-
-	var f$1 = Object.getOwnPropertySymbols;
-
-	var _objectGops = {
-		f: f$1
-	};
-
-	var f$2 = {}.propertyIsEnumerable;
-
-	var _objectPie = {
-		f: f$2
-	};
-
-	// 7.1.13 ToObject(argument)
-
-	var _toObject = function (it) {
-	  return Object(_defined(it));
-	};
-
-	// 19.1.2.1 Object.assign(target, source, ...)
-
-
-
-
-
-	var $assign = Object.assign;
-
-	// should work with symbols and should have deterministic property order (V8 bug)
-	var _objectAssign = !$assign || _fails(function () {
-	  var A = {};
-	  var B = {};
-	  // eslint-disable-next-line no-undef
-	  var S = Symbol();
-	  var K = 'abcdefghijklmnopqrst';
-	  A[S] = 7;
-	  K.split('').forEach(function (k) { B[k] = k; });
-	  return $assign({}, A)[S] != 7 || Object.keys($assign({}, B)).join('') != K;
-	}) ? function assign(target, source) { // eslint-disable-line no-unused-vars
-	  var T = _toObject(target);
-	  var aLen = arguments.length;
-	  var index = 1;
-	  var getSymbols = _objectGops.f;
-	  var isEnum = _objectPie.f;
-	  while (aLen > index) {
-	    var S = _iobject(arguments[index++]);
-	    var keys = getSymbols ? _objectKeys(S).concat(getSymbols(S)) : _objectKeys(S);
-	    var length = keys.length;
-	    var j = 0;
-	    var key;
-	    while (length > j) if (isEnum.call(S, key = keys[j++])) T[key] = S[key];
-	  } return T;
-	} : $assign;
-
-	// 19.1.3.1 Object.assign(target, source)
-
-
-	_export(_export.S + _export.F, 'Object', { assign: _objectAssign });
-
-	var assign = _core.Object.assign;
-
-	var assign$1 = createCommonjsModule(function (module) {
-	module.exports = { "default": assign, __esModule: true };
-	});
-
-	unwrapExports(assign$1);
-
-	var _extends = createCommonjsModule(function (module, exports) {
-
-	exports.__esModule = true;
-
-
-
-	var _assign2 = _interopRequireDefault(assign$1);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _assign2.default || function (target) {
-	  for (var i = 1; i < arguments.length; i++) {
-	    var source = arguments[i];
-
-	    for (var key in source) {
-	      if (Object.prototype.hasOwnProperty.call(source, key)) {
-	        target[key] = source[key];
-	      }
-	    }
-	  }
-
-	  return target;
-	};
-	});
-
-	var _extends$1 = unwrapExports(_extends);
-
-	var classCallCheck = createCommonjsModule(function (module, exports) {
-
-	exports.__esModule = true;
-
-	exports.default = function (instance, Constructor) {
-	  if (!(instance instanceof Constructor)) {
-	    throw new TypeError("Cannot call a class as a function");
-	  }
-	};
-	});
-
-	var _classCallCheck = unwrapExports(classCallCheck);
-
-	// 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
-	_export(_export.S + _export.F * !_descriptors, 'Object', { defineProperty: _objectDp.f });
-
-	var $Object = _core.Object;
-	var defineProperty = function defineProperty(it, key, desc) {
-	  return $Object.defineProperty(it, key, desc);
-	};
-
-	var defineProperty$1 = createCommonjsModule(function (module) {
-	module.exports = { "default": defineProperty, __esModule: true };
-	});
-
-	var _Object$defineProperty = unwrapExports(defineProperty$1);
-
-	var createClass = createCommonjsModule(function (module, exports) {
-
-	exports.__esModule = true;
-
-
-
-	var _defineProperty2 = _interopRequireDefault(defineProperty$1);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = function () {
-	  function defineProperties(target, props) {
-	    for (var i = 0; i < props.length; i++) {
-	      var descriptor = props[i];
-	      descriptor.enumerable = descriptor.enumerable || false;
-	      descriptor.configurable = true;
-	      if ("value" in descriptor) descriptor.writable = true;
-	      (0, _defineProperty2.default)(target, descriptor.key, descriptor);
-	    }
-	  }
-
-	  return function (Constructor, protoProps, staticProps) {
-	    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-	    if (staticProps) defineProperties(Constructor, staticProps);
-	    return Constructor;
-	  };
-	}();
-	});
-
-	var _createClass = unwrapExports(createClass);
-
-	var _iterStep = function (done, value) {
-	  return { value: value, done: !!done };
-	};
-
-	var _iterators = {};
-
-	var _library = true;
-
-	var _redefine = _hide;
-
-	var _objectDps = _descriptors ? Object.defineProperties : function defineProperties(O, Properties) {
-	  _anObject(O);
-	  var keys = _objectKeys(Properties);
-	  var length = keys.length;
-	  var i = 0;
-	  var P;
-	  while (length > i) _objectDp.f(O, P = keys[i++], Properties[P]);
-	  return O;
-	};
-
-	var document$1 = _global.document;
-	var _html = document$1 && document$1.documentElement;
-
-	// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-
-
-
-	var IE_PROTO$1 = _sharedKey('IE_PROTO');
-	var Empty = function () { /* empty */ };
-	var PROTOTYPE$1 = 'prototype';
-
-	// Create object with fake `null` prototype: use iframe Object with cleared prototype
-	var createDict = function () {
-	  // Thrash, waste and sodomy: IE GC bug
-	  var iframe = _domCreate('iframe');
-	  var i = _enumBugKeys.length;
-	  var lt = '<';
-	  var gt = '>';
-	  var iframeDocument;
-	  iframe.style.display = 'none';
-	  _html.appendChild(iframe);
-	  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
-	  // createDict = iframe.contentWindow.Object;
-	  // html.removeChild(iframe);
-	  iframeDocument = iframe.contentWindow.document;
-	  iframeDocument.open();
-	  iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
-	  iframeDocument.close();
-	  createDict = iframeDocument.F;
-	  while (i--) delete createDict[PROTOTYPE$1][_enumBugKeys[i]];
-	  return createDict();
-	};
-
-	var _objectCreate = Object.create || function create(O, Properties) {
-	  var result;
-	  if (O !== null) {
-	    Empty[PROTOTYPE$1] = _anObject(O);
-	    result = new Empty();
-	    Empty[PROTOTYPE$1] = null;
-	    // add "__proto__" for Object.getPrototypeOf polyfill
-	    result[IE_PROTO$1] = O;
-	  } else result = createDict();
-	  return Properties === undefined ? result : _objectDps(result, Properties);
-	};
-
-	var _wks = createCommonjsModule(function (module) {
-	var store = _shared('wks');
-
-	var Symbol = _global.Symbol;
-	var USE_SYMBOL = typeof Symbol == 'function';
-
-	var $exports = module.exports = function (name) {
-	  return store[name] || (store[name] =
-	    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : _uid)('Symbol.' + name));
-	};
-
-	$exports.store = store;
-	});
-
-	var def = _objectDp.f;
-
-	var TAG = _wks('toStringTag');
-
-	var _setToStringTag = function (it, tag, stat) {
-	  if (it && !_has(it = stat ? it : it.prototype, TAG)) def(it, TAG, { configurable: true, value: tag });
-	};
-
-	var IteratorPrototype = {};
-
-	// 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-	_hide(IteratorPrototype, _wks('iterator'), function () { return this; });
-
-	var _iterCreate = function (Constructor, NAME, next) {
-	  Constructor.prototype = _objectCreate(IteratorPrototype, { next: _propertyDesc(1, next) });
-	  _setToStringTag(Constructor, NAME + ' Iterator');
-	};
-
-	// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
-
-
-	var IE_PROTO$2 = _sharedKey('IE_PROTO');
-	var ObjectProto = Object.prototype;
-
-	var _objectGpo = Object.getPrototypeOf || function (O) {
-	  O = _toObject(O);
-	  if (_has(O, IE_PROTO$2)) return O[IE_PROTO$2];
-	  if (typeof O.constructor == 'function' && O instanceof O.constructor) {
-	    return O.constructor.prototype;
-	  } return O instanceof Object ? ObjectProto : null;
-	};
-
-	var ITERATOR = _wks('iterator');
-	var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
-	var FF_ITERATOR = '@@iterator';
-	var KEYS = 'keys';
-	var VALUES = 'values';
-
-	var returnThis = function () { return this; };
-
-	var _iterDefine = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED) {
-	  _iterCreate(Constructor, NAME, next);
-	  var getMethod = function (kind) {
-	    if (!BUGGY && kind in proto) return proto[kind];
-	    switch (kind) {
-	      case KEYS: return function keys() { return new Constructor(this, kind); };
-	      case VALUES: return function values() { return new Constructor(this, kind); };
-	    } return function entries() { return new Constructor(this, kind); };
-	  };
-	  var TAG = NAME + ' Iterator';
-	  var DEF_VALUES = DEFAULT == VALUES;
-	  var VALUES_BUG = false;
-	  var proto = Base.prototype;
-	  var $native = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT];
-	  var $default = $native || getMethod(DEFAULT);
-	  var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
-	  var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
-	  var methods, key, IteratorPrototype;
-	  // Fix native
-	  if ($anyNative) {
-	    IteratorPrototype = _objectGpo($anyNative.call(new Base()));
-	    if (IteratorPrototype !== Object.prototype && IteratorPrototype.next) {
-	      // Set @@toStringTag to native iterators
-	      _setToStringTag(IteratorPrototype, TAG, true);
-	      // fix for some old engines
-	      if (!_library && typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
-	    }
-	  }
-	  // fix Array#{values, @@iterator}.name in V8 / FF
-	  if (DEF_VALUES && $native && $native.name !== VALUES) {
-	    VALUES_BUG = true;
-	    $default = function values() { return $native.call(this); };
-	  }
-	  // Define iterator
-	  if ((!_library || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
-	    _hide(proto, ITERATOR, $default);
-	  }
-	  // Plug for library
-	  _iterators[NAME] = $default;
-	  _iterators[TAG] = returnThis;
-	  if (DEFAULT) {
-	    methods = {
-	      values: DEF_VALUES ? $default : getMethod(VALUES),
-	      keys: IS_SET ? $default : getMethod(KEYS),
-	      entries: $entries
-	    };
-	    if (FORCED) for (key in methods) {
-	      if (!(key in proto)) _redefine(proto, key, methods[key]);
-	    } else _export(_export.P + _export.F * (BUGGY || VALUES_BUG), NAME, methods);
-	  }
-	  return methods;
-	};
-
-	// 22.1.3.4 Array.prototype.entries()
-	// 22.1.3.13 Array.prototype.keys()
-	// 22.1.3.29 Array.prototype.values()
-	// 22.1.3.30 Array.prototype[@@iterator]()
-	var es6_array_iterator = _iterDefine(Array, 'Array', function (iterated, kind) {
-	  this._t = _toIobject(iterated); // target
-	  this._i = 0;                   // next index
-	  this._k = kind;                // kind
-	// 22.1.5.2.1 %ArrayIteratorPrototype%.next()
-	}, function () {
-	  var O = this._t;
-	  var kind = this._k;
-	  var index = this._i++;
-	  if (!O || index >= O.length) {
-	    this._t = undefined;
-	    return _iterStep(1);
-	  }
-	  if (kind == 'keys') return _iterStep(0, index);
-	  if (kind == 'values') return _iterStep(0, O[index]);
-	  return _iterStep(0, [index, O[index]]);
-	}, 'values');
-
-	// argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
-	_iterators.Arguments = _iterators.Array;
-
-	var TO_STRING_TAG = _wks('toStringTag');
-
-	var DOMIterables = ('CSSRuleList,CSSStyleDeclaration,CSSValueList,ClientRectList,DOMRectList,DOMStringList,' +
-	  'DOMTokenList,DataTransferItemList,FileList,HTMLAllCollection,HTMLCollection,HTMLFormElement,HTMLSelectElement,' +
-	  'MediaList,MimeTypeArray,NamedNodeMap,NodeList,PaintRequestList,Plugin,PluginArray,SVGLengthList,SVGNumberList,' +
-	  'SVGPathSegList,SVGPointList,SVGStringList,SVGTransformList,SourceBufferList,StyleSheetList,TextTrackCueList,' +
-	  'TextTrackList,TouchList').split(',');
-
-	for (var i = 0; i < DOMIterables.length; i++) {
-	  var NAME = DOMIterables[i];
-	  var Collection = _global[NAME];
-	  var proto = Collection && Collection.prototype;
-	  if (proto && !proto[TO_STRING_TAG]) _hide(proto, TO_STRING_TAG, NAME);
-	  _iterators[NAME] = _iterators.Array;
-	}
-
-	// true  -> String#at
-	// false -> String#codePointAt
-	var _stringAt = function (TO_STRING) {
-	  return function (that, pos) {
-	    var s = String(_defined(that));
-	    var i = _toInteger(pos);
-	    var l = s.length;
-	    var a, b;
-	    if (i < 0 || i >= l) return TO_STRING ? '' : undefined;
-	    a = s.charCodeAt(i);
-	    return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
-	      ? TO_STRING ? s.charAt(i) : a
-	      : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
-	  };
-	};
-
-	var $at = _stringAt(true);
-
-	// 21.1.3.27 String.prototype[@@iterator]()
-	_iterDefine(String, 'String', function (iterated) {
-	  this._t = String(iterated); // target
-	  this._i = 0;                // next index
-	// 21.1.5.2.1 %StringIteratorPrototype%.next()
-	}, function () {
-	  var O = this._t;
-	  var index = this._i;
-	  var point;
-	  if (index >= O.length) return { value: undefined, done: true };
-	  point = $at(O, index);
-	  this._i += point.length;
-	  return { value: point, done: false };
-	});
-
-	// getting tag from 19.1.3.6 Object.prototype.toString()
-
-	var TAG$1 = _wks('toStringTag');
-	// ES3 wrong here
-	var ARG = _cof(function () { return arguments; }()) == 'Arguments';
-
-	// fallback for IE11 Script Access Denied error
-	var tryGet = function (it, key) {
-	  try {
-	    return it[key];
-	  } catch (e) { /* empty */ }
-	};
-
-	var _classof = function (it) {
-	  var O, T, B;
-	  return it === undefined ? 'Undefined' : it === null ? 'Null'
-	    // @@toStringTag case
-	    : typeof (T = tryGet(O = Object(it), TAG$1)) == 'string' ? T
-	    // builtinTag case
-	    : ARG ? _cof(O)
-	    // ES3 arguments fallback
-	    : (B = _cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
-	};
-
-	var ITERATOR$1 = _wks('iterator');
-
-	var core_getIteratorMethod = _core.getIteratorMethod = function (it) {
-	  if (it != undefined) return it[ITERATOR$1]
-	    || it['@@iterator']
-	    || _iterators[_classof(it)];
-	};
-
-	var core_getIterator = _core.getIterator = function (it) {
-	  var iterFn = core_getIteratorMethod(it);
-	  if (typeof iterFn != 'function') throw TypeError(it + ' is not iterable!');
-	  return _anObject(iterFn.call(it));
-	};
-
-	var getIterator = core_getIterator;
-
-	var getIterator$1 = createCommonjsModule(function (module) {
-	module.exports = { "default": getIterator, __esModule: true };
-	});
-
-	var _getIterator = unwrapExports(getIterator$1);
-
-	// most Object methods by ES6 should accept primitives
-
-
-
-	var _objectSap = function (KEY, exec) {
-	  var fn = (_core.Object || {})[KEY] || Object[KEY];
-	  var exp = {};
-	  exp[KEY] = exec(fn);
-	  _export(_export.S + _export.F * _fails(function () { fn(1); }), 'Object', exp);
-	};
-
-	// 19.1.2.9 Object.getPrototypeOf(O)
-
-
-
-	_objectSap('getPrototypeOf', function () {
-	  return function getPrototypeOf(it) {
-	    return _objectGpo(_toObject(it));
-	  };
-	});
-
-	var getPrototypeOf = _core.Object.getPrototypeOf;
-
-	var getPrototypeOf$1 = createCommonjsModule(function (module) {
-	module.exports = { "default": getPrototypeOf, __esModule: true };
-	});
-
-	var _Object$getPrototypeOf = unwrapExports(getPrototypeOf$1);
-
-	var f$3 = _wks;
-
-	var _wksExt = {
-		f: f$3
-	};
-
-	var iterator = _wksExt.f('iterator');
-
-	var iterator$1 = createCommonjsModule(function (module) {
-	module.exports = { "default": iterator, __esModule: true };
-	});
-
-	unwrapExports(iterator$1);
-
-	var _meta = createCommonjsModule(function (module) {
-	var META = _uid('meta');
-
-
-	var setDesc = _objectDp.f;
-	var id = 0;
-	var isExtensible = Object.isExtensible || function () {
-	  return true;
-	};
-	var FREEZE = !_fails(function () {
-	  return isExtensible(Object.preventExtensions({}));
-	});
-	var setMeta = function (it) {
-	  setDesc(it, META, { value: {
-	    i: 'O' + ++id, // object ID
-	    w: {}          // weak collections IDs
-	  } });
-	};
-	var fastKey = function (it, create) {
-	  // return primitive with prefix
-	  if (!_isObject(it)) return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
-	  if (!_has(it, META)) {
-	    // can't set metadata to uncaught frozen object
-	    if (!isExtensible(it)) return 'F';
-	    // not necessary to add metadata
-	    if (!create) return 'E';
-	    // add missing metadata
-	    setMeta(it);
-	  // return object ID
-	  } return it[META].i;
-	};
-	var getWeak = function (it, create) {
-	  if (!_has(it, META)) {
-	    // can't set metadata to uncaught frozen object
-	    if (!isExtensible(it)) return true;
-	    // not necessary to add metadata
-	    if (!create) return false;
-	    // add missing metadata
-	    setMeta(it);
-	  // return hash weak collections IDs
-	  } return it[META].w;
-	};
-	// add metadata on freeze-family methods calling
-	var onFreeze = function (it) {
-	  if (FREEZE && meta.NEED && isExtensible(it) && !_has(it, META)) setMeta(it);
-	  return it;
-	};
-	var meta = module.exports = {
-	  KEY: META,
-	  NEED: false,
-	  fastKey: fastKey,
-	  getWeak: getWeak,
-	  onFreeze: onFreeze
-	};
-	});
-	var _meta_1 = _meta.KEY;
-	var _meta_2 = _meta.NEED;
-	var _meta_3 = _meta.fastKey;
-	var _meta_4 = _meta.getWeak;
-	var _meta_5 = _meta.onFreeze;
-
-	var defineProperty$2 = _objectDp.f;
-	var _wksDefine = function (name) {
-	  var $Symbol = _core.Symbol || (_core.Symbol = _library ? {} : _global.Symbol || {});
-	  if (name.charAt(0) != '_' && !(name in $Symbol)) defineProperty$2($Symbol, name, { value: _wksExt.f(name) });
-	};
-
-	// all enumerable object keys, includes symbols
-
-
-
-	var _enumKeys = function (it) {
-	  var result = _objectKeys(it);
-	  var getSymbols = _objectGops.f;
-	  if (getSymbols) {
-	    var symbols = getSymbols(it);
-	    var isEnum = _objectPie.f;
-	    var i = 0;
-	    var key;
-	    while (symbols.length > i) if (isEnum.call(it, key = symbols[i++])) result.push(key);
-	  } return result;
-	};
-
-	// 7.2.2 IsArray(argument)
-
-	var _isArray = Array.isArray || function isArray(arg) {
-	  return _cof(arg) == 'Array';
-	};
-
-	// 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
-
-	var hiddenKeys = _enumBugKeys.concat('length', 'prototype');
-
-	var f$4 = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
-	  return _objectKeysInternal(O, hiddenKeys);
-	};
-
-	var _objectGopn = {
-		f: f$4
-	};
-
-	// fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
-
-	var gOPN = _objectGopn.f;
-	var toString$1 = {}.toString;
-
-	var windowNames = typeof window == 'object' && window && Object.getOwnPropertyNames
-	  ? Object.getOwnPropertyNames(window) : [];
-
-	var getWindowNames = function (it) {
-	  try {
-	    return gOPN(it);
-	  } catch (e) {
-	    return windowNames.slice();
-	  }
-	};
-
-	var f$5 = function getOwnPropertyNames(it) {
-	  return windowNames && toString$1.call(it) == '[object Window]' ? getWindowNames(it) : gOPN(_toIobject(it));
-	};
-
-	var _objectGopnExt = {
-		f: f$5
-	};
-
-	var gOPD = Object.getOwnPropertyDescriptor;
-
-	var f$6 = _descriptors ? gOPD : function getOwnPropertyDescriptor(O, P) {
-	  O = _toIobject(O);
-	  P = _toPrimitive(P, true);
-	  if (_ie8DomDefine) try {
-	    return gOPD(O, P);
-	  } catch (e) { /* empty */ }
-	  if (_has(O, P)) return _propertyDesc(!_objectPie.f.call(O, P), O[P]);
-	};
-
-	var _objectGopd = {
-		f: f$6
-	};
-
-	// ECMAScript 6 symbols shim
-
-
-
-
-
-	var META = _meta.KEY;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	var gOPD$1 = _objectGopd.f;
-	var dP$1 = _objectDp.f;
-	var gOPN$1 = _objectGopnExt.f;
-	var $Symbol = _global.Symbol;
-	var $JSON = _global.JSON;
-	var _stringify = $JSON && $JSON.stringify;
-	var PROTOTYPE$2 = 'prototype';
-	var HIDDEN = _wks('_hidden');
-	var TO_PRIMITIVE = _wks('toPrimitive');
-	var isEnum = {}.propertyIsEnumerable;
-	var SymbolRegistry = _shared('symbol-registry');
-	var AllSymbols = _shared('symbols');
-	var OPSymbols = _shared('op-symbols');
-	var ObjectProto$1 = Object[PROTOTYPE$2];
-	var USE_NATIVE = typeof $Symbol == 'function';
-	var QObject = _global.QObject;
-	// Don't use setters in Qt Script, https://github.com/zloirock/core-js/issues/173
-	var setter = !QObject || !QObject[PROTOTYPE$2] || !QObject[PROTOTYPE$2].findChild;
-
-	// fallback for old Android, https://code.google.com/p/v8/issues/detail?id=687
-	var setSymbolDesc = _descriptors && _fails(function () {
-	  return _objectCreate(dP$1({}, 'a', {
-	    get: function () { return dP$1(this, 'a', { value: 7 }).a; }
-	  })).a != 7;
-	}) ? function (it, key, D) {
-	  var protoDesc = gOPD$1(ObjectProto$1, key);
-	  if (protoDesc) delete ObjectProto$1[key];
-	  dP$1(it, key, D);
-	  if (protoDesc && it !== ObjectProto$1) dP$1(ObjectProto$1, key, protoDesc);
-	} : dP$1;
-
-	var wrap = function (tag) {
-	  var sym = AllSymbols[tag] = _objectCreate($Symbol[PROTOTYPE$2]);
-	  sym._k = tag;
-	  return sym;
-	};
-
-	var isSymbol = USE_NATIVE && typeof $Symbol.iterator == 'symbol' ? function (it) {
-	  return typeof it == 'symbol';
-	} : function (it) {
-	  return it instanceof $Symbol;
-	};
-
-	var $defineProperty = function defineProperty(it, key, D) {
-	  if (it === ObjectProto$1) $defineProperty(OPSymbols, key, D);
-	  _anObject(it);
-	  key = _toPrimitive(key, true);
-	  _anObject(D);
-	  if (_has(AllSymbols, key)) {
-	    if (!D.enumerable) {
-	      if (!_has(it, HIDDEN)) dP$1(it, HIDDEN, _propertyDesc(1, {}));
-	      it[HIDDEN][key] = true;
-	    } else {
-	      if (_has(it, HIDDEN) && it[HIDDEN][key]) it[HIDDEN][key] = false;
-	      D = _objectCreate(D, { enumerable: _propertyDesc(0, false) });
-	    } return setSymbolDesc(it, key, D);
-	  } return dP$1(it, key, D);
-	};
-	var $defineProperties = function defineProperties(it, P) {
-	  _anObject(it);
-	  var keys = _enumKeys(P = _toIobject(P));
-	  var i = 0;
-	  var l = keys.length;
-	  var key;
-	  while (l > i) $defineProperty(it, key = keys[i++], P[key]);
-	  return it;
-	};
-	var $create = function create(it, P) {
-	  return P === undefined ? _objectCreate(it) : $defineProperties(_objectCreate(it), P);
-	};
-	var $propertyIsEnumerable = function propertyIsEnumerable(key) {
-	  var E = isEnum.call(this, key = _toPrimitive(key, true));
-	  if (this === ObjectProto$1 && _has(AllSymbols, key) && !_has(OPSymbols, key)) return false;
-	  return E || !_has(this, key) || !_has(AllSymbols, key) || _has(this, HIDDEN) && this[HIDDEN][key] ? E : true;
-	};
-	var $getOwnPropertyDescriptor = function getOwnPropertyDescriptor(it, key) {
-	  it = _toIobject(it);
-	  key = _toPrimitive(key, true);
-	  if (it === ObjectProto$1 && _has(AllSymbols, key) && !_has(OPSymbols, key)) return;
-	  var D = gOPD$1(it, key);
-	  if (D && _has(AllSymbols, key) && !(_has(it, HIDDEN) && it[HIDDEN][key])) D.enumerable = true;
-	  return D;
-	};
-	var $getOwnPropertyNames = function getOwnPropertyNames(it) {
-	  var names = gOPN$1(_toIobject(it));
-	  var result = [];
-	  var i = 0;
-	  var key;
-	  while (names.length > i) {
-	    if (!_has(AllSymbols, key = names[i++]) && key != HIDDEN && key != META) result.push(key);
-	  } return result;
-	};
-	var $getOwnPropertySymbols = function getOwnPropertySymbols(it) {
-	  var IS_OP = it === ObjectProto$1;
-	  var names = gOPN$1(IS_OP ? OPSymbols : _toIobject(it));
-	  var result = [];
-	  var i = 0;
-	  var key;
-	  while (names.length > i) {
-	    if (_has(AllSymbols, key = names[i++]) && (IS_OP ? _has(ObjectProto$1, key) : true)) result.push(AllSymbols[key]);
-	  } return result;
-	};
-
-	// 19.4.1.1 Symbol([description])
-	if (!USE_NATIVE) {
-	  $Symbol = function Symbol() {
-	    if (this instanceof $Symbol) throw TypeError('Symbol is not a constructor!');
-	    var tag = _uid(arguments.length > 0 ? arguments[0] : undefined);
-	    var $set = function (value) {
-	      if (this === ObjectProto$1) $set.call(OPSymbols, value);
-	      if (_has(this, HIDDEN) && _has(this[HIDDEN], tag)) this[HIDDEN][tag] = false;
-	      setSymbolDesc(this, tag, _propertyDesc(1, value));
-	    };
-	    if (_descriptors && setter) setSymbolDesc(ObjectProto$1, tag, { configurable: true, set: $set });
-	    return wrap(tag);
-	  };
-	  _redefine($Symbol[PROTOTYPE$2], 'toString', function toString() {
-	    return this._k;
-	  });
-
-	  _objectGopd.f = $getOwnPropertyDescriptor;
-	  _objectDp.f = $defineProperty;
-	  _objectGopn.f = _objectGopnExt.f = $getOwnPropertyNames;
-	  _objectPie.f = $propertyIsEnumerable;
-	  _objectGops.f = $getOwnPropertySymbols;
-
-	  if (_descriptors && !_library) {
-	    _redefine(ObjectProto$1, 'propertyIsEnumerable', $propertyIsEnumerable, true);
-	  }
-
-	  _wksExt.f = function (name) {
-	    return wrap(_wks(name));
-	  };
-	}
-
-	_export(_export.G + _export.W + _export.F * !USE_NATIVE, { Symbol: $Symbol });
-
-	for (var es6Symbols = (
-	  // 19.4.2.2, 19.4.2.3, 19.4.2.4, 19.4.2.6, 19.4.2.8, 19.4.2.9, 19.4.2.10, 19.4.2.11, 19.4.2.12, 19.4.2.13, 19.4.2.14
-	  'hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables'
-	).split(','), j = 0; es6Symbols.length > j;)_wks(es6Symbols[j++]);
-
-	for (var wellKnownSymbols = _objectKeys(_wks.store), k = 0; wellKnownSymbols.length > k;) _wksDefine(wellKnownSymbols[k++]);
-
-	_export(_export.S + _export.F * !USE_NATIVE, 'Symbol', {
-	  // 19.4.2.1 Symbol.for(key)
-	  'for': function (key) {
-	    return _has(SymbolRegistry, key += '')
-	      ? SymbolRegistry[key]
-	      : SymbolRegistry[key] = $Symbol(key);
-	  },
-	  // 19.4.2.5 Symbol.keyFor(sym)
-	  keyFor: function keyFor(sym) {
-	    if (!isSymbol(sym)) throw TypeError(sym + ' is not a symbol!');
-	    for (var key in SymbolRegistry) if (SymbolRegistry[key] === sym) return key;
-	  },
-	  useSetter: function () { setter = true; },
-	  useSimple: function () { setter = false; }
-	});
-
-	_export(_export.S + _export.F * !USE_NATIVE, 'Object', {
-	  // 19.1.2.2 Object.create(O [, Properties])
-	  create: $create,
-	  // 19.1.2.4 Object.defineProperty(O, P, Attributes)
-	  defineProperty: $defineProperty,
-	  // 19.1.2.3 Object.defineProperties(O, Properties)
-	  defineProperties: $defineProperties,
-	  // 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
-	  getOwnPropertyDescriptor: $getOwnPropertyDescriptor,
-	  // 19.1.2.7 Object.getOwnPropertyNames(O)
-	  getOwnPropertyNames: $getOwnPropertyNames,
-	  // 19.1.2.8 Object.getOwnPropertySymbols(O)
-	  getOwnPropertySymbols: $getOwnPropertySymbols
-	});
-
-	// 24.3.2 JSON.stringify(value [, replacer [, space]])
-	$JSON && _export(_export.S + _export.F * (!USE_NATIVE || _fails(function () {
-	  var S = $Symbol();
-	  // MS Edge converts symbol values to JSON as {}
-	  // WebKit converts symbol values to JSON as null
-	  // V8 throws on boxed symbols
-	  return _stringify([S]) != '[null]' || _stringify({ a: S }) != '{}' || _stringify(Object(S)) != '{}';
-	})), 'JSON', {
-	  stringify: function stringify(it) {
-	    var args = [it];
-	    var i = 1;
-	    var replacer, $replacer;
-	    while (arguments.length > i) args.push(arguments[i++]);
-	    $replacer = replacer = args[1];
-	    if (!_isObject(replacer) && it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
-	    if (!_isArray(replacer)) replacer = function (key, value) {
-	      if (typeof $replacer == 'function') value = $replacer.call(this, key, value);
-	      if (!isSymbol(value)) return value;
-	    };
-	    args[1] = replacer;
-	    return _stringify.apply($JSON, args);
-	  }
-	});
-
-	// 19.4.3.4 Symbol.prototype[@@toPrimitive](hint)
-	$Symbol[PROTOTYPE$2][TO_PRIMITIVE] || _hide($Symbol[PROTOTYPE$2], TO_PRIMITIVE, $Symbol[PROTOTYPE$2].valueOf);
-	// 19.4.3.5 Symbol.prototype[@@toStringTag]
-	_setToStringTag($Symbol, 'Symbol');
-	// 20.2.1.9 Math[@@toStringTag]
-	_setToStringTag(Math, 'Math', true);
-	// 24.3.3 JSON[@@toStringTag]
-	_setToStringTag(_global.JSON, 'JSON', true);
-
-	_wksDefine('asyncIterator');
-
-	_wksDefine('observable');
-
-	var symbol = _core.Symbol;
-
-	var symbol$1 = createCommonjsModule(function (module) {
-	module.exports = { "default": symbol, __esModule: true };
-	});
-
-	var _Symbol = unwrapExports(symbol$1);
-
-	var _typeof_1 = createCommonjsModule(function (module, exports) {
-
-	exports.__esModule = true;
-
-
-
-	var _iterator2 = _interopRequireDefault(iterator$1);
-
-
-
-	var _symbol2 = _interopRequireDefault(symbol$1);
-
-	var _typeof = typeof _symbol2.default === "function" && typeof _iterator2.default === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj; };
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.default) === "symbol" ? function (obj) {
-	  return typeof obj === "undefined" ? "undefined" : _typeof(obj);
-	} : function (obj) {
-	  return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
-	};
-	});
-
-	unwrapExports(_typeof_1);
-
-	var possibleConstructorReturn = createCommonjsModule(function (module, exports) {
-
-	exports.__esModule = true;
-
-
-
-	var _typeof3 = _interopRequireDefault(_typeof_1);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = function (self, call) {
-	  if (!self) {
-	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-	  }
-
-	  return call && ((typeof call === "undefined" ? "undefined" : (0, _typeof3.default)(call)) === "object" || typeof call === "function") ? call : self;
-	};
-	});
-
-	var _possibleConstructorReturn = unwrapExports(possibleConstructorReturn);
-
-	// 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
-
-	var $getOwnPropertyDescriptor$1 = _objectGopd.f;
-
-	_objectSap('getOwnPropertyDescriptor', function () {
-	  return function getOwnPropertyDescriptor(it, key) {
-	    return $getOwnPropertyDescriptor$1(_toIobject(it), key);
-	  };
-	});
-
-	var $Object$1 = _core.Object;
-	var getOwnPropertyDescriptor = function getOwnPropertyDescriptor(it, key) {
-	  return $Object$1.getOwnPropertyDescriptor(it, key);
-	};
-
-	var getOwnPropertyDescriptor$1 = createCommonjsModule(function (module) {
-	module.exports = { "default": getOwnPropertyDescriptor, __esModule: true };
-	});
-
-	unwrapExports(getOwnPropertyDescriptor$1);
-
-	var get = createCommonjsModule(function (module, exports) {
-
-	exports.__esModule = true;
-
-
-
-	var _getPrototypeOf2 = _interopRequireDefault(getPrototypeOf$1);
-
-
-
-	var _getOwnPropertyDescriptor2 = _interopRequireDefault(getOwnPropertyDescriptor$1);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = function get(object, property, receiver) {
-	  if (object === null) object = Function.prototype;
-	  var desc = (0, _getOwnPropertyDescriptor2.default)(object, property);
-
-	  if (desc === undefined) {
-	    var parent = (0, _getPrototypeOf2.default)(object);
-
-	    if (parent === null) {
-	      return undefined;
-	    } else {
-	      return get(parent, property, receiver);
-	    }
-	  } else if ("value" in desc) {
-	    return desc.value;
-	  } else {
-	    var getter = desc.get;
-
-	    if (getter === undefined) {
-	      return undefined;
-	    }
-
-	    return getter.call(receiver);
-	  }
-	};
-	});
-
-	var _get = unwrapExports(get);
-
-	// Works with __proto__ only. Old v8 can't work with null proto objects.
-	/* eslint-disable no-proto */
-
-
-	var check = function (O, proto) {
-	  _anObject(O);
-	  if (!_isObject(proto) && proto !== null) throw TypeError(proto + ": can't set as prototype!");
-	};
-	var _setProto = {
-	  set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
-	    function (test, buggy, set) {
-	      try {
-	        set = _ctx(Function.call, _objectGopd.f(Object.prototype, '__proto__').set, 2);
-	        set(test, []);
-	        buggy = !(test instanceof Array);
-	      } catch (e) { buggy = true; }
-	      return function setPrototypeOf(O, proto) {
-	        check(O, proto);
-	        if (buggy) O.__proto__ = proto;
-	        else set(O, proto);
-	        return O;
-	      };
-	    }({}, false) : undefined),
-	  check: check
-	};
-
-	// 19.1.3.19 Object.setPrototypeOf(O, proto)
-
-	_export(_export.S, 'Object', { setPrototypeOf: _setProto.set });
-
-	var setPrototypeOf = _core.Object.setPrototypeOf;
-
-	var setPrototypeOf$1 = createCommonjsModule(function (module) {
-	module.exports = { "default": setPrototypeOf, __esModule: true };
-	});
-
-	unwrapExports(setPrototypeOf$1);
-
-	// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-	_export(_export.S, 'Object', { create: _objectCreate });
-
-	var $Object$2 = _core.Object;
-	var create = function create(P, D) {
-	  return $Object$2.create(P, D);
-	};
-
-	var create$1 = createCommonjsModule(function (module) {
-	module.exports = { "default": create, __esModule: true };
-	});
-
-	unwrapExports(create$1);
-
-	var inherits = createCommonjsModule(function (module, exports) {
-
-	exports.__esModule = true;
-
-
-
-	var _setPrototypeOf2 = _interopRequireDefault(setPrototypeOf$1);
-
-
-
-	var _create2 = _interopRequireDefault(create$1);
-
-
-
-	var _typeof3 = _interopRequireDefault(_typeof_1);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = function (subClass, superClass) {
-	  if (typeof superClass !== "function" && superClass !== null) {
-	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : (0, _typeof3.default)(superClass)));
-	  }
-
-	  subClass.prototype = (0, _create2.default)(superClass && superClass.prototype, {
-	    constructor: {
-	      value: subClass,
-	      enumerable: false,
-	      writable: true,
-	      configurable: true
-	    }
-	  });
-	  if (superClass) _setPrototypeOf2.default ? (0, _setPrototypeOf2.default)(subClass, superClass) : subClass.__proto__ = superClass;
-	};
-	});
-
-	var _inherits = unwrapExports(inherits);
-
-	// 19.1.2.14 Object.keys(O)
-
-
-
-	_objectSap('keys', function () {
-	  return function keys(it) {
-	    return _objectKeys(_toObject(it));
-	  };
-	});
-
-	var keys = _core.Object.keys;
-
-	var keys$1 = createCommonjsModule(function (module) {
-	module.exports = { "default": keys, __esModule: true };
-	});
-
-	var _Object$keys = unwrapExports(keys$1);
-
-	function attrEscape(str) {
-	  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;').replace(/\t/g, '&#x9;').replace(/\n/g, '&#xA;').replace(/\r/g, '&#xD;');
-	}
-	function escape(str) {
-	  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\r/g, '&#xD;');
-	}
-
-	var HEAD = _Symbol('head');
-
-	function props() {
-	  for (var _len = arguments.length, attrs = Array(_len), _key = 0; _key < _len; _key++) {
-	    attrs[_key] = arguments[_key];
-	  }
-
-	  return function (clazz) {
-	    var target = clazz.prototype || clazz;
-
-	    var _loop = function _loop(name) {
-	      _Object$defineProperty(target, name, {
-	        get: function get() {
-	          if (this.attributes) {
-	            return this.attributes[name];
-	          }
-	        },
-	        set: function set(value) {
-	          if (this.attributes === undefined) {
-	            this.attributes = {};
-	          }
-	          this.attributes[name] = value;
-	        },
-
-	        configurable: true,
-	        enumerable: true
-	      });
-	    };
-
-	    var _iteratorNormalCompletion = true;
-	    var _didIteratorError = false;
-	    var _iteratorError = undefined;
-
-	    try {
-	      for (var _iterator = _getIterator(attrs), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	        var name = _step.value;
-
-	        _loop(name);
-	      }
-	    } catch (err) {
-	      _didIteratorError = true;
-	      _iteratorError = err;
-	    } finally {
-	      try {
-	        if (!_iteratorNormalCompletion && _iterator.return) {
-	          _iterator.return();
-	        }
-	      } finally {
-	        if (_didIteratorError) {
-	          throw _iteratorError;
-	        }
-	      }
-	    }
-
-	    return clazz;
-	  };
-	}
-
-	var Node = function () {
-	  function Node() {
-	    var attributes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-	    var children = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-	    var xmlName = arguments[2];
-
-	    _classCallCheck(this, Node);
-
-	    var _iteratorNormalCompletion2 = true;
-	    var _didIteratorError2 = false;
-	    var _iteratorError2 = undefined;
-
-	    try {
-	      for (var _iterator2 = _getIterator(_Object$keys(attributes)), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	        var key = _step2.value;
-
-	        this[key] = attributes[key];
-	      }
-	    } catch (err) {
-	      _didIteratorError2 = true;
-	      _iteratorError2 = err;
-	    } finally {
-	      try {
-	        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-	          _iterator2.return();
-	        }
-	      } finally {
-	        if (_didIteratorError2) {
-	          throw _iteratorError2;
-	        }
-	      }
-	    }
-
-	    this.children = children;
-	    this._xmlName = xmlName || this.constructor.name.substring(1);
-	  }
-
-	  _createClass(Node, [{
-	    key: 'render',
-	    value: function render() {
-	      function walk(tree) {
-	        var name = tree._xmlName;
-	        var attributes = tree.attributes,
-	            children = tree.children;
-
-	        var tokens = [];
-
-	        if (tree[HEAD]) {
-	          tokens.push(tree[HEAD]);
-	        }
-	        tokens.push('<' + name);
-
-	        var _iteratorNormalCompletion3 = true;
-	        var _didIteratorError3 = false;
-	        var _iteratorError3 = undefined;
-
-	        try {
-	          for (var _iterator3 = _getIterator(_Object$keys(attributes || {})), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-	            var key = _step3.value;
-
-	            var v = attributes[key];
-	            if (v === undefined) continue;
-	            if (typeof v === 'string') {
-	              v = attrEscape(v);
-	            }
-	            if (typeof v === 'boolean') {
-	              v = v ? 1 : 0;
-	            }
-	            tokens.push(' ' + key + '="' + v + '"');
-	          }
-	        } catch (err) {
-	          _didIteratorError3 = true;
-	          _iteratorError3 = err;
-	        } finally {
-	          try {
-	            if (!_iteratorNormalCompletion3 && _iterator3.return) {
-	              _iterator3.return();
-	            }
-	          } finally {
-	            if (_didIteratorError3) {
-	              throw _iteratorError3;
-	            }
-	          }
-	        }
-
-	        if (!children.length) {
-	          tokens.push('/>');
-	          return tokens;
-	        }
-	        tokens.push('>');
-	        var _iteratorNormalCompletion4 = true;
-	        var _didIteratorError4 = false;
-	        var _iteratorError4 = undefined;
-
-	        try {
-	          for (var _iterator4 = _getIterator(children), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-	            var child = _step4.value;
-
-	            if (child instanceof Node) {
-	              tokens.push(child.render());
-	            } else if (typeof child === 'string') {
-	              tokens.push(escape(child));
-	            } else {
-	              tokens.push(child.toString());
-	            }
-	          }
-	        } catch (err) {
-	          _didIteratorError4 = true;
-	          _iteratorError4 = err;
-	        } finally {
-	          try {
-	            if (!_iteratorNormalCompletion4 && _iterator4.return) {
-	              _iterator4.return();
-	            }
-	          } finally {
-	            if (_didIteratorError4) {
-	              throw _iteratorError4;
-	            }
-	          }
-	        }
-
-	        tokens.push('</' + name + '>');
-	        return tokens;
-	      }
-	      return walk(this).join('');
-	    }
-	  }]);
-
-	  return Node;
-	}();
-
-	var NumFmtsCount = 163;
-	/**
-	 * Number format table
-	 *
-	 * ```js
-	 * {
-	 *   0: 'general',
-	 *   1: '0',
-	 *   2: '0.00',
-	 *   3: '#,##0',
-	 *   4: '#,##0.00',
-	 *   9: '0%',
-	 *   10: '0.00%',
-	 *   11: '0.00e+00',
-	 *   12: '# ?/?',
-	 *   13: '# ??/??',
-	 *   14: 'mm-dd-yy',
-	 *   15: 'd-mmm-yy',
-	 *   16: 'd-mmm',
-	 *   17: 'mmm-yy',
-	 *   18: 'h:mm am/pm',
-	 *   19: 'h:mm:ss am/pm',
-	 *   20: 'h:mm',
-	 *   21: 'h:mm:ss',
-	 *   22: 'm/d/yy h:mm',
-	 *   37: '#,##0 ;(#,##0)',
-	 *   38: '#,##0 ;[red](#,##0)',
-	 *   39: '#,##0.00;(#,##0.00)',
-	 *   40: '#,##0.00;[red](#,##0.00)',
-	 *   41: '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)',
-	 *   42: '_("$"* #,##0_);_("$* (#,##0);_("$"* "-"_);_(@_)',
-	 *   43: '_(* #,##0.00_);_(* (#,##0.00);_(* "-"??_);_(@_)',
-	 *   44: '_("$"* #,##0.00_);_("$"* (#,##0.00);_("$"* "-"??_);_(@_)',
-	 *   45: 'mm:ss',
-	 *   46: '[h]:mm:ss',
-	 *   47: 'mmss.0',
-	 *   48: '##0.0e+0',
-	 *   49: '@'
-	 * }
-	 * ```
-	 *
-	 * @type {Object}
-	 */
-	var NumFmt = {
-	  0: 'general',
-	  1: '0',
-	  2: '0.00',
-	  3: '#,##0',
-	  4: '#,##0.00',
-	  9: '0%',
-	  10: '0.00%',
-	  11: '0.00e+00',
-	  12: '# ?/?',
-	  13: '# ??/??',
-	  14: 'mm-dd-yy',
-	  15: 'd-mmm-yy',
-	  16: 'd-mmm',
-	  17: 'mmm-yy',
-	  18: 'h:mm am/pm',
-	  19: 'h:mm:ss am/pm',
-	  20: 'h:mm',
-	  21: 'h:mm:ss',
-	  22: 'm/d/yy h:mm',
-	  37: '#,##0 ;(#,##0)',
-	  38: '#,##0 ;[red](#,##0)',
-	  39: '#,##0.00;(#,##0.00)',
-	  40: '#,##0.00;[red](#,##0.00)',
-	  41: '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)',
-	  42: '_("$"* #,##0_);_("$* (#,##0);_("$"* "-"_);_(@_)',
-	  43: '_(* #,##0.00_);_(* (#,##0.00);_(* "-"??_);_(@_)',
-	  44: '_("$"* #,##0.00_);_("$"* (#,##0.00);_("$"* "-"??_);_(@_)',
-	  45: 'mm:ss',
-	  46: '[h]:mm:ss',
-	  47: 'mmss.0',
-	  48: '##0.0e+0',
-	  49: '@'
-	};
-
-	var NumFmtInv = {};
-	var _iteratorNormalCompletion = true;
-	var _didIteratorError = false;
-	var _iteratorError = undefined;
-
-	try {
-	  for (var _iterator = _getIterator(_Object$keys(NumFmt)), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	    var k$1 = _step.value;
-
-	    NumFmtInv[NumFmt[k$1]] = k$1;
-	  }
-	  // AA => 26
-	} catch (err) {
-	  _didIteratorError = true;
-	  _iteratorError = err;
-	} finally {
-	  try {
-	    if (!_iteratorNormalCompletion && _iterator.return) {
-	      _iterator.return();
-	    }
-	  } finally {
-	    if (_didIteratorError) {
-	      throw _iteratorError;
-	    }
-	  }
-	}
-
-	function col2num(colstr) {
-	  var d = 0;
-	  for (var i = 0; i !== colstr.length; ++i) {
-	    d = 26 * d + colstr.charCodeAt(i) - 64;
-	  }
-	  return d - 1;
-	}
-	// 26 => AA
-	function num2col(col) {
-	  var s = '';
-	  for (++col; col; col = Math.floor((col - 1) / 26)) {
-	    s = String.fromCharCode((col - 1) % 26 + 65) + s;
-	  }
-	  return s;
-	}
-	// B3 => {x: 1, y: 2}
-	function cid2coord(cid) {
-	  var temp = cid.match(/([A-Z]+)(\d+)/);
-	  return {
-	    x: col2num(temp[1]),
-	    y: parseInt(temp[2], 10) - 1
-	  };
-	}
-
-	function toExcelTime(d) {
-	  var unix = d.getTime() / 1000;
-	  return unix / 86400.0 + 25569.0;
-	}
-
-	var lib = /*#__PURE__*/Object.freeze({
-		NumFmt: NumFmt,
-		NumFmtInv: NumFmtInv,
-		NumFmtsCount: NumFmtsCount,
-		col2num: col2num,
-		num2col: num2col,
-		cid2coord: cid2coord,
-		toExcelTime: toExcelTime
-	});
-
-	var _dec, _class, _dec2, _class3, _dec3, _class4, _dec4, _class5, _dec5, _class6, _dec6, _class7, _dec7, _class8, _dec8, _class9, _dec9, _class10, _dec10, _class11, _dec11, _class12, _dec12, _class13, _dec13, _class14, _dec14, _class15, _dec15, _class16, _dec16, _class17;
-
-	var XstyleSheet = (_dec = props('xmlns'), _dec(_class = function (_Node) {
-	  _inherits(XstyleSheet, _Node);
-
-	  function XstyleSheet(_ref, children) {
-	    var _ref$xmlns = _ref.xmlns,
-	        xmlns = _ref$xmlns === undefined ? 'http://schemas.openxmlformats.org/spreadsheetml/2006/main' : _ref$xmlns;
-
-	    _classCallCheck(this, XstyleSheet);
-
-	    var _this = _possibleConstructorReturn(this, (XstyleSheet.__proto__ || _Object$getPrototypeOf(XstyleSheet)).call(this, { xmlns: xmlns }, children));
-
-	    _this.fonts = null;
-	    _this.fills = null;
-	    _this.borders = null;
-	    _this.cellStyles = null;
-	    _this.cellStyleXfs = null;
-	    _this.cellXfs = null;
-	    _this.numFmts = null;
-	    _this.numFmtRefTable = {};
-
-	    _this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
-	    return _this;
-	  }
-
-	  _createClass(XstyleSheet, [{
-	    key: 'render',
-	    value: function render() {
-	      this.children = [];
-	      if (this.numFmts) this.children.push(this.numFmts);
-	      if (this.fonts) this.children.push(this.fonts);
-	      if (this.fills) this.children.push(this.fills);
-	      if (this.borders) this.children.push(this.borders);
-	      if (this.cellStyleXfs) this.children.push(this.cellStyleXfs);
-	      if (this.cellXfs) this.children.push(this.cellXfs);
-	      if (this.cellStyles) this.children.push(this.cellStyles);
-	      return _get(XstyleSheet.prototype.__proto__ || _Object$getPrototypeOf(XstyleSheet.prototype), 'render', this).call(this);
-	    }
-	  }, {
-	    key: 'reset',
-	    value: function reset() {
-	      this.children = [];
-	      this.fonts = new Xfonts();
-	      this.fills = new Xfills();
-	      this.borders = new Xborders();
-	      this.cellXfs = new XcellXfs({ count: 1 }, [new Xxf()]);
-	      this.numFmts = new XnumFmts();
-	      this.addBorder(new Xborder({
-	        left: { style: 'none' },
-	        right: { style: 'none' },
-	        top: { style: 'none' },
-	        bottom: { style: 'none' }
-	      }));
-	    }
-	  }, {
-	    key: 'addFont',
-	    value: function addFont(xFont) {
-	      if (!xFont.name) return 0;
-	      var list = this.fonts.children;
-	      var len = list.length;
-	      for (var i = 0; i < list.length; i++) {
-	        if (xFont.equals(list[i])) return i;
-	      }
-	      list.push(xFont);
-	      this.fonts.count = list.length;
-	      return len;
-	    }
-	  }, {
-	    key: 'addFill',
-	    value: function addFill(xFill) {
-	      var list = this.fills.children;
-	      var len = list.length;
-	      for (var i = 0; i < list.length; i++) {
-	        if (xFill.equals(list[i])) return i;
-	      }
-	      list.push(xFill);
-	      this.fills.count = list.length;
-	      return len;
-	    }
-	  }, {
-	    key: 'addBorder',
-	    value: function addBorder(xBorder) {
-	      var list = this.borders.children;
-	      var len = list.length;
-	      for (var i = 0; i < list.length; i++) {
-	        if (xBorder.equals(list[i])) return i;
-	      }
-	      list.push(xBorder);
-	      this.borders.count = list.length;
-	      return len;
-	    }
-	  }, {
-	    key: 'addCellXf',
-	    value: function addCellXf(xXf) {
-	      var list = this.cellXfs.children;
-	      var len = list.length;
-	      for (var i = 0; i < list.length; i++) {
-	        if (xXf.equals(list[i])) return i;
-	      }
-	      list.push(xXf);
-	      this.cellXfs.count = list.length;
-	      return len;
-	    }
-	  }, {
-	    key: 'addNumFmt',
-	    value: function addNumFmt(xNumFmt) {
-	      if (xNumFmt.numFmtId <= NumFmtsCount) return;
-	      if (this.numFmtRefTable[xNumFmt.numFmtId] === undefined) {
-	        this.numFmts.children.push(xNumFmt);
-	        this.numFmts.count = this.numFmts.children.length;
-	        this.numFmtRefTable[xNumFmt.numFmtId] = xNumFmt;
-	      }
-	    }
-	  }, {
-	    key: 'newNumFmt',
-	    value: function newNumFmt(formatCode) {
-	      if (!formatCode) return new XnumFmt({ numFmtId: 0, formatCode: 'general' });
-	      var numFmtId = NumFmtInv[formatCode];
-	      if (numFmtId !== undefined) {
-	        return new XnumFmt({ numFmtId: numFmtId, formatCode: formatCode });
-	      }
-	      var _iteratorNormalCompletion = true;
-	      var _didIteratorError = false;
-	      var _iteratorError = undefined;
-
-	      try {
-	        for (var _iterator = _getIterator(this.numFmts.children), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	          var numFmt = _step.value;
-
-	          if (formatCode === numFmt.formatCode) return numFmt;
-	        }
-	      } catch (err) {
-	        _didIteratorError = true;
-	        _iteratorError = err;
-	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion && _iterator.return) {
-	            _iterator.return();
-	          }
-	        } finally {
-	          if (_didIteratorError) {
-	            throw _iteratorError;
-	          }
-	        }
-	      }
-
-	      numFmtId = NumFmtsCount + 1;
-	      do {
-	        if (this.numFmtRefTable[numFmtId]) {
-	          numFmtId++;
-	        } else {
-	          this.addNumFmt(new XnumFmt({ numFmtId: numFmtId, formatCode: formatCode }));
-	          break;
-	        }
-	      } while (1);
-	      return new XnumFmt({ numFmtId: numFmtId, formatCode: formatCode });
-	    }
-	  }]);
-
-	  return XstyleSheet;
-	}(Node)) || _class);
-
-	var XnumFmts = (_dec2 = props('count'), _dec2(_class3 = function (_Node2) {
-	  _inherits(XnumFmts, _Node2);
-
-	  function XnumFmts() {
-	    _classCallCheck(this, XnumFmts);
-
-	    return _possibleConstructorReturn(this, (XnumFmts.__proto__ || _Object$getPrototypeOf(XnumFmts)).apply(this, arguments));
-	  }
-
-	  _createClass(XnumFmts, [{
-	    key: 'render',
-	    value: function render() {
-	      if (this.count) return _get(XnumFmts.prototype.__proto__ || _Object$getPrototypeOf(XnumFmts.prototype), 'render', this).call(this);
-	      return '';
-	    }
-	  }]);
-
-	  return XnumFmts;
-	}(Node)) || _class3);
-
-	var XnumFmt = (_dec3 = props('numFmtId', 'formatCode'), _dec3(_class4 = function (_Node3) {
-	  _inherits(XnumFmt, _Node3);
-
-	  function XnumFmt() {
-	    _classCallCheck(this, XnumFmt);
-
-	    return _possibleConstructorReturn(this, (XnumFmt.__proto__ || _Object$getPrototypeOf(XnumFmt)).apply(this, arguments));
-	  }
-
-	  return XnumFmt;
-	}(Node)) || _class4);
-
-	var Xfonts = (_dec4 = props('count'), _dec4(_class5 = function (_Node4) {
-	  _inherits(Xfonts, _Node4);
-
-	  function Xfonts() {
-	    _classCallCheck(this, Xfonts);
-
-	    return _possibleConstructorReturn(this, (Xfonts.__proto__ || _Object$getPrototypeOf(Xfonts)).apply(this, arguments));
-	  }
-
-	  _createClass(Xfonts, [{
-	    key: 'render',
-	    value: function render() {
-	      if (this.count) return _get(Xfonts.prototype.__proto__ || _Object$getPrototypeOf(Xfonts.prototype), 'render', this).call(this);
-	      return '';
-	    }
-	  }]);
-
-	  return Xfonts;
-	}(Node)) || _class5);
-
-	var Xfont = (_dec5 = props('sz', 'name', 'family', 'charset', 'color', 'b', 'i', 'u'), _dec5(_class6 = function (_Node5) {
-	  _inherits(Xfont, _Node5);
-
-	  function Xfont() {
-	    _classCallCheck(this, Xfont);
-
-	    return _possibleConstructorReturn(this, (Xfont.__proto__ || _Object$getPrototypeOf(Xfont)).apply(this, arguments));
-	  }
-
-	  _createClass(Xfont, [{
-	    key: 'render',
-	    value: function render() {
-	      var str = '<font>';
-	      if (this.sz) str += '<sz val="' + this.sz + '"/>';
-	      if (this.name) str += '<name val="' + this.name + '"/>';
-	      if (this.family) str += '<family val="' + this.family + '"/>';
-	      if (this.charset) str += '<charset val="' + this.charset + '"/>';
-	      if (this.color) str += '<color rgb="' + this.color + '"/>';
-	      if (this.b) str += '<b/>';
-	      if (this.i) str += '<i/>';
-	      if (this.u) str += '<u/>';
-	      return str + '</font>';
-	    }
-	  }, {
-	    key: 'equals',
-	    value: function equals(o) {
-	      return this.sz === o.sz && this.name === o.name && this.family === o.family && this.charset === o.charset && this.color === o.color && this.b === o.b && this.i === o.i && this.u === o.u;
-	    }
-	  }]);
-
-	  return Xfont;
-	}(Node)) || _class6);
-
-	var Xfills = (_dec6 = props('count'), _dec6(_class7 = function (_Node6) {
-	  _inherits(Xfills, _Node6);
-
-	  function Xfills() {
-	    _classCallCheck(this, Xfills);
-
-	    return _possibleConstructorReturn(this, (Xfills.__proto__ || _Object$getPrototypeOf(Xfills)).apply(this, arguments));
-	  }
-
-	  _createClass(Xfills, [{
-	    key: 'render',
-	    value: function render() {
-	      if (this.count) return _get(Xfills.prototype.__proto__ || _Object$getPrototypeOf(Xfills.prototype), 'render', this).call(this);
-	      return '';
-	    }
-	  }]);
-
-	  return Xfills;
-	}(Node)) || _class7);
-
-	var Xfill = (_dec7 = props('patternFill'), _dec7(_class8 = function (_Node7) {
-	  _inherits(Xfill, _Node7);
-
-	  function Xfill() {
-	    _classCallCheck(this, Xfill);
-
-	    return _possibleConstructorReturn(this, (Xfill.__proto__ || _Object$getPrototypeOf(Xfill)).apply(this, arguments));
-	  }
-
-	  _createClass(Xfill, [{
-	    key: 'render',
-	    value: function render() {
-	      return '<fill>' + this.patternFill.render() + '</fill>';
-	    }
-	  }, {
-	    key: 'equals',
-	    value: function equals(o) {
-	      var pf1 = this.patternFill;
-	      var pf2 = o.patternFill;
-	      if (pf1 && pf2) {
-	        return pf1.patternType === pf2.patternType && pf1.fgColor === pf2.fgColor && pf1.bgColor === pf2.bgColor;
-	      }
-	      return !pf1 && !pf2;
-	    }
-	  }]);
-
-	  return Xfill;
-	}(Node)) || _class8);
-
-	var XpatternFill = (_dec8 = props('patternType', 'fgColor', 'bgColor'), _dec8(_class9 = function (_Node8) {
-	  _inherits(XpatternFill, _Node8);
-
-	  function XpatternFill() {
-	    _classCallCheck(this, XpatternFill);
-
-	    return _possibleConstructorReturn(this, (XpatternFill.__proto__ || _Object$getPrototypeOf(XpatternFill)).apply(this, arguments));
-	  }
-
-	  _createClass(XpatternFill, [{
-	    key: 'render',
-	    value: function render() {
-	      var str = '<patternFill patternType="' + this.patternType + '">';
-	      if (this.fgColor) str += '<fgColor rgb="' + this.fgColor + '"/>';
-	      if (this.bgColor) str += '<bgColor rgb="' + this.bgColor + '"/>';
-	      return str + '</patternFill>';
-	    }
-	  }]);
-
-	  return XpatternFill;
-	}(Node)) || _class9);
-
-	var Xborders = (_dec9 = props('count'), _dec9(_class10 = function (_Node9) {
-	  _inherits(Xborders, _Node9);
-
-	  function Xborders() {
-	    _classCallCheck(this, Xborders);
-
-	    return _possibleConstructorReturn(this, (Xborders.__proto__ || _Object$getPrototypeOf(Xborders)).apply(this, arguments));
-	  }
-
-	  _createClass(Xborders, [{
-	    key: 'render',
-	    value: function render() {
-	      if (this.count) return _get(Xborders.prototype.__proto__ || _Object$getPrototypeOf(Xborders.prototype), 'render', this).call(this);
-	      return '';
-	    }
-	  }]);
-
-	  return Xborders;
-	}(Node)) || _class10);
-
-	var Xborder = (_dec10 = props('left', 'right', 'top', 'bottom'), _dec10(_class11 = function (_Node10) {
-	  _inherits(Xborder, _Node10);
-
-	  function Xborder() {
-	    _classCallCheck(this, Xborder);
-
-	    return _possibleConstructorReturn(this, (Xborder.__proto__ || _Object$getPrototypeOf(Xborder)).apply(this, arguments));
-	  }
-
-	  _createClass(Xborder, [{
-	    key: '_renderLine',
-	    value: function _renderLine(pos) {
-	      var posVal = this[pos];
-	      if (!posVal) return '';
-
-	      var str = '<' + pos + ' style="' + posVal.style + '">';
-	      if (posVal.color) str += '<color rgb="' + posVal.color + '"/>';
-	      return str + ('</' + pos + '>');
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var str = '<border>';
-	      str += this._renderLine('left');
-	      str += this._renderLine('right');
-	      str += this._renderLine('top');
-	      str += this._renderLine('bottom');
-	      return str + '</border>';
-	    }
-	  }, {
-	    key: 'equals',
-	    value: function equals(o) {
-	      var check = function check(a, b) {
-	        if (a && b) {
-	          return a.style === b.style && a.color === b.color;
-	        }
-	        return !a && !b;
-	      };
-	      return check(this.left, o.left) && check(this.right, o.right) && check(this.top, o.top) && check(this.bottom, o.bottom);
-	    }
-	  }]);
-
-	  return Xborder;
-	}(Node)) || _class11);
-
-	var XcellStyles = (_dec11 = props('count'), _dec11(_class12 = function (_Node11) {
-	  _inherits(XcellStyles, _Node11);
-
-	  function XcellStyles() {
-	    _classCallCheck(this, XcellStyles);
-
-	    return _possibleConstructorReturn(this, (XcellStyles.__proto__ || _Object$getPrototypeOf(XcellStyles)).apply(this, arguments));
-	  }
-
-	  _createClass(XcellStyles, [{
-	    key: 'render',
-	    value: function render() {
-	      if (this.count) return _get(XcellStyles.prototype.__proto__ || _Object$getPrototypeOf(XcellStyles.prototype), 'render', this).call(this);
-	      return '';
-	    }
-	  }]);
-
-	  return XcellStyles;
-	}(Node)) || _class12);
-
-	var XcellStyle = (_dec12 = props('builtInId', 'customBuiltIn', 'hidden', 'iLevel', 'name', 'xfId'), _dec12(_class13 = function (_Node12) {
-	  _inherits(XcellStyle, _Node12);
-
-	  function XcellStyle() {
-	    _classCallCheck(this, XcellStyle);
-
-	    return _possibleConstructorReturn(this, (XcellStyle.__proto__ || _Object$getPrototypeOf(XcellStyle)).apply(this, arguments));
-	  }
-
-	  return XcellStyle;
-	}(Node)) || _class13);
-
-	var XcellStyleXfs = (_dec13 = props('count'), _dec13(_class14 = function (_Node13) {
-	  _inherits(XcellStyleXfs, _Node13);
-
-	  function XcellStyleXfs() {
-	    _classCallCheck(this, XcellStyleXfs);
-
-	    return _possibleConstructorReturn(this, (XcellStyleXfs.__proto__ || _Object$getPrototypeOf(XcellStyleXfs)).apply(this, arguments));
-	  }
-
-	  _createClass(XcellStyleXfs, [{
-	    key: 'render',
-	    value: function render() {
-	      if (this.count) return _get(XcellStyleXfs.prototype.__proto__ || _Object$getPrototypeOf(XcellStyleXfs.prototype), 'render', this).call(this);
-	      return '';
-	    }
-	  }]);
-
-	  return XcellStyleXfs;
-	}(Node)) || _class14);
-
-	var XcellXfs = (_dec14 = props('count'), _dec14(_class15 = function (_Node14) {
-	  _inherits(XcellXfs, _Node14);
-
-	  function XcellXfs() {
-	    _classCallCheck(this, XcellXfs);
-
-	    return _possibleConstructorReturn(this, (XcellXfs.__proto__ || _Object$getPrototypeOf(XcellXfs)).apply(this, arguments));
-	  }
-
-	  _createClass(XcellXfs, [{
-	    key: 'render',
-	    value: function render() {
-	      if (this.count) return _get(XcellXfs.prototype.__proto__ || _Object$getPrototypeOf(XcellXfs.prototype), 'render', this).call(this);
-	      return '';
-	    }
-	  }]);
-
-	  return XcellXfs;
-	}(Node)) || _class15);
-
-	var Xxf = (_dec15 = props('applyAlignment', 'applyBorder', 'applyFont', 'applyFill', 'applyNumberFormat', 'applyProtection', 'borderId', 'fillId', 'fontId', 'numFmtId', 'xfId'), _dec15(_class16 = function (_Node15) {
-	  _inherits(Xxf, _Node15);
-
-	  function Xxf(attrs, children) {
-	    _classCallCheck(this, Xxf);
-
-	    var defaults = {
-	      applyAlignment: false,
-	      applyBorder: false,
-	      applyFont: false,
-	      applyFill: false,
-	      applyNumberFormat: false,
-	      applyProtection: false,
-	      borderId: 0,
-	      fillId: 0,
-	      fontId: 0,
-	      numFmtId: 0
-	    };
-
-	    var _this15 = _possibleConstructorReturn(this, (Xxf.__proto__ || _Object$getPrototypeOf(Xxf)).call(this, _extends$1({}, defaults, attrs), children));
-
-	    _this15.alignment = new Xalignment();
-	    return _this15;
-	  }
-
-	  _createClass(Xxf, [{
-	    key: 'render',
-	    value: function render() {
-	      if (this.alignment) {
-	        this.children = [this.alignment];
-	      }
-	      return _get(Xxf.prototype.__proto__ || _Object$getPrototypeOf(Xxf.prototype), 'render', this).call(this);
-	    }
-	  }, {
-	    key: 'equals',
-	    value: function equals(o) {
-	      return this.applyAlignment === o.applyAlignment && this.applyBorder === o.applyBorder && this.applyFont === o.applyFont && this.applyFill === o.applyFill && this.applyProtection === o.applyProtection && this.borderId === o.borderId && this.fillId === o.fillId && this.fontId === o.fontId && this.numFmtId === o.numFmtId && this.xfId === o.xfId && this.alignment.equals(o.alignment);
-	    }
-	  }]);
-
-	  return Xxf;
-	}(Node)) || _class16);
-
-	var Xalignment = (_dec16 = props('horizontal', 'indent', 'shrinkToFit', 'textRotation', 'vertical', 'wrapText'), _dec16(_class17 = function (_Node16) {
-	  _inherits(Xalignment, _Node16);
-
-	  function Xalignment(attrs) {
-	    var children = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-
-	    _classCallCheck(this, Xalignment);
-
-	    var defaults = {
-	      horizontal: 'general',
-	      indent: 0,
-	      shrinkToFit: false,
-	      textRotation: 0,
-	      vertical: 'bottom',
-	      wrapText: false
-	    };
-	    return _possibleConstructorReturn(this, (Xalignment.__proto__ || _Object$getPrototypeOf(Xalignment)).call(this, _extends$1({}, defaults, attrs), children));
-	  }
-
-	  _createClass(Xalignment, [{
-	    key: 'equals',
-	    value: function equals(o) {
-	      return this.horizontal === o.horizontal && this.indent === o.indent && this.shrinkToFit === o.shrinkToFit && this.textRotation === o.textRotation && this.vertical === o.vertical && this.wrapText === o.wrapText;
-	    }
-	  }]);
-
-	  return Xalignment;
-	}(Node)) || _class17);
-
-	function handleStyle(style, numFmtId, styles) {
-	  var _style$makeXStyleElem = style.makeXStyleElements(),
-	      xFont = _style$makeXStyleElem.xFont,
-	      xFill = _style$makeXStyleElem.xFill,
-	      xBorder = _style$makeXStyleElem.xBorder,
-	      xXf = _style$makeXStyleElem.xXf;
-
-	  var fontId = styles.addFont(xFont);
-	  var fillId = styles.addFill(xFill);
-
-	  // HACK - adding light grey fill, as in OO and Google
-	  var greyfill = new Xfill({
-	    patternFill: new XpatternFill({ patternType: 'lightGray' })
-	  });
-	  styles.addFill(greyfill);
-
-	  var borderId = styles.addBorder(xBorder);
-	  xXf.fontId = fontId;
-	  xXf.fillId = fillId;
-	  xXf.borderId = borderId;
-	  xXf.numFmtId = numFmtId;
-	  // apply the numFmtId when it is not the default cellxf
-	  if (xXf.numFmtId > 0) {
-	    xXf.applyNumberFormat = true;
-	  }
-
-	  xXf.alignment.horizontal = style.align.h;
-	  xXf.alignment.indent = style.align.indent;
-	  xXf.alignment.shrinkToFit = style.align.shrinkToFit;
-	  xXf.alignment.textRotation = style.align.textRotation;
-	  xXf.alignment.vertical = style.align.v;
-	  xXf.alignment.wrapText = style.align.wrapText;
-
-	  return styles.addCellXf(xXf);
-	}
-
-	function handleNumFmtId(numFmtId, styles) {
-	  var xf = new Xxf({ numFmtId: numFmtId });
-	  if (numFmtId > 0) {
-	    xf.applyNumberFormat = true;
-	  }
-	  return styles.addCellXf(xf);
-	}
-
-	/**
-	 * Style class for set Cell styles.
-	 */
-	var Style = function () {
-	  function Style() {
-	    _classCallCheck(this, Style);
-
-	    this.applyBorder = false;
-	    this.applyFill = false;
-	    this.applyFont = false;
-	    this.applyAlignment = false;
-	    this.namedStyleIndex = null;
-
-	    /**
-	     * Cell border
-	     * @type {Border}
-	     */
-	    this.border = new Border({});
-	    /**
-	     * Cell fill background or foreground
-	     * @type {Fill}
-	     */
-	    this.fill = new Fill({});
-	    /**
-	     * Cell font
-	     * @type {Font}
-	     */
-	    this.font = new Font({});
-	    /**
-	     * Cell alignment
-	     * @type {Alignment}
-	     */
-	    this.align = new Alignment({});
-	  }
-
-	  _createClass(Style, [{
-	    key: 'makeXStyleElements',
-	    value: function makeXStyleElements() {
-	      var xFont = new Xfont({
-	        sz: this.font.size,
-	        name: this.font.name,
-	        family: this.font.family,
-	        charset: this.font.charset,
-	        color: this.font.color,
-	        b: this.font.bold,
-	        i: this.font.italic,
-	        u: this.font.underline
-	      });
-	      var xFill = new Xfill({
-	        patternFill: new XpatternFill({
-	          patternType: this.fill.patternType,
-	          fgColor: this.fill.fgColor,
-	          bgColor: this.fill.bgColor
-	        })
-	      });
-	      var xBorder = new Xborder({
-	        left: { style: this.border.left, color: this.border.leftColor },
-	        right: { style: this.border.right, color: this.border.rightColor },
-	        top: { style: this.border.top, color: this.border.topColor },
-	        bottom: { style: this.border.bottom, color: this.border.bottomColor }
-	      });
-	      var xXf = new Xxf({
-	        numFmtId: 0,
-	        applyBorder: this.applyBorder,
-	        applyFill: this.applyFill,
-	        applyFont: this.applyFont,
-	        applyAlignment: this.applyAlignment
-	      });
-
-	      xXf.alignment = new Xalignment({
-	        horizontal: this.align.h,
-	        indent: this.align.indent,
-	        shrinkToFit: this.align.shrinkToFit,
-	        textRotation: this.align.textRotation,
-	        vertical: this.align.v,
-	        wrapText: this.align.wrapText
-	      });
-
-	      if (this.namedStyleIndex !== null) {
-	        xXf.xfId = this.namedStyleIndex;
-	      }
-
-	      return { xFont: xFont, xFill: xFill, xBorder: xBorder, xXf: xXf };
-	    }
-	  }]);
-
-	  return Style;
-	}();
-
-	/**
-	 * Border of the Style and border type have: `none`, `thin`, `medium`, `thick`, `dashed`, `dotted`, `double`
-	 *
-	 */
-	var Border =
-	/**
-	 * top border color
-	 * @type {String}
-	 */
-
-	/**
-	 * left border color
-	 * @type {String}
-	 */
-	function Border(_ref) {
-	  var _ref$left = _ref.left,
-	      left = _ref$left === undefined ? 'none' : _ref$left,
-	      _ref$right = _ref.right,
-	      right = _ref$right === undefined ? 'none' : _ref$right,
-	      _ref$top = _ref.top,
-	      top = _ref$top === undefined ? 'none' : _ref$top,
-	      _ref$bottom = _ref.bottom,
-	      bottom = _ref$bottom === undefined ? 'none' : _ref$bottom;
-
-	  _classCallCheck(this, Border);
-
-	  this.leftColor = undefined;
-	  this.rightColor = undefined;
-	  this.topColor = undefined;
-	  this.bottomColor = undefined;
-
-	  /**
-	   * left border type
-	   * @type {String}
-	   */
-	  this.left = left;
-	  /**
-	   * right border type
-	   * @type {String}
-	   */
-	  this.right = right;
-	  /**
-	   * top border type
-	   * @type {String}
-	   */
-	  this.top = top;
-	  /**
-	   * bottom border type
-	   * @type {String}
-	   */
-	  this.bottom = bottom;
-	}
-	/**
-	 * bottom border color
-	 * @type {String}
-	 */
-
-	/**
-	 * right border color
-	 * @type {String}
-	 */
-	;
-	/**
-	 * Fill of the Style
-	 */
-	var Fill = function Fill(_ref2) {
-	  var _ref2$patternType = _ref2.patternType,
-	      patternType = _ref2$patternType === undefined ? 'none' : _ref2$patternType,
-	      _ref2$fgColor = _ref2.fgColor,
-	      fgColor = _ref2$fgColor === undefined ? 'FFFFFFFF' : _ref2$fgColor,
-	      _ref2$bgColor = _ref2.bgColor,
-	      bgColor = _ref2$bgColor === undefined ? '00000000' : _ref2$bgColor;
-
-	  _classCallCheck(this, Fill);
-
-	  /**
-	   * pattern type of the fill
-	   * @type {String}
-	   */
-	  this.patternType = patternType;
-	  /**
-	   * foreground color of the fill
-	   * @type {String}
-	   */
-	  this.fgColor = fgColor;
-	  /**
-	   * background color of the fill
-	   * @type {String}
-	   */
-	  this.bgColor = bgColor;
-	};
-	/**
-	 * Font of the Style
-	 */
-	var Font =
-	/**
-	 * Is italic style
-	 * @type {Boolean}
-	 */
-
-	/**
-	 * font color
-	 * @type {String}
-	 */
-	function Font(_ref3) {
-	  var _ref3$size = _ref3.size,
-	      size = _ref3$size === undefined ? 12 : _ref3$size,
-	      _ref3$name = _ref3.name,
-	      name = _ref3$name === undefined ? 'Verdana' : _ref3$name;
-
-	  _classCallCheck(this, Font);
-
-	  this.family = 0;
-	  this.charset = 0;
-	  this.color = undefined;
-	  this.bold = false;
-	  this.italic = false;
-	  this.underline = false;
-
-	  /**
-	   * font size [default 12]
-	   * @type {Number}
-	   */
-	  this.size = size;
-	  this.name = name;
-	}
-	/**
-	 * IS underline style
-	 * @type {Boolean}
-	 */
-
-	/**
-	 * Is bold style
-	 * @type {Boolean}
-	 */
-	;
-	/**
-	 * Alignment of the Style.
-	 */
-	var Alignment = function Alignment(_ref4) {
-	  var _ref4$h = _ref4.h,
-	      h = _ref4$h === undefined ? 'general' : _ref4$h,
-	      _ref4$v = _ref4.v,
-	      v = _ref4$v === undefined ? 'bottom' : _ref4$v;
-
-	  _classCallCheck(this, Alignment);
-
-	  this.indent = 0;
-	  this.shrinkToFit = false;
-	  this.textRotation = 0;
-	  this.wrapText = false;
-
-	  /**
-	   * Horizontal align: `general`, `center`, `left`, `right`
-	   * @type {String}
-	   */
-	  this.h = h;
-	  /**
-	   * Vertical align: `general`, `top`, `bottom`, `center`
-	   * @type {String}
-	   */
-	  this.v = v;
-	};
-
-	var style = /*#__PURE__*/Object.freeze({
-		handleStyle: handleStyle,
-		handleNumFmtId: handleNumFmtId,
-		Style: Style,
-		Border: Border,
-		Fill: Fill,
-		Font: Font,
-		Alignment: Alignment
-	});
-
-	var toString$2 = Object.prototype.toString;
-
-	var kindOf = function kindOf(val) {
-	  if (val === void 0) return 'undefined';
-	  if (val === null) return 'null';
-
-	  var type = typeof val;
-	  if (type === 'boolean') return 'boolean';
-	  if (type === 'string') return 'string';
-	  if (type === 'number') return 'number';
-	  if (type === 'symbol') return 'symbol';
-	  if (type === 'function') {
-	    return isGeneratorFn(val) ? 'generatorfunction' : 'function';
-	  }
-
-	  if (isArray(val)) return 'array';
-	  if (isBuffer(val)) return 'buffer';
-	  if (isArguments(val)) return 'arguments';
-	  if (isDate(val)) return 'date';
-	  if (isError(val)) return 'error';
-	  if (isRegexp(val)) return 'regexp';
-
-	  switch (ctorName(val)) {
-	    case 'Symbol': return 'symbol';
-	    case 'Promise': return 'promise';
-
-	    // Set, Map, WeakSet, WeakMap
-	    case 'WeakMap': return 'weakmap';
-	    case 'WeakSet': return 'weakset';
-	    case 'Map': return 'map';
-	    case 'Set': return 'set';
-
-	    // 8-bit typed arrays
-	    case 'Int8Array': return 'int8array';
-	    case 'Uint8Array': return 'uint8array';
-	    case 'Uint8ClampedArray': return 'uint8clampedarray';
-
-	    // 16-bit typed arrays
-	    case 'Int16Array': return 'int16array';
-	    case 'Uint16Array': return 'uint16array';
-
-	    // 32-bit typed arrays
-	    case 'Int32Array': return 'int32array';
-	    case 'Uint32Array': return 'uint32array';
-	    case 'Float32Array': return 'float32array';
-	    case 'Float64Array': return 'float64array';
-	  }
-
-	  if (isGeneratorObj(val)) {
-	    return 'generator';
-	  }
-
-	  // Non-plain objects
-	  type = toString$2.call(val);
-	  switch (type) {
-	    case '[object Object]': return 'object';
-	    // iterators
-	    case '[object Map Iterator]': return 'mapiterator';
-	    case '[object Set Iterator]': return 'setiterator';
-	    case '[object String Iterator]': return 'stringiterator';
-	    case '[object Array Iterator]': return 'arrayiterator';
-	  }
-
-	  // other
-	  return type.slice(8, -1).toLowerCase().replace(/\s/g, '');
-	};
-
-	function ctorName(val) {
-	  return val.constructor ? val.constructor.name : null;
-	}
-
-	function isArray(val) {
-	  if (Array.isArray) return Array.isArray(val);
-	  return val instanceof Array;
-	}
-
-	function isError(val) {
-	  return val instanceof Error || (typeof val.message === 'string' && val.constructor && typeof val.constructor.stackTraceLimit === 'number');
-	}
-
-	function isDate(val) {
-	  if (val instanceof Date) return true;
-	  return typeof val.toDateString === 'function'
-	    && typeof val.getDate === 'function'
-	    && typeof val.setDate === 'function';
-	}
-
-	function isRegexp(val) {
-	  if (val instanceof RegExp) return true;
-	  return typeof val.flags === 'string'
-	    && typeof val.ignoreCase === 'boolean'
-	    && typeof val.multiline === 'boolean'
-	    && typeof val.global === 'boolean';
-	}
-
-	function isGeneratorFn(name, val) {
-	  return ctorName(name) === 'GeneratorFunction';
-	}
-
-	function isGeneratorObj(val) {
-	  return typeof val.throw === 'function'
-	    && typeof val.return === 'function'
-	    && typeof val.next === 'function';
-	}
-
-	function isArguments(val) {
-	  try {
-	    if (typeof val.length === 'number' && typeof val.callee === 'function') {
-	      return true;
-	    }
-	  } catch (err) {
-	    if (err.message.indexOf('callee') !== -1) {
-	      return true;
-	    }
-	  }
-	  return false;
-	}
-
-	/**
-	 * If you need to support Safari 5-7 (8-10 yr-old browser),
-	 * take a look at https://github.com/feross/is-buffer
-	 */
-
-	function isBuffer(val) {
-	  if (val.constructor && typeof val.constructor.isBuffer === 'function') {
-	    return val.constructor.isBuffer(val);
-	  }
-	  return false;
-	}
-
-	var CellType = {
-	  TypeString: 49,
-	  TypeFormula: 0,
-	  TypeNumeric: 1,
-	  TypeBool: 0,
-	  TypeInline: 0,
-	  TypeError: 0,
-	  TypeDate: 14,
-	  TypeGeneral: 0
-	};
-
-	/**
-	 * Cell intended to provide user access to the contents of Cell within an xlsx.Row.
-	 *
-	 * ```js
-	 * const cell = row.addCell();
-	 * cell.value = 'I am a cell!';
-	 * cell.hMerge = 2;
-	 * cell.vMerge = 1;
-	 * cell.style.fill.patternType = 'solid';
-	 * cell.style.fill.fgColor = '00FF0000';
-	 * cell.style.fill.bgColor = 'FF000000';
-	 * cell.style.align.h = 'center';
-	 * cell.style.align.v = 'center';
-	 * ```
-	 *
-	 * Set the cell value
-	 *
-	 * ```js
-	 * const cell = row.addCell();
-	 * // Date type
-	 * cell.setDate(new Date());
-	 * // Number type
-	 * cell.setNumber(123456);
-	 * cell.numFmt = '$#,##0.00';
-	 * ```
-	 */
-	var Cell = function () {
-
-	  /**
-	   * Create a cell and add it to a row.
-	   * @private
-	   * @param  {Object} options.row Row of add to
-	   */
-
-	  /**
-	   * Vertical merge with other cells.
-	   * @type {Number}
-	   */
-
-	  /**
-	   * Hide the cell.
-	   * @type {Boolean}
-	   */
-
-	  /**
-	   * Number format @see {@link NumFmt}
-	   * @type {String}
-	   */
-	  function Cell(_ref) {
-	    var row = _ref.row;
-
-	    _classCallCheck(this, Cell);
-
-	    this._value = '';
-	    this._style = null;
-	    this.formula = '';
-	    this.numFmt = '';
-	    this.date1904 = false;
-	    this.hidden = false;
-	    this.hMerge = 0;
-	    this.vMerge = 0;
-	    this.cellType = 'TypeString';
-
-	    this.row = row;
-	  }
-	  /**
-	   * Get the cell style.
-	   * @return {Style}
-	   */
-
-	  /**
-	   * Horizontal merge with other cells.
-	   * @type {Number}
-	   */
-
-
-	  _createClass(Cell, [{
-	    key: 'setString',
-
-	    /**
-	     * Set cell value with String type.
-	     * @param {String} v
-	     */
-	    value: function setString(v) {
-	      this._value = v;
-	      this.formula = '';
-	      this.cellType = 'TypeString';
-	    }
-	    /**
-	     * Set cell value with Date type.
-	     * @param {Date} v
-	     */
-
-	  }, {
-	    key: 'setDate',
-	    value: function setDate(v) {
-	      this._value = parseInt(toExcelTime(v));
-	      this.formula = '';
-	      this.numFmt = NumFmt[14];
-	      this.cellType = 'TypeDate';
-	    }
-	    /**
-	     * Set cell value with DateTime type.
-	     * @param {Date} v
-	     */
-
-	  }, {
-	    key: 'setDateTime',
-	    value: function setDateTime(v) {
-	      this._value = toExcelTime(v);
-	      this.formula = '';
-	      this.numFmt = NumFmt[22];
-	      this.cellType = 'TypeDate';
-	    }
-	    /**
-	     * Set cell value with Number type.
-	     * @param {Number} v
-	     */
-
-	  }, {
-	    key: 'setNumber',
-	    value: function setNumber(v) {
-	      this._value = v;
-	      this.formula = '';
-	      this.numFmt = NumFmt[0];
-	      this.cellType = 'TypeNumeric';
-	    }
-	    /**
-	     * Set cell value with Boolean type.
-	     * @param {Boolean} v
-	     */
-
-	  }, {
-	    key: 'setBool',
-	    value: function setBool(v) {
-	      this._value = v ? 1 : 0;
-	      this.cellType = 'TypeBool';
-	    }
-	    /**
-	     * Set cell formula.
-	     * @param {String} f - Formula like `B2*C2-D2`.
-	     */
-
-	  }, {
-	    key: 'setFormula',
-	    value: function setFormula(f) {
-	      this.formula = f;
-	      this.cellType = 'TypeFormula';
-	    }
-	  }, {
-	    key: 'style',
-	    get: function get() {
-	      if (this._style === null) {
-	        this._style = new Style();
-	      }
-	      return this._style;
-	    }
-	    /**
-	     * Set the style of the cell.
-	     * @param  {Style} s
-	     */
-	    ,
-	    set: function set(s) {
-	      this._style = s;
-	    }
-	    /**
-	     * Get the cell value.
-	     */
-
-	  }, {
-	    key: 'value',
-	    get: function get() {
-	      return this._value;
-	    }
-	    /**
-	     * Set the cell value.
-	     * @param  {String|Date|Number|Boolean} v
-	     */
-	    ,
-	    set: function set(v) {
-	      var t = kindOf(v);
-	      if (t === 'null' || t === 'undefined') {
-	        return this.setString('');
-	      }
-	      if (t === 'date') {
-	        return this.setDateTime(v);
-	      }
-	      if (t === 'number') {
-	        return this.setNumber(v);
-	      }
-	      if (t === 'string') {
-	        return this.setString(v);
-	      }
-	      if (t === 'boolean') {
-	        return this.setBool(v);
-	      }
-	      return this.setString(v.toString());
-	    }
-	  }]);
-
-	  return Cell;
-	}();
-
-	var cell = /*#__PURE__*/Object.freeze({
-		CellType: CellType,
-		Cell: Cell
-	});
-
-	/**
-	 * The column of the Sheet.
-	 *
-	 * ```js
-	 * const col = sheet.col(0);
-	 * col.width = 20;
-	 * col.style.fill.patternType = 'solid';
-	 * col.style.fill.fgColor = '00FF0000';
-	 * col.style.fill.bgColor = 'FF000000';
-	 * col.style.align.h = 'center';
-	 * col.style.align.v = 'center';
-	 * ```
-	 */
-	var Col = function () {
-	  function Col(_ref) {
-	    var min = _ref.min,
-	        max = _ref.max,
-	        _ref$hidden = _ref.hidden,
-	        hidden = _ref$hidden === undefined ? false : _ref$hidden,
-	        _ref$collapsed = _ref.collapsed,
-	        collapsed = _ref$collapsed === undefined ? false : _ref$collapsed,
-	        _ref$width = _ref.width,
-	        width = _ref$width === undefined ? 0 : _ref$width;
-
-	    _classCallCheck(this, Col);
-
-	    this.outlineLevel = 0;
-	    this.numFmt = '';
-
-	    this.min = min;
-	    this.max = max;
-	    this.hidden = hidden;
-	    this.collapsed = collapsed;
-	    /**
-	     * Column width [default 9.5]
-	     * @type {Number}
-	     */
-	    this.width = width;
-	    /**
-	     * Style of the column.
-	     * @type {Style}
-	     */
-	    this.style = new Style();
-	  }
-	  /**
-	   * Number format for all column @see {@link NumFmt}
-	   * @type {String}
-	   */
-
-
-	  _createClass(Col, [{
-	    key: 'setType',
-	    value: function setType(cellType) {
-	      this.numFmt = NumFmt[cellType];
-	    }
-	  }]);
-
-	  return Col;
-	}();
-
-	var col = /*#__PURE__*/Object.freeze({
-		Col: Col
-	});
-
-	/**
-	 * Row of the sheet.
-	 * ```js
-	 * const row = sheet.addRow();
-	 * row.setHeightCM(0.8);
-	 * ```
-	 */
-	var Row = function () {
-	  function Row(_ref) {
-	    var sheet = _ref.sheet;
-
-	    _classCallCheck(this, Row);
-
-	    this.cells = [];
-	    this.hidden = false;
-	    this.height = 0;
-	    this.outlineLevel = 0;
-	    this.isCustom = false;
-
-	    this.sheet = sheet;
-	  }
-	  /**
-	   * Set height of the Row with `cm` unit.
-	   * @param {Number} ht Height with `cm` unit
-	   */
-
-	  /**
-	   * Row height
-	   * @type {Number}
-	   */
-
-
-	  _createClass(Row, [{
-	    key: 'setHeightCM',
-	    value: function setHeightCM(ht) {
-	      this.height = ht * 28.3464567;
-	      this.isCustom = true;
-	    }
-	    /**
-	     * Create a cell and add it into the Row.
-	     * @return {Cell}
-	     */
-
-	  }, {
-	    key: 'addCell',
-	    value: function addCell() {
-	      var cell = new Cell({ row: this });
-	      this.cells.push(cell);
-	      this.sheet.maybeAddCol(this.cells.length);
-	      return cell;
-	    }
-	  }]);
-
-	  return Row;
-	}();
-
-	var row = /*#__PURE__*/Object.freeze({
-		Row: Row
-	});
-
-	var _dec$1, _class$1, _dec2$1, _class3$1, _dec3$1, _class4$1, _dec4$1, _class5$1, _dec5$1, _class6$1, _dec6$1, _class7$1, _dec7$1, _class8$1, _dec8$1, _class9$1, _dec9$1, _class10$1, _dec10$1, _class11$1, _dec11$1, _class12$1, _dec12$1, _class13$1, _dec13$1, _class14$1, _dec14$1, _class15$1, _dec15$1, _class16$1, _dec16$1, _class17$1, _dec17, _class18, _dec18, _class19;
-
-	var Xworksheet = (_dec$1 = props('xmlns', 'xmlns:r'), _dec$1(_class$1 = function (_Node) {
-	  _inherits(Xworksheet, _Node);
-
-	  function Xworksheet() {
-	    var attrs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-	    var children = arguments[1];
-
-	    _classCallCheck(this, Xworksheet);
-
-	    attrs['xmlns'] = attrs['xmlns'] || 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
-	    attrs['xmlns:r'] = attrs['xmlns:r'] || 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
-
-	    var _this = _possibleConstructorReturn(this, (Xworksheet.__proto__ || _Object$getPrototypeOf(Xworksheet)).call(this, attrs, children));
-
-	    _this.sheetPr = null;
-	    _this.sheetViews = null;
-	    _this.sheetFormatPr = null;
-	    _this.printOptions = null;
-	    _this.pageMargins = null;
-	    _this.pageSetup = null;
-	    _this.headerFooter = null;
-	    _this.mergeCells = null;
-	    _this.dimension = null;
-	    _this.cols = null;
-	    _this.sheetData = null;
-
-	    _this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
-	    return _this;
-	  }
-
-	  _createClass(Xworksheet, [{
-	    key: 'render',
-	    value: function render() {
-	      this.children = [];
-	      if (this.sheetPr) this.children.push(this.sheetPr);
-	      if (this.dimension) this.children.push(this.dimension);
-	      if (this.sheetViews) this.children.push(this.sheetViews);
-	      if (this.sheetFormatPr) this.children.push(this.sheetFormatPr);
-	      if (this.cols) this.children.push(this.cols);
-	      if (this.sheetData) this.children.push(this.sheetData);
-	      if (this.mergeCells) this.children.push(this.mergeCells);
-	      if (this.printOptions) this.children.push(this.printOptions);
-	      if (this.pageMargins) this.children.push(this.pageMargins);
-	      if (this.pageSetup) this.children.push(this.pageSetup);
-	      if (this.headerFooter) this.children.push(this.headerFooter);
-	      return _get(Xworksheet.prototype.__proto__ || _Object$getPrototypeOf(Xworksheet.prototype), 'render', this).call(this);
-	    }
-	  }]);
-
-	  return Xworksheet;
-	}(Node)) || _class$1);
-
-	var XsheetPr = (_dec2$1 = props('filterMode'), _dec2$1(_class3$1 = function (_Node2) {
-	  _inherits(XsheetPr, _Node2);
-
-	  function XsheetPr() {
-	    _classCallCheck(this, XsheetPr);
-
-	    return _possibleConstructorReturn(this, (XsheetPr.__proto__ || _Object$getPrototypeOf(XsheetPr)).apply(this, arguments));
-	  }
-
-	  return XsheetPr;
-	}(Node)) || _class3$1);
-
-	var XpageSetUpPr = (_dec3$1 = props('fitToPage'), _dec3$1(_class4$1 = function (_Node3) {
-	  _inherits(XpageSetUpPr, _Node3);
-
-	  function XpageSetUpPr() {
-	    _classCallCheck(this, XpageSetUpPr);
-
-	    return _possibleConstructorReturn(this, (XpageSetUpPr.__proto__ || _Object$getPrototypeOf(XpageSetUpPr)).apply(this, arguments));
-	  }
-
-	  return XpageSetUpPr;
-	}(Node)) || _class4$1);
-
-	var Xdimension = (_dec4$1 = props('ref'), _dec4$1(_class5$1 = function (_Node4) {
-	  _inherits(Xdimension, _Node4);
-
-	  function Xdimension() {
-	    _classCallCheck(this, Xdimension);
-
-	    return _possibleConstructorReturn(this, (Xdimension.__proto__ || _Object$getPrototypeOf(Xdimension)).apply(this, arguments));
-	  }
-
-	  return Xdimension;
-	}(Node)) || _class5$1);
-
-	var XsheetViews = function (_Node5) {
-	  _inherits(XsheetViews, _Node5);
-
-	  function XsheetViews() {
-	    _classCallCheck(this, XsheetViews);
-
-	    return _possibleConstructorReturn(this, (XsheetViews.__proto__ || _Object$getPrototypeOf(XsheetViews)).apply(this, arguments));
-	  }
-
-	  return XsheetViews;
-	}(Node);
-
-	var XsheetView = (_dec5$1 = props('windowProtection', 'showFormulas', 'showGridLines', 'showRowColHeaders', 'showZeros', 'rightToLeft', 'tabSelected', 'showOutlineSymbols', 'defaultGridColor', 'view', 'topLeftCell', 'colorId', 'zoomScale', 'zoomScaleNormal', 'zoomScalePageLayoutView', 'workbookViewId'), _dec5$1(_class6$1 = function (_Node6) {
-	  _inherits(XsheetView, _Node6);
-
-	  function XsheetView() {
-	    _classCallCheck(this, XsheetView);
-
-	    return _possibleConstructorReturn(this, (XsheetView.__proto__ || _Object$getPrototypeOf(XsheetView)).apply(this, arguments));
-	  }
-
-	  return XsheetView;
-	}(Node)) || _class6$1);
-
-	var Xselection = (_dec6$1 = props('pane', 'activeCell', 'activeCellId', 'sqref'), _dec6$1(_class7$1 = function (_Node7) {
-	  _inherits(Xselection, _Node7);
-
-	  function Xselection() {
-	    _classCallCheck(this, Xselection);
-
-	    return _possibleConstructorReturn(this, (Xselection.__proto__ || _Object$getPrototypeOf(Xselection)).apply(this, arguments));
-	  }
-
-	  return Xselection;
-	}(Node)) || _class7$1);
-
-	var Xpane = (_dec7$1 = props('xSplit', 'ySplit', 'topLeftCell', 'activePane', 'state'), _dec7$1(_class8$1 = function (_Node8) {
-	  _inherits(Xpane, _Node8);
-
-	  function Xpane() {
-	    _classCallCheck(this, Xpane);
-
-	    return _possibleConstructorReturn(this, (Xpane.__proto__ || _Object$getPrototypeOf(Xpane)).apply(this, arguments));
-	  }
-
-	  return Xpane;
-	}(Node)) || _class8$1);
-
-	var XsheetFormatPr = (_dec8$1 = props('defaultColWidth', 'defaultRowHeight', 'outlineLevelCol', 'outlineLevelRow'), _dec8$1(_class9$1 = function (_Node9) {
-	  _inherits(XsheetFormatPr, _Node9);
-
-	  function XsheetFormatPr() {
-	    _classCallCheck(this, XsheetFormatPr);
-
-	    return _possibleConstructorReturn(this, (XsheetFormatPr.__proto__ || _Object$getPrototypeOf(XsheetFormatPr)).apply(this, arguments));
-	  }
-
-	  return XsheetFormatPr;
-	}(Node)) || _class9$1);
-
-	var Xcols = function (_Node10) {
-	  _inherits(Xcols, _Node10);
-
-	  function Xcols() {
-	    _classCallCheck(this, Xcols);
-
-	    return _possibleConstructorReturn(this, (Xcols.__proto__ || _Object$getPrototypeOf(Xcols)).apply(this, arguments));
-	  }
-
-	  return Xcols;
-	}(Node);
-
-	var Xcol = (_dec9$1 = props('collapsed', 'hidden', 'max', 'min', 'style', 'width', 'customWidth', 'outlineLevel'), _dec9$1(_class10$1 = function (_Node11) {
-	  _inherits(Xcol, _Node11);
-
-	  function Xcol() {
-	    _classCallCheck(this, Xcol);
-
-	    return _possibleConstructorReturn(this, (Xcol.__proto__ || _Object$getPrototypeOf(Xcol)).apply(this, arguments));
-	  }
-
-	  return Xcol;
-	}(Node)) || _class10$1);
-
-	var XsheetData = function (_Node12) {
-	  _inherits(XsheetData, _Node12);
-
-	  function XsheetData() {
-	    _classCallCheck(this, XsheetData);
-
-	    return _possibleConstructorReturn(this, (XsheetData.__proto__ || _Object$getPrototypeOf(XsheetData)).apply(this, arguments));
-	  }
-
-	  return XsheetData;
-	}(Node);
-
-	var Xrow = (_dec10$1 = props('r', 'spans', 'hidden', 'ht', 'customHeight', 'outlineLevel'), _dec10$1(_class11$1 = function (_Node13) {
-	  _inherits(Xrow, _Node13);
-
-	  function Xrow() {
-	    _classCallCheck(this, Xrow);
-
-	    return _possibleConstructorReturn(this, (Xrow.__proto__ || _Object$getPrototypeOf(Xrow)).apply(this, arguments));
-	  }
-
-	  return Xrow;
-	}(Node)) || _class11$1);
-
-	var Xc = (_dec11$1 = props('r', 's', 't'), _dec11$1(_class12$1 = function (_Node14) {
-	  _inherits(Xc, _Node14);
-
-	  function Xc(attrs, children) {
-	    _classCallCheck(this, Xc);
-
-	    var _this14 = _possibleConstructorReturn(this, (Xc.__proto__ || _Object$getPrototypeOf(Xc)).call(this, attrs, children));
-
-	    _this14.f = null;
-	    _this14.v = null;
-	    return _this14;
-	  }
-
-	  _createClass(Xc, [{
-	    key: 'render',
-	    value: function render() {
-	      if (this.f !== null) this.children.push(this.f);
-	      if (this.v !== null) this.children.push(new Node({}, [this.v], 'v'));
-	      return _get(Xc.prototype.__proto__ || _Object$getPrototypeOf(Xc.prototype), 'render', this).call(this);
-	    }
-	  }]);
-
-	  return Xc;
-	}(Node)) || _class12$1);
-
-	var Xf = (_dec12$1 = props('t', 'ref', 'si'), _dec12$1(_class13$1 = function (_Node15) {
-	  _inherits(Xf, _Node15);
-
-	  function Xf() {
-	    _classCallCheck(this, Xf);
-
-	    return _possibleConstructorReturn(this, (Xf.__proto__ || _Object$getPrototypeOf(Xf)).apply(this, arguments));
-	  }
-
-	  return Xf;
-	}(Node)) || _class13$1);
-
-	var XmergeCells = (_dec13$1 = props('count'), _dec13$1(_class14$1 = function (_Node16) {
-	  _inherits(XmergeCells, _Node16);
-
-	  function XmergeCells() {
-	    _classCallCheck(this, XmergeCells);
-
-	    return _possibleConstructorReturn(this, (XmergeCells.__proto__ || _Object$getPrototypeOf(XmergeCells)).apply(this, arguments));
-	  }
-
-	  return XmergeCells;
-	}(Node)) || _class14$1);
-
-	var XmergeCell = (_dec14$1 = props('ref'), _dec14$1(_class15$1 = function (_Node17) {
-	  _inherits(XmergeCell, _Node17);
-
-	  function XmergeCell() {
-	    _classCallCheck(this, XmergeCell);
-
-	    return _possibleConstructorReturn(this, (XmergeCell.__proto__ || _Object$getPrototypeOf(XmergeCell)).apply(this, arguments));
-	  }
-
-	  return XmergeCell;
-	}(Node)) || _class15$1);
-
-	var XprintOptions = (_dec15$1 = props('headings', 'gridLines', 'gridLinesSet', 'horizontalCentered', 'verticalCentered'), _dec15$1(_class16$1 = function (_Node18) {
-	  _inherits(XprintOptions, _Node18);
-
-	  function XprintOptions() {
-	    _classCallCheck(this, XprintOptions);
-
-	    return _possibleConstructorReturn(this, (XprintOptions.__proto__ || _Object$getPrototypeOf(XprintOptions)).apply(this, arguments));
-	  }
-
-	  return XprintOptions;
-	}(Node)) || _class16$1);
-
-	var XpageMargins = (_dec16$1 = props('left', 'right', 'top', 'bottom', 'header', 'footer'), _dec16$1(_class17$1 = function (_Node19) {
-	  _inherits(XpageMargins, _Node19);
-
-	  function XpageMargins() {
-	    _classCallCheck(this, XpageMargins);
-
-	    return _possibleConstructorReturn(this, (XpageMargins.__proto__ || _Object$getPrototypeOf(XpageMargins)).apply(this, arguments));
-	  }
-
-	  return XpageMargins;
-	}(Node)) || _class17$1);
-
-	var XpageSetup = (_dec17 = props('paperSize', 'scale', 'firstPageNumber', 'fitToWidth', 'fitToHeight', 'pageOrder', 'orientation', 'usePrinterDefaults', 'blackAndWhite', 'draft', 'cellComments', 'useFirstPageNumber', 'horizontalDpi', 'verticalDpi', 'copies'), _dec17(_class18 = function (_Node20) {
-	  _inherits(XpageSetup, _Node20);
-
-	  function XpageSetup() {
-	    _classCallCheck(this, XpageSetup);
-
-	    return _possibleConstructorReturn(this, (XpageSetup.__proto__ || _Object$getPrototypeOf(XpageSetup)).apply(this, arguments));
-	  }
-
-	  return XpageSetup;
-	}(Node)) || _class18);
-
-	var XheaderFooter = (_dec18 = props('differentFirst', 'differentOddEven'), _dec18(_class19 = function (_Node21) {
-	  _inherits(XheaderFooter, _Node21);
-
-	  function XheaderFooter(attrs, children) {
-	    _classCallCheck(this, XheaderFooter);
-
-	    var _this21 = _possibleConstructorReturn(this, (XheaderFooter.__proto__ || _Object$getPrototypeOf(XheaderFooter)).call(this, attrs, children));
-
-	    _this21.oddHeader = null;
-	    _this21.oddFooter = null;
-	    return _this21;
-	  }
-
-	  _createClass(XheaderFooter, [{
-	    key: 'render',
-	    value: function render() {
-	      if (this.oddHeader !== null) this.children.push(new Node({}, [this.oddHeader], 'oddHeader'));
-	      if (this.oddFooter !== null) this.children.push(new Node({}, [this.oddFooter], 'oddFooter'));
-	      return _get(XheaderFooter.prototype.__proto__ || _Object$getPrototypeOf(XheaderFooter.prototype), 'render', this).call(this);
-	    }
-	  }]);
-
-	  return XheaderFooter;
-	}(Node)) || _class19);
-
-	function makeXworksheet() {
-	  var sheet = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Xworksheet();
-
-	  sheet.sheetPr = new XsheetPr({ filterMode: false }, [new XpageSetUpPr({ fitToPage: false })]);
-	  sheet.sheetViews = new XsheetViews({}, [new XsheetView({
-	    colorId: 64,
-	    defaultGridColor: true,
-	    rightToLeft: false,
-	    showFormulas: false,
-	    showGridLines: true,
-	    showOutlineSymbols: true,
-	    showRowColHeaders: true,
-	    showZeros: true,
-	    tabSelected: false,
-	    topLeftCell: 'A1',
-	    view: 'normal',
-	    windowProtection: false,
-	    workbookViewId: 0,
-	    zoomScale: 100,
-	    zoomScaleNormal: 100,
-	    zoomScalePageLayoutView: 100
-	  }, [new Xselection({
-	    activeCell: 'A1',
-	    activeCellId: 0,
-	    pane: 'topLeft',
-	    sqref: 'A1'
-	  })])]);
-	  sheet.sheetFormatPr = new XsheetFormatPr({ defaultRowHeight: '12.85' });
-	  sheet.printOptions = new XprintOptions({
-	    gridLines: false,
-	    gridLinesSet: true,
-	    headings: false,
-	    horizontalCentered: false,
-	    verticalCentered: false
-	  });
-	  sheet.pageMargins = new XpageMargins({
-	    left: 0.7875,
-	    right: 0.7875,
-	    top: 1.05277777777778,
-	    bottom: 1.05277777777778,
-	    header: 0.7875,
-	    footer: 0.7875
-	  });
-	  sheet.pageSetup = new XpageSetup({
-	    blackAndWhite: false,
-	    cellComments: 'none',
-	    copies: 1,
-	    draft: false,
-	    firstPageNumber: 1,
-	    fitToHeight: 1,
-	    fitToWidth: 1,
-	    horizontalDpi: 300,
-	    orientation: 'portrait',
-	    pageOrder: 'downThenOver',
-	    paperSize: 9,
-	    scale: 100,
-	    useFirstPageNumber: true,
-	    usePrinterDefaults: false,
-	    verticalDpi: 300
-	  });
-	  var headerFooter = new XheaderFooter();
-	  headerFooter.oddHeader = '&C&"Times New Roman,Regular"&12&A';
-	  headerFooter.oddFooter = '&C&"Times New Roman,Regular"&12Page &P';
-
-	  sheet.headerFooter = headerFooter;
-	  return sheet;
-	}
-
-	/**
-	 * Sheet of the xlsx file.
-	 * ```js
-	 * import { File } from 'better-xlsx';
-	 * const file = new File();
-	 * const sheet = file.addSheet('Sheet-1');
-	 * const row = sheet.addRow();
-	 * const cell = row.addCell();
-	 * ```
-	 */
-	var Sheet = function () {
-	  function Sheet(_ref) {
-	    var name = _ref.name,
-	        file = _ref.file,
-	        selected = _ref.selected;
-
-	    _classCallCheck(this, Sheet);
-
-	    this.rows = [];
-	    this.cols = [];
-	    this.maxRow = 0;
-	    this.maxCol = 0;
-	    this.hidden = false;
-	    this.sheetViews = [];
-	    this.sheetFormat = {
-	      defaultColWidth: 0,
-	      defaultRowHeight: 0,
-	      outlineLevelCol: 0,
-	      outlineLevelRow: 0
-	    };
-
-	    this.name = name;
-	    this.file = file;
-	    this.selected = selected;
-	  }
-	  /**
-	   * Create a Row and add it into the Sheet.
-	   * @return {Row}
-	   */
-
-
-	  _createClass(Sheet, [{
-	    key: 'addRow',
-	    value: function addRow() {
-	      var row = new Row({ sheet: this });
-	      this.rows.push(row);
-	      if (this.rows.length > this.maxRow) {
-	        this.maxRow = this.rows.length;
-	      }
-	      return row;
-	    }
-	  }, {
-	    key: 'maybeAddCol',
-	    value: function maybeAddCol(cellCount) {
-	      if (cellCount > this.maxCol) {
-	        var col = new Col({
-	          min: cellCount,
-	          max: cellCount,
-	          hidden: false,
-	          collapsed: false
-	        });
-	        this.cols.push(col);
-	        this.maxCol = cellCount;
-	      }
-	    }
-	    /**
-	     * Get Col of the sheet with index and create cols when `index > maxCol`.
-	     * @param  {Number} idx Index of the Col [from 0].
-	     * @return {Col}
-	     */
-
-	  }, {
-	    key: 'col',
-	    value: function col(idx) {
-	      this.maybeAddCol(idx + 1);
-	      return this.cols[idx];
-	    }
-	    /**
-	     * Get Row of the sheet with index and create rows when `index > maxRow`.
-	     * @param  {Number} idx Index of the Row [from 0].
-	     * @return {Row}
-	     */
-
-	  }, {
-	    key: 'row',
-	    value: function row(idx) {
-	      for (var len = this.rows.length; len <= idx; len++) {
-	        this.addRow();
-	      }
-	      return this.rows[idx];
-	    }
-	    /**
-	     * Get Cell of the sheet with `(row, col)` and create cell when out of range.
-	     * @param  {Number} row
-	     * @param {Number} col
-	     * @return {Cell}
-	     */
-
-	  }, {
-	    key: 'cell',
-	    value: function cell(row, col) {
-	      for (var len = this.rows.length; len <= row; len++) {
-	        this.addRow();
-	      }
-	      var r = this.rows[row];
-	      for (var _len = r.cells.length; _len <= col; _len++) {
-	        r.addCell();
-	      }
-	      return r.cells[col];
-	    }
-	    /**
-	     * Set columns width from `startcol` to `endcol`.
-	     * @param {Number} startcol
-	     * @param {Number} endcol
-	     * @param {Number} width
-	     */
-
-	  }, {
-	    key: 'setColWidth',
-	    value: function setColWidth(startcol, endcol, width) {
-	      if (startcol > endcol) {
-	        throw new Error('Could not set width for range ' + startcol + '-' + endcol + ': startcol must be less than endcol.');
-	      }
-	      var col = new Col({
-	        min: startcol + 1,
-	        max: endcol + 1,
-	        hidden: false,
-	        collapsed: false,
-	        width: width
-	      });
-	      this.cols.push(col);
-	      if (endcol + 1 > this.maxCol) {
-	        this.maxCol = endcol + 1;
-	      }
-	    }
-	  }, {
-	    key: 'handleMerged',
-	    value: function handleMerged() {
-	      var merged = [];
-	      for (var r = 0; r < this.rows.length; r++) {
-	        var row = this.rows[r];
-	        for (var c = 0; c < row.cells.length; c++) {
-	          var cell = row.cells[c];
-	          if (cell.hMerge > 0 || cell.vMerge > 0) {
-	            merged.push({ r: r, c: c, cell: cell });
-	          }
-	        }
-	      }
-	      var _iteratorNormalCompletion = true;
-	      var _didIteratorError = false;
-	      var _iteratorError = undefined;
-
-	      try {
-	        for (var _iterator = _getIterator(merged), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	          var _ref2 = _step.value;
-	          var _r = _ref2.r,
-	              _c = _ref2.c,
-	              _cell = _ref2.cell;
-
-	          var left = _cell.style.border.left;
-	          var right = _cell.style.border.right;
-	          var top = _cell.style.border.top;
-	          var bottom = _cell.style.border.bottom;
-
-	          _cell.style.border.left = 'none';
-	          _cell.style.border.right = 'none';
-	          _cell.style.border.top = 'none';
-	          _cell.style.border.bottom = 'none';
-
-	          for (var rownum = 0; rownum <= _cell.vMerge; rownum++) {
-	            for (var colnum = 0; colnum <= _cell.hMerge; colnum++) {
-	              var tmpcell = this.cell(_r + rownum, _c + colnum);
-	              tmpcell.style.applyBorder = true;
-	              if (rownum === 0) {
-	                tmpcell.style.border.top = top;
-	              }
-	              if (rownum === _cell.vMerge) {
-	                tmpcell.style.border.bottom = bottom;
-	              }
-	              if (colnum === 0) {
-	                tmpcell.style.border.left = left;
-	              }
-	              if (colnum === _cell.hMerge) {
-	                tmpcell.style.border.right = right;
-	              }
-	            }
-	          }
-	        }
-	      } catch (err) {
-	        _didIteratorError = true;
-	        _iteratorError = err;
-	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion && _iterator.return) {
-	            _iterator.return();
-	          }
-	        } finally {
-	          if (_didIteratorError) {
-	            throw _iteratorError;
-	          }
-	        }
-	      }
-	    }
-	  }, {
-	    key: 'makeXSheet',
-	    value: function makeXSheet(refTable, styles) {
-	      var sheet = makeXworksheet();
-	      var xSheet = new XsheetData();
-	      var maxRow = 0;
-	      var maxCell = 0;
-	      var maxLevelCol = void 0;
-	      var maxLevelRow = void 0;
-
-	      this.handleMerged();
-
-	      for (var i = 0; i < this.sheetViews.length; i++) {
-	        var view = this.sheetViews[i];
-	        if (view && view.pane) {
-	          sheet.sheetViews.children[i].children.push(new Xpane({
-	            xSplit: view.pane.xSplit,
-	            ySplit: view.pane.ySplit,
-	            topLeftCell: view.pane.topLeftCell,
-	            activePane: view.pane.activePane,
-	            state: view.pane.state
-	          }));
-	        }
-	      }
-	      if (this.selected) {
-	        sheet.sheetViews.children[0].tabSelected = true;
-	      }
-	      if (this.sheetFormat.defaultRowHeight !== 0) {
-	        sheet.sheetFormatPr.defaultRowHeight = this.sheetFormat.defaultRowHeight;
-	      }
-	      if (this.sheetFormat.defaultColWidth !== 0) {
-	        sheet.sheetFormatPr.defaultColWidth = this.sheetFormat.defaultColWidth;
-	      }
-
-	      var fIdList = [];
-	      sheet.cols = new Xcols();
-	      for (var c = 0; c < this.cols.length; c++) {
-	        var col = this.cols[c];
-	        col.min = col.min || 1;
-	        col.max = col.max || 1;
-	        var xNumFmt = styles.newNumFmt(col.numFmt);
-	        var fId = handleStyle(col.style, xNumFmt.numFmtId, styles);
-
-	        fIdList.push(fId);
-
-	        var customWidth = 0;
-	        if (col.width === 0) {
-	          col.width = 9.5;
-	        } else {
-	          customWidth = 1;
-	        }
-	        sheet.cols.children.push(new Xcol({
-	          min: col.min,
-	          max: col.max,
-	          hidden: col.hidden,
-	          width: col.width,
-	          customWidth: customWidth,
-	          collapsed: col.collapsed,
-	          outlineLevel: col.outlineLevel,
-	          style: fId
-	        }));
-
-	        if (col.outlineLevel > maxLevelCol) {
-	          maxLevelCol = col.outlineLevel;
-	        }
-	      }
-	      for (var r = 0; r < this.rows.length; r++) {
-	        var row = this.rows[r];
-	        if (r > maxRow) maxRow = r;
-	        var xRow = new Xrow({ r: r + 1 });
-	        if (row.isCustom) {
-	          xRow.customHeight = true;
-	          xRow.ht = row.height;
-	        }
-	        xRow.outlineLevel = row.outlineLevel;
-	        if (row.outlineLevel > maxLevelRow) {
-	          maxLevelRow = row.outlineLevel;
-	        }
-	        for (var _c2 = 0; _c2 < row.cells.length; _c2++) {
-	          var _fId = fIdList[_c2];
-	          var cell = row.cells[_c2];
-	          var _xNumFmt = styles.newNumFmt(cell.numFmt);
-	          var style = cell.style;
-	          if (style !== null) {
-	            _fId = handleStyle(style, _xNumFmt.numFmtId, styles);
-	          } else if (cell.numFmt && this.cols[_c2].numFmt !== cell.numFmt) {
-	            _fId = handleNumFmtId(_xNumFmt.NumFmtId, styles);
-	          }
-
-	          if (_c2 > maxCell) maxCell = _c2;
-
-	          var xC = new Xc({ r: '' + num2col(_c2) + (r + 1) });
-	          switch (cell.cellType) {
-	            case 'TypeString':
-	              if (cell.value) {
-	                xC.v = refTable.addString(cell.value);
-	              }
-	              xC.t = 's';
-	              xC.s = _fId;
-	              break;
-	            case 'TypeBool':
-	              xC.v = cell.value;
-	              xC.t = 'b';
-	              xC.s = _fId;
-	              break;
-	            case 'TypeNumeric':
-	              xC.v = cell.value;
-	              xC.s = _fId;
-	              break;
-	            case 'TypeDate':
-	              xC.v = cell.value;
-	              xC.s = _fId;
-	              break;
-	            case 'TypeFormula':
-	              xC.v = cell.value;
-	              xC.f = new Xf({}, [cell.formula]);
-	              xC.s = _fId;
-	              break;
-	            case 'TypeError':
-	              xC.v = cell.value;
-	              xC.f = new Xf({}, [cell.formula]);
-	              xC.t = 'e';
-	              xC.s = _fId;
-	              break;
-	            case 'TypeGeneral':
-	              xC.v = cell.value;
-	              xC.s = _fId;
-	              break;
-	          }
-	          xRow.children.push(xC);
-	          if (cell.hMerge > 0 || cell.vMerge > 0) {
-	            // r == rownum, c == colnum
-	            var start = '' + num2col(_c2) + (r + 1);
-	            var endcol = _c2 + cell.hMerge;
-	            var endrow = r + cell.vMerge + 1;
-	            var end = '' + num2col(endcol) + endrow;
-	            var mc = new XmergeCell({ ref: start + ':' + end });
-	            if (sheet.mergeCells === null) {
-	              sheet.mergeCells = new XmergeCells();
-	            }
-	            sheet.mergeCells.children.push(mc);
-	          }
-	        }
-	        xSheet.children.push(xRow);
-	      }
-	      // Update sheet format with the freshly determined max levels
-	      this.sheetFormat.outlineLevelCol = maxLevelCol;
-	      this.sheetFormat.outlineLevelRow = maxLevelRow;
-	      // .. and then also apply this to the xml worksheet
-	      sheet.sheetFormatPr.outlineLevelCol = this.sheetFormat.outlineLevelCol;
-	      sheet.sheetFormatPr.outlineLevelRow = this.sheetFormat.outlineLevelRow;
-
-	      if (sheet.mergeCells !== null) {
-	        sheet.mergeCells.count = sheet.mergeCells.children.length;
-	      }
-
-	      sheet.sheetData = xSheet;
-
-	      var dimension = new Xdimension({
-	        ref: 'A1:' + num2col(maxCell) + (maxRow + 1)
-	      });
-	      if (dimension.ref === 'A1:A1') {
-	        dimension.ref = 'A1';
-	      }
-	      sheet.dimension = dimension;
-	      if (this.afterMake) {
-	        this.afterMake(sheet);
-	      }
-	      return sheet;
-	    }
-	  }]);
-
-	  return Sheet;
-	}();
-
-	var sheet = /*#__PURE__*/Object.freeze({
-		Sheet: Sheet
-	});
-
-	var DOT_RELS = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">\n  <Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument\" Target=\"xl/workbook.xml\"/>\n  <Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties\" Target=\"docProps/core.xml\"/>\n  <Relationship Id=\"rId3\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties\" Target=\"docProps/app.xml\"/>\n</Relationships>";
-
-	var DOCPROPS_APP = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Properties xmlns=\"http://schemas.openxmlformats.org/officeDocument/2006/extended-properties\" xmlns:vt=\"http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes\">\n  <TotalTime>0</TotalTime>\n  <Application>JS XLSX</Application>\n</Properties>";
-
-	var DOCPROPS_CORE = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcmitype=\"http://purl.org/dc/dcmitype/\" xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"></cp:coreProperties>";
-
-	var XL_THEME_THEME = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<a:theme xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" name=\"Office-Design\">\n  <a:themeElements>\n    <a:clrScheme name=\"Office\">\n      <a:dk1>\n        <a:sysClr val=\"windowText\" lastClr=\"000000\"/>\n      </a:dk1>\n      <a:lt1>\n        <a:sysClr val=\"window\" lastClr=\"FFFFFF\"/>\n      </a:lt1>\n      <a:dk2>\n        <a:srgbClr val=\"1F497D\"/>\n      </a:dk2>\n      <a:lt2>\n        <a:srgbClr val=\"EEECE1\"/>\n      </a:lt2>\n      <a:accent1>\n        <a:srgbClr val=\"4F81BD\"/>\n      </a:accent1>\n      <a:accent2>\n        <a:srgbClr val=\"C0504D\"/>\n      </a:accent2>\n      <a:accent3>\n        <a:srgbClr val=\"9BBB59\"/>\n      </a:accent3>\n      <a:accent4>\n        <a:srgbClr val=\"8064A2\"/>\n      </a:accent4>\n      <a:accent5>\n        <a:srgbClr val=\"4BACC6\"/>\n      </a:accent5>\n      <a:accent6>\n        <a:srgbClr val=\"F79646\"/>\n      </a:accent6>\n      <a:hlink>\n        <a:srgbClr val=\"0000FF\"/>\n      </a:hlink>\n      <a:folHlink>\n        <a:srgbClr val=\"800080\"/>\n      </a:folHlink>\n    </a:clrScheme>\n    <a:fontScheme name=\"Office\">\n      <a:majorFont>\n        <a:latin typeface=\"Cambria\"/>\n        <a:ea typeface=\"\"/>\n        <a:cs typeface=\"\"/>\n        <a:font script=\"Jpan\" typeface=\"\uFF2D\uFF33 \uFF30\u30B4\u30B7\u30C3\u30AF\"/>\n        <a:font script=\"Hang\" typeface=\"\uB9D1\uC740 \uACE0\uB515\"/>\n        <a:font script=\"Hans\" typeface=\"\u5B8B\u4F53\"/>\n        <a:font script=\"Hant\" typeface=\"\u65B0\u7D30\u660E\u9AD4\"/>\n        <a:font script=\"Arab\" typeface=\"Times New Roman\"/>\n        <a:font script=\"Hebr\" typeface=\"Times New Roman\"/>\n        <a:font script=\"Thai\" typeface=\"Tahoma\"/>\n        <a:font script=\"Ethi\" typeface=\"Nyala\"/>\n        <a:font script=\"Beng\" typeface=\"Vrinda\"/>\n        <a:font script=\"Gujr\" typeface=\"Shruti\"/>\n        <a:font script=\"Khmr\" typeface=\"MoolBoran\"/>\n        <a:font script=\"Knda\" typeface=\"Tunga\"/>\n        <a:font script=\"Guru\" typeface=\"Raavi\"/>\n        <a:font script=\"Cans\" typeface=\"Euphemia\"/>\n        <a:font script=\"Cher\" typeface=\"Plantagenet Cherokee\"/>\n        <a:font script=\"Yiii\" typeface=\"Microsoft Yi Baiti\"/>\n        <a:font script=\"Tibt\" typeface=\"Microsoft Himalaya\"/>\n        <a:font script=\"Thaa\" typeface=\"MV Boli\"/>\n        <a:font script=\"Deva\" typeface=\"Mangal\"/>\n        <a:font script=\"Telu\" typeface=\"Gautami\"/>\n        <a:font script=\"Taml\" typeface=\"Latha\"/>\n        <a:font script=\"Syrc\" typeface=\"Estrangelo Edessa\"/>\n        <a:font script=\"Orya\" typeface=\"Kalinga\"/>\n        <a:font script=\"Mlym\" typeface=\"Kartika\"/>\n        <a:font script=\"Laoo\" typeface=\"DokChampa\"/>\n        <a:font script=\"Sinh\" typeface=\"Iskoola Pota\"/>\n        <a:font script=\"Mong\" typeface=\"Mongolian Baiti\"/>\n        <a:font script=\"Viet\" typeface=\"Times New Roman\"/>\n        <a:font script=\"Uigh\" typeface=\"Microsoft Uighur\"/>\n        <a:font script=\"Geor\" typeface=\"Sylfaen\"/>\n      </a:majorFont>\n      <a:minorFont>\n        <a:latin typeface=\"Calibri\"/>\n        <a:ea typeface=\"\"/>\n        <a:cs typeface=\"\"/>\n        <a:font script=\"Jpan\" typeface=\"\uFF2D\uFF33 \uFF30\u30B4\u30B7\u30C3\u30AF\"/>\n        <a:font script=\"Hang\" typeface=\"\uB9D1\uC740 \uACE0\uB515\"/>\n        <a:font script=\"Hans\" typeface=\"\u5B8B\u4F53\"/>\n        <a:font script=\"Hant\" typeface=\"\u65B0\u7D30\u660E\u9AD4\"/>\n        <a:font script=\"Arab\" typeface=\"Arial\"/>\n        <a:font script=\"Hebr\" typeface=\"Arial\"/>\n        <a:font script=\"Thai\" typeface=\"Tahoma\"/>\n        <a:font script=\"Ethi\" typeface=\"Nyala\"/>\n        <a:font script=\"Beng\" typeface=\"Vrinda\"/>\n        <a:font script=\"Gujr\" typeface=\"Shruti\"/>\n        <a:font script=\"Khmr\" typeface=\"DaunPenh\"/>\n        <a:font script=\"Knda\" typeface=\"Tunga\"/>\n        <a:font script=\"Guru\" typeface=\"Raavi\"/>\n        <a:font script=\"Cans\" typeface=\"Euphemia\"/>\n        <a:font script=\"Cher\" typeface=\"Plantagenet Cherokee\"/>\n        <a:font script=\"Yiii\" typeface=\"Microsoft Yi Baiti\"/>\n        <a:font script=\"Tibt\" typeface=\"Microsoft Himalaya\"/>\n        <a:font script=\"Thaa\" typeface=\"MV Boli\"/>\n        <a:font script=\"Deva\" typeface=\"Mangal\"/>\n        <a:font script=\"Telu\" typeface=\"Gautami\"/>\n        <a:font script=\"Taml\" typeface=\"Latha\"/>\n        <a:font script=\"Syrc\" typeface=\"Estrangelo Edessa\"/>\n        <a:font script=\"Orya\" typeface=\"Kalinga\"/>\n        <a:font script=\"Mlym\" typeface=\"Kartika\"/>\n        <a:font script=\"Laoo\" typeface=\"DokChampa\"/>\n        <a:font script=\"Sinh\" typeface=\"Iskoola Pota\"/>\n        <a:font script=\"Mong\" typeface=\"Mongolian Baiti\"/>\n        <a:font script=\"Viet\" typeface=\"Arial\"/>\n        <a:font script=\"Uigh\" typeface=\"Microsoft Uighur\"/>\n        <a:font script=\"Geor\" typeface=\"Sylfaen\"/>\n      </a:minorFont>\n    </a:fontScheme>\n    <a:fmtScheme name=\"Office\">\n      <a:fillStyleLst>\n        <a:solidFill>\n          <a:schemeClr val=\"phClr\"/>\n        </a:solidFill>\n        <a:gradFill rotWithShape=\"1\">\n          <a:gsLst>\n            <a:gs pos=\"0\">\n              <a:schemeClr val=\"phClr\">\n                <a:tint val=\"50000\"/>\n                <a:satMod val=\"300000\"/>\n              </a:schemeClr>\n            </a:gs>\n            <a:gs pos=\"35000\">\n              <a:schemeClr val=\"phClr\">\n                <a:tint val=\"37000\"/>\n                <a:satMod val=\"300000\"/>\n              </a:schemeClr>\n            </a:gs>\n            <a:gs pos=\"100000\">\n              <a:schemeClr val=\"phClr\">\n                <a:tint val=\"15000\"/>\n                <a:satMod val=\"350000\"/>\n              </a:schemeClr>\n            </a:gs>\n          </a:gsLst>\n          <a:lin ang=\"16200000\" scaled=\"1\"/>\n        </a:gradFill>\n        <a:gradFill rotWithShape=\"1\">\n          <a:gsLst>\n            <a:gs pos=\"0\">\n              <a:schemeClr val=\"phClr\">\n                <a:tint val=\"100000\"/>\n                <a:shade val=\"100000\"/>\n                <a:satMod val=\"130000\"/>\n              </a:schemeClr>\n            </a:gs>\n            <a:gs pos=\"100000\">\n              <a:schemeClr val=\"phClr\">\n                <a:tint val=\"50000\"/>\n                <a:shade val=\"100000\"/>\n                <a:satMod val=\"350000\"/>\n              </a:schemeClr>\n            </a:gs>\n          </a:gsLst>\n          <a:lin ang=\"16200000\" scaled=\"0\"/>\n        </a:gradFill>\n      </a:fillStyleLst>\n      <a:lnStyleLst>\n        <a:ln w=\"9525\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\">\n          <a:solidFill>\n            <a:schemeClr val=\"phClr\">\n              <a:shade val=\"95000\"/>\n              <a:satMod val=\"105000\"/>\n            </a:schemeClr>\n          </a:solidFill>\n          <a:prstDash val=\"solid\"/>\n        </a:ln>\n        <a:ln w=\"25400\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\">\n          <a:solidFill>\n            <a:schemeClr val=\"phClr\"/>\n          </a:solidFill>\n          <a:prstDash val=\"solid\"/>\n        </a:ln>\n        <a:ln w=\"38100\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\">\n          <a:solidFill>\n            <a:schemeClr val=\"phClr\"/>\n          </a:solidFill>\n          <a:prstDash val=\"solid\"/>\n        </a:ln>\n      </a:lnStyleLst>\n      <a:effectStyleLst>\n        <a:effectStyle>\n          <a:effectLst>\n            <a:outerShdw blurRad=\"40000\" dist=\"20000\" dir=\"5400000\" rotWithShape=\"0\">\n              <a:srgbClr val=\"000000\">\n                <a:alpha val=\"38000\"/>\n              </a:srgbClr>\n            </a:outerShdw>\n          </a:effectLst>\n        </a:effectStyle>\n        <a:effectStyle>\n          <a:effectLst>\n            <a:outerShdw blurRad=\"40000\" dist=\"23000\" dir=\"5400000\" rotWithShape=\"0\">\n              <a:srgbClr val=\"000000\">\n                <a:alpha val=\"35000\"/>\n              </a:srgbClr>\n            </a:outerShdw>\n          </a:effectLst>\n        </a:effectStyle>\n        <a:effectStyle>\n          <a:effectLst>\n            <a:outerShdw blurRad=\"40000\" dist=\"23000\" dir=\"5400000\" rotWithShape=\"0\">\n              <a:srgbClr val=\"000000\">\n                <a:alpha val=\"35000\"/>\n              </a:srgbClr>\n            </a:outerShdw>\n          </a:effectLst>\n          <a:scene3d>\n            <a:camera prst=\"orthographicFront\">\n              <a:rot lat=\"0\" lon=\"0\" rev=\"0\"/>\n            </a:camera>\n            <a:lightRig rig=\"threePt\" dir=\"t\">\n              <a:rot lat=\"0\" lon=\"0\" rev=\"1200000\"/>\n            </a:lightRig>\n          </a:scene3d>\n          <a:sp3d>\n            <a:bevelT w=\"63500\" h=\"25400\"/>\n          </a:sp3d>\n        </a:effectStyle>\n      </a:effectStyleLst>\n      <a:bgFillStyleLst>\n        <a:solidFill>\n          <a:schemeClr val=\"phClr\"/>\n        </a:solidFill>\n        <a:gradFill rotWithShape=\"1\">\n          <a:gsLst>\n            <a:gs pos=\"0\">\n              <a:schemeClr val=\"phClr\">\n                <a:tint val=\"40000\"/>\n                <a:satMod val=\"350000\"/>\n              </a:schemeClr>\n            </a:gs>\n            <a:gs pos=\"40000\">\n              <a:schemeClr val=\"phClr\">\n                <a:tint val=\"45000\"/>\n                <a:shade val=\"99000\"/>\n                <a:satMod val=\"350000\"/>\n              </a:schemeClr>\n            </a:gs>\n            <a:gs pos=\"100000\">\n              <a:schemeClr val=\"phClr\">\n                <a:shade val=\"20000\"/>\n                <a:satMod val=\"255000\"/>\n              </a:schemeClr>\n            </a:gs>\n          </a:gsLst>\n          <a:path path=\"circle\">\n            <a:fillToRect l=\"50000\" t=\"-80000\" r=\"50000\" b=\"180000\"/>\n          </a:path>\n        </a:gradFill>\n        <a:gradFill rotWithShape=\"1\">\n          <a:gsLst>\n            <a:gs pos=\"0\">\n              <a:schemeClr val=\"phClr\">\n                <a:tint val=\"80000\"/>\n                <a:satMod val=\"300000\"/>\n              </a:schemeClr>\n            </a:gs>\n            <a:gs pos=\"100000\">\n              <a:schemeClr val=\"phClr\">\n                <a:shade val=\"30000\"/>\n                <a:satMod val=\"200000\"/>\n              </a:schemeClr>\n            </a:gs>\n          </a:gsLst>\n          <a:path path=\"circle\">\n            <a:fillToRect l=\"50000\" t=\"50000\" r=\"50000\" b=\"50000\"/>\n          </a:path>\n        </a:gradFill>\n      </a:bgFillStyleLst>\n    </a:fmtScheme>\n  </a:themeElements>\n  <a:objectDefaults>\n    <a:spDef>\n      <a:spPr/>\n      <a:bodyPr/>\n      <a:lstStyle/>\n      <a:style>\n        <a:lnRef idx=\"1\">\n          <a:schemeClr val=\"accent1\"/>\n        </a:lnRef>\n        <a:fillRef idx=\"3\">\n          <a:schemeClr val=\"accent1\"/>\n        </a:fillRef>\n        <a:effectRef idx=\"2\">\n          <a:schemeClr val=\"accent1\"/>\n        </a:effectRef>\n        <a:fontRef idx=\"minor\">\n          <a:schemeClr val=\"lt1\"/>\n        </a:fontRef>\n      </a:style>\n    </a:spDef>\n    <a:lnDef>\n      <a:spPr/>\n      <a:bodyPr/>\n      <a:lstStyle/>\n      <a:style>\n        <a:lnRef idx=\"2\">\n          <a:schemeClr val=\"accent1\"/>\n        </a:lnRef>\n        <a:fillRef idx=\"0\">\n          <a:schemeClr val=\"accent1\"/>\n        </a:fillRef>\n        <a:effectRef idx=\"1\">\n          <a:schemeClr val=\"accent1\"/>\n        </a:effectRef>\n        <a:fontRef idx=\"minor\">\n          <a:schemeClr val=\"tx1\"/>\n        </a:fontRef>\n      </a:style>\n    </a:lnDef>\n  </a:objectDefaults>\n  <a:extraClrSchemeLst/>\n</a:theme>";
-
-	var _dec$2, _class$2, _dec2$2, _class2;
-
-	var Xsst = (_dec$2 = props('xmlns', 'count', 'uniqueCount'), _dec$2(_class$2 = function (_Node) {
-	  _inherits(Xsst, _Node);
-
-	  function Xsst(_ref, children) {
-	    var _ref$xmlns = _ref.xmlns,
-	        xmlns = _ref$xmlns === undefined ? 'http://schemas.openxmlformats.org/spreadsheetml/2006/main' : _ref$xmlns;
-
-	    _classCallCheck(this, Xsst);
-
-	    var _this = _possibleConstructorReturn(this, (Xsst.__proto__ || _Object$getPrototypeOf(Xsst)).call(this, { xmlns: xmlns }, children));
-
-	    _this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
-	    return _this;
-	  }
-
-	  return Xsst;
-	}(Node)) || _class$2);
-
-	var Xsi = function (_Node2) {
-	  _inherits(Xsi, _Node2);
-
-	  function Xsi() {
-	    _classCallCheck(this, Xsi);
-
-	    return _possibleConstructorReturn(this, (Xsi.__proto__ || _Object$getPrototypeOf(Xsi)).apply(this, arguments));
-	  }
-
-	  return Xsi;
-	}(Node);
-
-	var Xt = (_dec2$2 = props('xml:space'), _dec2$2(_class2 = function (_Node3) {
-	  _inherits(Xt, _Node3);
-
-	  function Xt() {
-	    _classCallCheck(this, Xt);
-
-	    return _possibleConstructorReturn(this, (Xt.__proto__ || _Object$getPrototypeOf(Xt)).apply(this, arguments));
-	  }
-
-	  return Xt;
-	}(Node)) || _class2);
-
-	var Xr = function (_Node4) {
-	  _inherits(Xr, _Node4);
-
-	  function Xr() {
-	    _classCallCheck(this, Xr);
-
-	    return _possibleConstructorReturn(this, (Xr.__proto__ || _Object$getPrototypeOf(Xr)).apply(this, arguments));
-	  }
-
-	  return Xr;
-	}(Node);
-
-	var RefTable = function () {
-	  function RefTable() {
-	    _classCallCheck(this, RefTable);
-
-	    this.strings = [];
-	    this.known = {};
-	  }
-
-	  _createClass(RefTable, [{
-	    key: 'makeXsst',
-	    value: function makeXsst() {
-	      var len = this.strings.length;
-	      var sst = new Xsst({
-	        count: len,
-	        uniqueCount: len
-	      });
-	      var _iteratorNormalCompletion = true;
-	      var _didIteratorError = false;
-	      var _iteratorError = undefined;
-
-	      try {
-	        for (var _iterator = _getIterator(this.strings), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	          var str = _step.value;
-
-	          var si = new Xsi({}, [new Xt({}, [str])]);
-	          sst.children.push(si);
-	        }
-	      } catch (err) {
-	        _didIteratorError = true;
-	        _iteratorError = err;
-	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion && _iterator.return) {
-	            _iterator.return();
-	          }
-	        } finally {
-	          if (_didIteratorError) {
-	            throw _iteratorError;
-	          }
-	        }
-	      }
-
-	      return sst;
-	    }
-	  }, {
-	    key: 'addString',
-	    value: function addString(str) {
-	      if (this.known[str] === undefined) {
-	        var index = this.strings.length;
-	        this.strings.push(str);
-	        this.known[str] = index;
-	        return index;
-	      }
-	      return this.known[str];
-	    }
-	  }, {
-	    key: 'getString',
-	    value: function getString(index) {
-	      return this.strings[index];
-	    }
-	  }, {
-	    key: 'length',
-	    value: function length() {
-	      return this.strings.length;
-	    }
-	  }]);
-
-	  return RefTable;
-	}();
-
-	var _dec$3, _class$3, _dec2$3, _class2$1, _dec3$2, _class3$2, _dec4$2, _class5$2, _dec5$2, _class6$2, _dec6$2, _class7$2, _dec7$2, _class8$2, _dec8$2, _class9$2;
-
-	var XRelationships = (_dec$3 = props('xmlns'), _dec$3(_class$3 = function (_Node) {
-	  _inherits(XRelationships, _Node);
-
-	  function XRelationships(_ref, children) {
-	    var _ref$xmlns = _ref.xmlns,
-	        xmlns = _ref$xmlns === undefined ? 'http://schemas.openxmlformats.org/package/2006/relationships' : _ref$xmlns;
-
-	    _classCallCheck(this, XRelationships);
-
-	    var _this = _possibleConstructorReturn(this, (XRelationships.__proto__ || _Object$getPrototypeOf(XRelationships)).call(this, { xmlns: xmlns }, children));
-
-	    _this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
-	    return _this;
-	  }
-
-	  return XRelationships;
-	}(Node)) || _class$3);
-
-	var XRelationship = (_dec2$3 = props('Id', 'Target', 'Type'), _dec2$3(_class2$1 = function (_Node2) {
-	  _inherits(XRelationship, _Node2);
-
-	  function XRelationship() {
-	    _classCallCheck(this, XRelationship);
-
-	    return _possibleConstructorReturn(this, (XRelationship.__proto__ || _Object$getPrototypeOf(XRelationship)).apply(this, arguments));
-	  }
-
-	  return XRelationship;
-	}(Node)) || _class2$1);
-
-	var Xworkbook = (_dec3$2 = props('xmlns', 'xmlns:r'), _dec3$2(_class3$2 = function (_Node3) {
-	  _inherits(Xworkbook, _Node3);
-
-	  function Xworkbook() {
-	    var attrs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-	    var children = arguments[1];
-
-	    _classCallCheck(this, Xworkbook);
-
-	    attrs['xmlns'] = attrs['xmlns'] || 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
-	    attrs['xmlns:r'] = attrs['xmlns:r'] || 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
-
-	    var _this3 = _possibleConstructorReturn(this, (Xworkbook.__proto__ || _Object$getPrototypeOf(Xworkbook)).call(this, attrs, children));
-
-	    _this3.fileVersion = null;
-	    _this3.workbookPr = null;
-	    _this3.bookViews = null;
-	    _this3.sheets = null;
-	    _this3.calcPr = null;
-
-	    _this3[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
-	    return _this3;
-	  }
-
-	  _createClass(Xworkbook, [{
-	    key: 'render',
-	    value: function render() {
-	      this.children = [];
-	      if (this.fileVersion) this.children.push(this.fileVersion);
-	      if (this.workbookPr) this.children.push(this.workbookPr);
-	      if (this.bookViews) this.children.push(this.bookViews);
-	      if (this.sheets) this.children.push(this.sheets);
-	      if (this.calcPr) this.children.push(this.calcPr);
-	      return _get(Xworkbook.prototype.__proto__ || _Object$getPrototypeOf(Xworkbook.prototype), 'render', this).call(this);
-	    }
-	  }]);
-
-	  return Xworkbook;
-	}(Node)) || _class3$2);
-
-	var XfileVersion = (_dec4$2 = props('appName', 'lastEdited', 'lowestEdited', 'rupBuild'), _dec4$2(_class5$2 = function (_Node4) {
-	  _inherits(XfileVersion, _Node4);
-
-	  function XfileVersion() {
-	    _classCallCheck(this, XfileVersion);
-
-	    return _possibleConstructorReturn(this, (XfileVersion.__proto__ || _Object$getPrototypeOf(XfileVersion)).apply(this, arguments));
-	  }
-
-	  return XfileVersion;
-	}(Node)) || _class5$2);
-
-	var XworkbookPr = (_dec5$2 = props('defaultThemeVersion', 'backupFile', 'showObjects', 'date1904'), _dec5$2(_class6$2 = function (_Node5) {
-	  _inherits(XworkbookPr, _Node5);
-
-	  function XworkbookPr() {
-	    _classCallCheck(this, XworkbookPr);
-
-	    return _possibleConstructorReturn(this, (XworkbookPr.__proto__ || _Object$getPrototypeOf(XworkbookPr)).apply(this, arguments));
-	  }
-
-	  return XworkbookPr;
-	}(Node)) || _class6$2);
-
-	var XworkbookProtection = function (_Node6) {
-	  _inherits(XworkbookProtection, _Node6);
-
-	  function XworkbookProtection() {
-	    _classCallCheck(this, XworkbookProtection);
-
-	    return _possibleConstructorReturn(this, (XworkbookProtection.__proto__ || _Object$getPrototypeOf(XworkbookProtection)).apply(this, arguments));
-	  }
-
-	  return XworkbookProtection;
-	}(Node);
-
-	var XbookViews = function (_Node7) {
-	  _inherits(XbookViews, _Node7);
-
-	  function XbookViews() {
-	    _classCallCheck(this, XbookViews);
-
-	    return _possibleConstructorReturn(this, (XbookViews.__proto__ || _Object$getPrototypeOf(XbookViews)).apply(this, arguments));
-	  }
-
-	  return XbookViews;
-	}(Node);
-
-	var XworkbookView = (_dec6$2 = props('activeTab', 'firstSheet', 'showHorizontalScroll', 'showVerticalScroll', 'showSheetTabs', 'tabRatio', 'windowHeight', 'windowWidth', 'xWindow', 'yWindow'), _dec6$2(_class7$2 = function (_Node8) {
-	  _inherits(XworkbookView, _Node8);
-
-	  function XworkbookView() {
-	    _classCallCheck(this, XworkbookView);
-
-	    return _possibleConstructorReturn(this, (XworkbookView.__proto__ || _Object$getPrototypeOf(XworkbookView)).apply(this, arguments));
-	  }
-
-	  return XworkbookView;
-	}(Node)) || _class7$2);
-
-	var Xsheets = function (_Node9) {
-	  _inherits(Xsheets, _Node9);
-
-	  function Xsheets() {
-	    _classCallCheck(this, Xsheets);
-
-	    return _possibleConstructorReturn(this, (Xsheets.__proto__ || _Object$getPrototypeOf(Xsheets)).apply(this, arguments));
-	  }
-
-	  return Xsheets;
-	}(Node);
-
-	var Xsheet = (_dec7$2 = props('name', 'sheetId', 'r:id', 'state'), _dec7$2(_class8$2 = function (_Node10) {
-	  _inherits(Xsheet, _Node10);
-
-	  function Xsheet() {
-	    _classCallCheck(this, Xsheet);
-
-	    return _possibleConstructorReturn(this, (Xsheet.__proto__ || _Object$getPrototypeOf(Xsheet)).apply(this, arguments));
-	  }
-
-	  return Xsheet;
-	}(Node)) || _class8$2);
-
-	var XcalcPr = (_dec8$2 = props('calcId', 'iterateCount', 'refMode', 'iterate', 'iterateDelta'), _dec8$2(_class9$2 = function (_Node11) {
-	  _inherits(XcalcPr, _Node11);
-
-	  function XcalcPr() {
-	    _classCallCheck(this, XcalcPr);
-
-	    return _possibleConstructorReturn(this, (XcalcPr.__proto__ || _Object$getPrototypeOf(XcalcPr)).apply(this, arguments));
-	  }
-
-	  return XcalcPr;
-	}(Node)) || _class9$2);
-
-	function makeWorkbookRels(sheetCount) {
-	  var rels = new XRelationships({});
-	  for (var i = 1; i <= sheetCount; i++) {
-	    rels.children.push(new XRelationship({
-	      Id: 'rId' + i,
-	      Target: 'worksheets/sheet' + i + '.xml',
-	      Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet'
-	    }));
-	  }
-	  rels.children.push(new XRelationship({
-	    Id: 'rId' + (sheetCount + 1),
-	    Target: 'sharedStrings.xml',
-	    Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings'
-	  }));
-	  rels.children.push(new XRelationship({
-	    Id: 'rId' + (sheetCount + 2),
-	    Target: 'theme/theme1.xml',
-	    Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme'
-	  }));
-	  rels.children.push(new XRelationship({
-	    Id: 'rId' + (sheetCount + 3),
-	    Target: 'styles.xml',
-	    Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles'
-	  }));
-	  return rels;
-	}
-
-	function makeXworkbook() {
-	  var workbook = new Xworkbook();
-	  workbook.fileVersion = new XfileVersion({ appName: 'JS XLSX' });
-	  workbook.workbookPr = new XworkbookPr({ showObjects: 'all' });
-	  workbook.bookViews = new XbookViews({}, [new XworkbookView({
-	    showHorizontalScroll: true,
-	    showSheetTabs: true,
-	    showVerticalScroll: true,
-	    tabRatio: 204,
-	    windowHeight: 8192,
-	    windowWidth: 16384,
-	    xWindow: 0,
-	    yWindow: 0
-	  })]);
-	  workbook.calcPr = new XcalcPr({
-	    iterateCount: 100,
-	    iterate: false,
-	    iterateDelta: 0.001,
-	    refMode: 'A1'
-	  });
-
-	  return workbook;
-	}
-
-	var _dec$4, _class$4, _dec2$4, _class2$2, _dec3$3, _class3$3;
-
-	var XTypes = (_dec$4 = props('xmlns'), _dec$4(_class$4 = function (_Node) {
-	  _inherits(XTypes, _Node);
-
-	  function XTypes(_ref, children) {
-	    var _ref$xmlns = _ref.xmlns,
-	        xmlns = _ref$xmlns === undefined ? 'http://schemas.openxmlformats.org/package/2006/content-types' : _ref$xmlns;
-
-	    _classCallCheck(this, XTypes);
-
-	    var _this = _possibleConstructorReturn(this, (XTypes.__proto__ || _Object$getPrototypeOf(XTypes)).call(this, { xmlns: xmlns }, children));
-
-	    _this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
-	    return _this;
-	  }
-
-	  return XTypes;
-	}(Node)) || _class$4);
-
-	var XDefault = (_dec2$4 = props('Extension', 'ContentType'), _dec2$4(_class2$2 = function (_Node2) {
-	  _inherits(XDefault, _Node2);
-
-	  function XDefault() {
-	    _classCallCheck(this, XDefault);
-
-	    return _possibleConstructorReturn(this, (XDefault.__proto__ || _Object$getPrototypeOf(XDefault)).apply(this, arguments));
-	  }
-
-	  return XDefault;
-	}(Node)) || _class2$2);
-
-	var XOverride = (_dec3$3 = props('PartName', 'ContentType'), _dec3$3(_class3$3 = function (_Node3) {
-	  _inherits(XOverride, _Node3);
-
-	  function XOverride() {
-	    _classCallCheck(this, XOverride);
-
-	    return _possibleConstructorReturn(this, (XOverride.__proto__ || _Object$getPrototypeOf(XOverride)).apply(this, arguments));
-	  }
-
-	  return XOverride;
-	}(Node)) || _class3$3);
-
-	function makeXTypes() {
-	  var types = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new XTypes({});
-
-	  var defaults = [{
-	    Extension: 'rels',
-	    ContentType: 'application/vnd.openxmlformats-package.relationships+xml'
-	  }, {
-	    Extension: 'xml',
-	    ContentType: 'application/xml'
-	  }];
-
-	  var _iteratorNormalCompletion = true;
-	  var _didIteratorError = false;
-	  var _iteratorError = undefined;
-
-	  try {
-	    for (var _iterator = _getIterator(defaults), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	      var item = _step.value;
-
-	      types.children.push(new XDefault(item));
-	    }
-	  } catch (err) {
-	    _didIteratorError = true;
-	    _iteratorError = err;
-	  } finally {
-	    try {
-	      if (!_iteratorNormalCompletion && _iterator.return) {
-	        _iterator.return();
-	      }
-	    } finally {
-	      if (_didIteratorError) {
-	        throw _iteratorError;
-	      }
-	    }
-	  }
-
-	  var overrides = [{
-	    PartName: '/_rels/.rels',
-	    ContentType: 'application/vnd.openxmlformats-package.relationships+xml'
-	  }, {
-	    PartName: '/docProps/app.xml',
-	    ContentType: 'application/vnd.openxmlformats-officedocument.extended-properties+xml'
-	  }, {
-	    PartName: '/docProps/core.xml',
-	    ContentType: 'application/vnd.openxmlformats-package.core-properties+xml'
-	  }, {
-	    PartName: '/xl/_rels/workbook.xml.rels',
-	    ContentType: 'application/vnd.openxmlformats-package.relationships+xml'
-	  }, {
-	    PartName: '/xl/sharedStrings.xml',
-	    ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml'
-	  }, {
-	    PartName: '/xl/styles.xml',
-	    ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml'
-	  }, {
-	    PartName: '/xl/workbook.xml',
-	    ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml'
-	  }, {
-	    PartName: '/xl/theme/theme1.xml',
-	    ContentType: 'application/vnd.openxmlformats-officedocument.theme+xml'
-	  }];
-
-	  var _iteratorNormalCompletion2 = true;
-	  var _didIteratorError2 = false;
-	  var _iteratorError2 = undefined;
-
-	  try {
-	    for (var _iterator2 = _getIterator(overrides), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	      var override = _step2.value;
-
-	      types.children.push(new XOverride(override));
-	    }
-	  } catch (err) {
-	    _didIteratorError2 = true;
-	    _iteratorError2 = err;
-	  } finally {
-	    try {
-	      if (!_iteratorNormalCompletion2 && _iterator2.return) {
-	        _iterator2.return();
-	      }
-	    } finally {
-	      if (_didIteratorError2) {
-	        throw _iteratorError2;
-	      }
-	    }
-	  }
-
-	  return types;
-	}
-
-	/**
-	 * This is the main class, use it:
-	 *
-	 * ```js
-	 * import { File } from 'better-xlsx';
-	 * const file = new File();
-	 * const sheet = file.addSheet('Sheet-1');
-	 * ```
-	 *
-	 * @class File
-	 */
-	var File = function () {
-	  /**
-	   * @private
-	   */
-	  function File() {
-	    _classCallCheck(this, File);
-
-	    this.sheet = {};
-	    this.sheets = [];
-	    this.definedNames = [];
-
-	    /**
-	     * @private
-	     */
-	    this.styles = new XstyleSheet({});
-	  }
-	  /**
-	   * Add a new Sheet, with the provided name, to a File
-	   * @param {String} name Name of the Sheet
-	   * @return {Sheet}
-	   */
-
-	  /**
-	   * @private
-	   */
-
-	  /**
-	   * @private
-	   */
-
-
-	  _createClass(File, [{
-	    key: 'addSheet',
-	    value: function addSheet(name) {
-	      if (this.sheet[name]) {
-	        throw new Error('duplicate sheet name ' + name + '.');
-	      }
-	      var sheet = new Sheet({
-	        name: name,
-	        file: this,
-	        selected: this.sheets.length === 0
-	      });
-	      this.sheet[name] = sheet;
-	      this.sheets.push(sheet);
-	      return sheet;
-	    }
-	    /**
-	     * Save the File to an xlsx file.
-	     * @param  {String} [type='nodebuffer'] For Node.js use `nodebuffer` and browser use `blob` or `base64`.
-	     * @param {Boolean} [compress=false] For file compression.
-	     * @return {Promise|stream} For Node.js return `stream` and browser return Promise.
-	     */
-
-	  }, {
-	    key: 'saveAs',
-	    value: function saveAs() {
-	      var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'nodebuffer';
-	      var compress = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-	      var parts = this.makeParts();
-	      var zip = new Zip();
-	      var _iteratorNormalCompletion = true;
-	      var _didIteratorError = false;
-	      var _iteratorError = undefined;
-
-	      try {
-	        for (var _iterator = _getIterator(_Object$keys(parts)), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	          var key = _step.value;
-
-	          zip.file(key, parts[key]);
-	        }
-	      } catch (err) {
-	        _didIteratorError = true;
-	        _iteratorError = err;
-	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion && _iterator.return) {
-	            _iterator.return();
-	          }
-	        } finally {
-	          if (_didIteratorError) {
-	            throw _iteratorError;
-	          }
-	        }
-	      }
-
-	      var compression = compress ? 'DEFLATE' : 'STORE';
-	      if (type === 'blob' || type === 'base64') {
-	        return zip.generateAsync({ type: type, compression: compression });
-	      } else {
-	        return zip.generateNodeStream({ type: 'nodebuffer', compression: compression });
-	      }
-	    }
-	    /**
-	     * @private
-	     * @return {Object} XML files mapping object
-	     */
-
-	  }, {
-	    key: 'makeParts',
-	    value: function makeParts() {
-	      var parts = {};
-	      var refTable = new RefTable();
-	      var types = makeXTypes();
-	      var workbook = makeXworkbook();
-
-	      this.styles.reset();
-
-	      var i = 1;
-	      var sheets = new Xsheets();
-	      var _iteratorNormalCompletion2 = true;
-	      var _didIteratorError2 = false;
-	      var _iteratorError2 = undefined;
-
-	      try {
-	        for (var _iterator2 = _getIterator(this.sheets), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	          var sheet = _step2.value;
-
-	          var xSheet = sheet.makeXSheet(refTable, this.styles);
-	          types.children.push(new XOverride({
-	            PartName: '/xl/worksheets/sheet' + i + '.xml',
-	            ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml'
-	          }));
-	          sheets.children.push(new Xsheet({
-	            name: sheet.name,
-	            sheetId: i,
-	            'r:id': 'rId' + i,
-	            state: 'visible'
-	          }));
-	          parts['xl/worksheets/sheet' + i + '.xml'] = xSheet.render();
-	          i++;
-	        }
-	      } catch (err) {
-	        _didIteratorError2 = true;
-	        _iteratorError2 = err;
-	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-	            _iterator2.return();
-	          }
-	        } finally {
-	          if (_didIteratorError2) {
-	            throw _iteratorError2;
-	          }
-	        }
-	      }
-
-	      workbook.sheets = sheets;
-
-	      parts['xl/workbook.xml'] = workbook.render();
-	      parts['_rels/.rels'] = DOT_RELS;
-	      parts['docProps/app.xml'] = DOCPROPS_APP;
-	      parts['docProps/core.xml'] = DOCPROPS_CORE;
-	      parts['xl/theme/theme1.xml'] = XL_THEME_THEME;
-
-	      parts['xl/sharedStrings.xml'] = refTable.makeXsst().render();
-	      parts['xl/_rels/workbook.xml.rels'] = makeWorkbookRels(this.sheets.length).render();
-	      parts['[Content_Types].xml'] = types.render();
-	      parts['xl/styles.xml'] = this.styles.render();
-
-	      return parts;
-	    }
-	  }]);
-
-	  return File;
-	}();
-
-	var file = /*#__PURE__*/Object.freeze({
-		File: File
-	});
-
-	var index = _extends$1({}, cell, col, file, lib, row, sheet, style, { Zip: Zip });
-
-	return index;
+  Zip = Zip && Zip.hasOwnProperty('default') ? Zip['default'] : Zip;
+
+  function _defineProperty(obj, key, value) {
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+      });
+    } else {
+      obj[key] = value;
+    }
+
+    return obj;
+  }
+
+  var defineProperty = _defineProperty;
+
+  function _objectSpread(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i] != null ? arguments[i] : {};
+      var ownKeys = Object.keys(source);
+
+      if (typeof Object.getOwnPropertySymbols === 'function') {
+        ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
+          return Object.getOwnPropertyDescriptor(source, sym).enumerable;
+        }));
+      }
+
+      ownKeys.forEach(function (key) {
+        defineProperty(target, key, source[key]);
+      });
+    }
+
+    return target;
+  }
+
+  var objectSpread = _objectSpread;
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var classCallCheck = _classCallCheck;
+
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    return Constructor;
+  }
+
+  var createClass = _createClass;
+
+  function createCommonjsModule(fn, module) {
+  	return module = { exports: {} }, fn(module, module.exports), module.exports;
+  }
+
+  var _typeof_1 = createCommonjsModule(function (module) {
+  function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
+
+  function _typeof(obj) {
+    if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
+      module.exports = _typeof = function _typeof(obj) {
+        return _typeof2(obj);
+      };
+    } else {
+      module.exports = _typeof = function _typeof(obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
+      };
+    }
+
+    return _typeof(obj);
+  }
+
+  module.exports = _typeof;
+  });
+
+  function _assertThisInitialized(self) {
+    if (self === void 0) {
+      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    }
+
+    return self;
+  }
+
+  var assertThisInitialized = _assertThisInitialized;
+
+  function _possibleConstructorReturn(self, call) {
+    if (call && (_typeof_1(call) === "object" || typeof call === "function")) {
+      return call;
+    }
+
+    return assertThisInitialized(self);
+  }
+
+  var possibleConstructorReturn = _possibleConstructorReturn;
+
+  var setPrototypeOf = createCommonjsModule(function (module) {
+  function _setPrototypeOf(o, p) {
+    module.exports = _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+      o.__proto__ = p;
+      return o;
+    };
+
+    return _setPrototypeOf(o, p);
+  }
+
+  module.exports = _setPrototypeOf;
+  });
+
+  function _inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+      throw new TypeError("Super expression must either be null or a function");
+    }
+
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+      constructor: {
+        value: subClass,
+        writable: true,
+        configurable: true
+      }
+    });
+    if (superClass) setPrototypeOf(subClass, superClass);
+  }
+
+  var inherits = _inherits;
+
+  function _arrayWithHoles(arr) {
+    if (Array.isArray(arr)) return arr;
+  }
+
+  var arrayWithHoles = _arrayWithHoles;
+
+  function _iterableToArray(iter) {
+    if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  }
+
+  var iterableToArray = _iterableToArray;
+
+  function _nonIterableRest() {
+    throw new TypeError("Invalid attempt to destructure non-iterable instance");
+  }
+
+  var nonIterableRest = _nonIterableRest;
+
+  function _toArray(arr) {
+    return arrayWithHoles(arr) || iterableToArray(arr) || nonIterableRest();
+  }
+
+  var toArray = _toArray;
+
+  var getPrototypeOf = createCommonjsModule(function (module) {
+  function _getPrototypeOf(o) {
+    module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+      return o.__proto__ || Object.getPrototypeOf(o);
+    };
+    return _getPrototypeOf(o);
+  }
+
+  module.exports = _getPrototypeOf;
+  });
+
+  function _superPropBase(object, property) {
+    while (!Object.prototype.hasOwnProperty.call(object, property)) {
+      object = getPrototypeOf(object);
+      if (object === null) break;
+    }
+
+    return object;
+  }
+
+  var superPropBase = _superPropBase;
+
+  var get = createCommonjsModule(function (module) {
+  function _get(target, property, receiver) {
+    if (typeof Reflect !== "undefined" && Reflect.get) {
+      module.exports = _get = Reflect.get;
+    } else {
+      module.exports = _get = function _get(target, property, receiver) {
+        var base = superPropBase(target, property);
+        if (!base) return;
+        var desc = Object.getOwnPropertyDescriptor(base, property);
+
+        if (desc.get) {
+          return desc.get.call(receiver);
+        }
+
+        return desc.value;
+      };
+    }
+
+    return _get(target, property, receiver || target);
+  }
+
+  module.exports = _get;
+  });
+
+  function attrEscape(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;').replace(/\t/g, '&#x9;').replace(/\n/g, '&#xA;').replace(/\r/g, '&#xD;');
+  }
+
+  function escape(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\r/g, '&#xD;');
+  }
+
+  var HEAD = Symbol('head');
+  function props() {
+    for (var _len = arguments.length, keys = new Array(_len), _key = 0; _key < _len; _key++) {
+      keys[_key] = arguments[_key];
+    }
+
+    return function (target) {
+      var _loop = function _loop() {
+        var key = keys[_i];
+        target.elements.push({
+          key: key,
+          kind: 'method',
+          placement: 'prototype',
+          descriptor: {
+            get: function get() {
+              if (this.attributes) {
+                return this.attributes[key];
+              }
+            },
+            set: function set(value) {
+              if (this.attributes === undefined) {
+                this.attributes = {};
+              }
+
+              this.attributes[key] = value;
+            },
+            configurable: true,
+            enumerable: true
+          }
+        });
+      };
+
+      for (var _i = 0; _i < keys.length; _i++) {
+        _loop();
+      }
+
+      return target;
+    };
+  }
+  var Node =
+  /*#__PURE__*/
+  function () {
+    function Node() {
+      var attributes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var children = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+      var xmlName = arguments.length > 2 ? arguments[2] : undefined;
+
+      classCallCheck(this, Node);
+
+      var _arr = Object.keys(attributes);
+
+      for (var _i2 = 0; _i2 < _arr.length; _i2++) {
+        var key = _arr[_i2];
+        this[key] = attributes[key];
+      }
+
+      this.children = children;
+      this._xmlName = xmlName || this.constructor.name.substring(1);
+    }
+
+    createClass(Node, [{
+      key: "render",
+      value: function render() {
+        function walk(tree) {
+          var name = tree._xmlName;
+          var attributes = tree.attributes,
+              children = tree.children;
+          var tokens = [];
+
+          if (tree[HEAD]) {
+            tokens.push(tree[HEAD]);
+          }
+
+          tokens.push("<".concat(name));
+
+          var _arr2 = Object.keys(attributes || {});
+
+          for (var _i3 = 0; _i3 < _arr2.length; _i3++) {
+            var key = _arr2[_i3];
+            var v = attributes[key];
+            if (v === undefined) continue;
+
+            if (typeof v === 'string') {
+              v = attrEscape(v);
+            }
+
+            if (typeof v === 'boolean') {
+              v = v ? 1 : 0;
+            }
+
+            tokens.push(" ".concat(key, "=\"").concat(v, "\""));
+          }
+
+          if (!children.length) {
+            tokens.push('/>');
+            return tokens;
+          }
+
+          tokens.push('>');
+          var _iteratorNormalCompletion = true;
+          var _didIteratorError = false;
+          var _iteratorError = undefined;
+
+          try {
+            for (var _iterator = children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              var child = _step.value;
+
+              if (child instanceof Node) {
+                tokens.push(child.render());
+              } else if (typeof child === 'string') {
+                tokens.push(escape(child));
+              } else {
+                tokens.push(child.toString());
+              }
+            }
+          } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion && _iterator.return != null) {
+                _iterator.return();
+              }
+            } finally {
+              if (_didIteratorError) {
+                throw _iteratorError;
+              }
+            }
+          }
+
+          tokens.push("</".concat(name, ">"));
+          return tokens;
+        }
+
+        return walk(this).join('');
+      }
+    }]);
+
+    return Node;
+  }();
+
+  var NumFmtsCount = 163;
+  /**
+   * Number format table
+   *
+   * ```js
+   * {
+   *   0: 'general',
+   *   1: '0',
+   *   2: '0.00',
+   *   3: '#,##0',
+   *   4: '#,##0.00',
+   *   9: '0%',
+   *   10: '0.00%',
+   *   11: '0.00e+00',
+   *   12: '# ?/?',
+   *   13: '# ??/??',
+   *   14: 'mm-dd-yy',
+   *   15: 'd-mmm-yy',
+   *   16: 'd-mmm',
+   *   17: 'mmm-yy',
+   *   18: 'h:mm am/pm',
+   *   19: 'h:mm:ss am/pm',
+   *   20: 'h:mm',
+   *   21: 'h:mm:ss',
+   *   22: 'm/d/yy h:mm',
+   *   37: '#,##0 ;(#,##0)',
+   *   38: '#,##0 ;[red](#,##0)',
+   *   39: '#,##0.00;(#,##0.00)',
+   *   40: '#,##0.00;[red](#,##0.00)',
+   *   41: '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)',
+   *   42: '_("$"* #,##0_);_("$* (#,##0);_("$"* "-"_);_(@_)',
+   *   43: '_(* #,##0.00_);_(* (#,##0.00);_(* "-"??_);_(@_)',
+   *   44: '_("$"* #,##0.00_);_("$"* (#,##0.00);_("$"* "-"??_);_(@_)',
+   *   45: 'mm:ss',
+   *   46: '[h]:mm:ss',
+   *   47: 'mmss.0',
+   *   48: '##0.0e+0',
+   *   49: '@'
+   * }
+   * ```
+   *
+   * @type {Object}
+   */
+
+  var NumFmt = {
+    0: 'general',
+    1: '0',
+    2: '0.00',
+    3: '#,##0',
+    4: '#,##0.00',
+    9: '0%',
+    10: '0.00%',
+    11: '0.00e+00',
+    12: '# ?/?',
+    13: '# ??/??',
+    14: 'mm-dd-yy',
+    15: 'd-mmm-yy',
+    16: 'd-mmm',
+    17: 'mmm-yy',
+    18: 'h:mm am/pm',
+    19: 'h:mm:ss am/pm',
+    20: 'h:mm',
+    21: 'h:mm:ss',
+    22: 'm/d/yy h:mm',
+    37: '#,##0 ;(#,##0)',
+    38: '#,##0 ;[red](#,##0)',
+    39: '#,##0.00;(#,##0.00)',
+    40: '#,##0.00;[red](#,##0.00)',
+    41: '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)',
+    42: '_("$"* #,##0_);_("$* (#,##0);_("$"* "-"_);_(@_)',
+    43: '_(* #,##0.00_);_(* (#,##0.00);_(* "-"??_);_(@_)',
+    44: '_("$"* #,##0.00_);_("$"* (#,##0.00);_("$"* "-"??_);_(@_)',
+    45: 'mm:ss',
+    46: '[h]:mm:ss',
+    47: 'mmss.0',
+    48: '##0.0e+0',
+    49: '@'
+  };
+  var NumFmtInv = {};
+
+  var _arr = Object.keys(NumFmt);
+
+  for (var _i = 0; _i < _arr.length; _i++) {
+    var k = _arr[_i];
+    NumFmtInv[NumFmt[k]] = k;
+  } // AA => 26
+
+
+  function col2num(colstr) {
+    var d = 0;
+
+    for (var i = 0; i !== colstr.length; ++i) {
+      d = 26 * d + colstr.charCodeAt(i) - 64;
+    }
+
+    return d - 1;
+  } // 26 => AA
+
+
+  function num2col(col) {
+    var s = '';
+
+    for (++col; col; col = Math.floor((col - 1) / 26)) {
+      s = String.fromCharCode((col - 1) % 26 + 65) + s;
+    }
+
+    return s;
+  } // B3 => {x: 1, y: 2}
+
+
+  function cid2coord(cid) {
+    var temp = cid.match(/([A-Z]+)(\d+)/);
+    return {
+      x: col2num(temp[1]),
+      y: parseInt(temp[2], 10) - 1
+    };
+  }
+
+  function toExcelTime(d) {
+    var unix = d.getTime() / 1000;
+    return unix / 86400.0 + 25569.0;
+  }
+
+  var lib = /*#__PURE__*/Object.freeze({
+    NumFmt: NumFmt,
+    NumFmtInv: NumFmtInv,
+    NumFmtsCount: NumFmtsCount,
+    col2num: col2num,
+    num2col: num2col,
+    cid2coord: cid2coord,
+    toExcelTime: toExcelTime
+  });
+
+  function _decorate(decorators, factory, superClass) { var r = factory(function initialize(O) { _initializeInstanceElements(O, decorated.elements); }, superClass); var decorated = _decorateClass(_coalesceClassElements(r.d.map(_createElementDescriptor)), decorators); _initializeClassElements(r.F, decorated.elements); return _runClassFinishers(r.F, decorated.finishers); }
+
+  function _createElementDescriptor(def) { var key = _toPropertyKey(def.key); var descriptor; if (def.kind === "method") { descriptor = { value: def.value, writable: true, configurable: true, enumerable: false }; Object.defineProperty(def.value, "name", { value: _typeof_1(key) === "symbol" ? "" : key, configurable: true }); } else if (def.kind === "get") { descriptor = { get: def.value, configurable: true, enumerable: false }; } else if (def.kind === "set") { descriptor = { set: def.value, configurable: true, enumerable: false }; } else if (def.kind === "field") { descriptor = { configurable: true, writable: true, enumerable: true }; } var element = { kind: def.kind === "field" ? "field" : "method", key: key, placement: def.static ? "static" : def.kind === "field" ? "own" : "prototype", descriptor: descriptor }; if (def.decorators) element.decorators = def.decorators; if (def.kind === "field") element.initializer = def.value; return element; }
+
+  function _coalesceGetterSetter(element, other) { if (element.descriptor.get !== undefined) { other.descriptor.get = element.descriptor.get; } else { other.descriptor.set = element.descriptor.set; } }
+
+  function _coalesceClassElements(elements) { var newElements = []; var isSameElement = function isSameElement(other) { return other.kind === "method" && other.key === element.key && other.placement === element.placement; }; for (var i = 0; i < elements.length; i++) { var element = elements[i]; var other; if (element.kind === "method" && (other = newElements.find(isSameElement))) { if (_isDataDescriptor(element.descriptor) || _isDataDescriptor(other.descriptor)) { if (_hasDecorators(element) || _hasDecorators(other)) { throw new ReferenceError("Duplicated methods (" + element.key + ") can't be decorated."); } other.descriptor = element.descriptor; } else { if (_hasDecorators(element)) { if (_hasDecorators(other)) { throw new ReferenceError("Decorators can't be placed on different accessors with for " + "the same property (" + element.key + ")."); } other.decorators = element.decorators; } _coalesceGetterSetter(element, other); } } else { newElements.push(element); } } return newElements; }
+
+  function _hasDecorators(element) { return element.decorators && element.decorators.length; }
+
+  function _isDataDescriptor(desc) { return desc !== undefined && !(desc.value === undefined && desc.writable === undefined); }
+
+  function _initializeClassElements(F, elements) { var proto = F.prototype; ["method", "field"].forEach(function (kind) { elements.forEach(function (element) { var placement = element.placement; if (element.kind === kind && (placement === "static" || placement === "prototype")) { var receiver = placement === "static" ? F : proto; _defineClassElement(receiver, element); } }); }); }
+
+  function _initializeInstanceElements(O, elements) { ["method", "field"].forEach(function (kind) { elements.forEach(function (element) { if (element.kind === kind && element.placement === "own") { _defineClassElement(O, element); } }); }); }
+
+  function _defineClassElement(receiver, element) { var descriptor = element.descriptor; if (element.kind === "field") { var initializer = element.initializer; descriptor = { enumerable: descriptor.enumerable, writable: descriptor.writable, configurable: descriptor.configurable, value: initializer === void 0 ? void 0 : initializer.call(receiver) }; } Object.defineProperty(receiver, element.key, descriptor); }
+
+  function _decorateClass(elements, decorators) { var newElements = []; var finishers = []; var placements = { static: [], prototype: [], own: [] }; elements.forEach(function (element) { _addElementPlacement(element, placements); }); elements.forEach(function (element) { if (!_hasDecorators(element)) return newElements.push(element); var elementFinishersExtras = _decorateElement(element, placements); newElements.push(elementFinishersExtras.element); newElements.push.apply(newElements, elementFinishersExtras.extras); finishers.push.apply(finishers, elementFinishersExtras.finishers); }); if (!decorators) { return { elements: newElements, finishers: finishers }; } var result = _decorateConstructor(newElements, decorators); finishers.push.apply(finishers, result.finishers); result.finishers = finishers; return result; }
+
+  function _addElementPlacement(element, placements, silent) { var keys = placements[element.placement]; if (!silent && keys.indexOf(element.key) !== -1) { throw new TypeError("Duplicated element (" + element.key + ")"); } keys.push(element.key); }
+
+  function _decorateElement(element, placements) { var extras = []; var finishers = []; for (var decorators = element.decorators, i = decorators.length - 1; i >= 0; i--) { var keys = placements[element.placement]; keys.splice(keys.indexOf(element.key), 1); var elementObject = _fromElementDescriptor(element); var elementFinisherExtras = _toElementFinisherExtras((0, decorators[i])(elementObject) || elementObject); element = elementFinisherExtras.element; _addElementPlacement(element, placements); if (elementFinisherExtras.finisher) { finishers.push(elementFinisherExtras.finisher); } var newExtras = elementFinisherExtras.extras; if (newExtras) { for (var j = 0; j < newExtras.length; j++) { _addElementPlacement(newExtras[j], placements); } extras.push.apply(extras, newExtras); } } return { element: element, finishers: finishers, extras: extras }; }
+
+  function _decorateConstructor(elements, decorators) { var finishers = []; for (var i = decorators.length - 1; i >= 0; i--) { var obj = _fromClassDescriptor(elements); var elementsAndFinisher = _toClassDescriptor((0, decorators[i])(obj) || obj); if (elementsAndFinisher.finisher !== undefined) { finishers.push(elementsAndFinisher.finisher); } if (elementsAndFinisher.elements !== undefined) { elements = elementsAndFinisher.elements; for (var j = 0; j < elements.length - 1; j++) { for (var k = j + 1; k < elements.length; k++) { if (elements[j].key === elements[k].key && elements[j].placement === elements[k].placement) { throw new TypeError("Duplicated element (" + elements[j].key + ")"); } } } } } return { elements: elements, finishers: finishers }; }
+
+  function _fromElementDescriptor(element) { var obj = { kind: element.kind, key: element.key, placement: element.placement, descriptor: element.descriptor }; var desc = { value: "Descriptor", configurable: true }; Object.defineProperty(obj, Symbol.toStringTag, desc); if (element.kind === "field") obj.initializer = element.initializer; return obj; }
+
+  function _toElementDescriptors(elementObjects) { if (elementObjects === undefined) return; return toArray(elementObjects).map(function (elementObject) { var element = _toElementDescriptor(elementObject); _disallowProperty(elementObject, "finisher", "An element descriptor"); _disallowProperty(elementObject, "extras", "An element descriptor"); return element; }); }
+
+  function _toElementDescriptor(elementObject) { var kind = String(elementObject.kind); if (kind !== "method" && kind !== "field") { throw new TypeError('An element descriptor\'s .kind property must be either "method" or' + ' "field", but a decorator created an element descriptor with' + ' .kind "' + kind + '"'); } var key = _toPropertyKey(elementObject.key); var placement = String(elementObject.placement); if (placement !== "static" && placement !== "prototype" && placement !== "own") { throw new TypeError('An element descriptor\'s .placement property must be one of "static",' + ' "prototype" or "own", but a decorator created an element descriptor' + ' with .placement "' + placement + '"'); } var descriptor = elementObject.descriptor; _disallowProperty(elementObject, "elements", "An element descriptor"); var element = { kind: kind, key: key, placement: placement, descriptor: Object.assign({}, descriptor) }; if (kind !== "field") { _disallowProperty(elementObject, "initializer", "A method descriptor"); } else { _disallowProperty(descriptor, "get", "The property descriptor of a field descriptor"); _disallowProperty(descriptor, "set", "The property descriptor of a field descriptor"); _disallowProperty(descriptor, "value", "The property descriptor of a field descriptor"); element.initializer = elementObject.initializer; } return element; }
+
+  function _toElementFinisherExtras(elementObject) { var element = _toElementDescriptor(elementObject); var finisher = _optionalCallableProperty(elementObject, "finisher"); var extras = _toElementDescriptors(elementObject.extras); return { element: element, finisher: finisher, extras: extras }; }
+
+  function _fromClassDescriptor(elements) { var obj = { kind: "class", elements: elements.map(_fromElementDescriptor) }; var desc = { value: "Descriptor", configurable: true }; Object.defineProperty(obj, Symbol.toStringTag, desc); return obj; }
+
+  function _toClassDescriptor(obj) { var kind = String(obj.kind); if (kind !== "class") { throw new TypeError('A class descriptor\'s .kind property must be "class", but a decorator' + ' created a class descriptor with .kind "' + kind + '"'); } _disallowProperty(obj, "key", "A class descriptor"); _disallowProperty(obj, "placement", "A class descriptor"); _disallowProperty(obj, "descriptor", "A class descriptor"); _disallowProperty(obj, "initializer", "A class descriptor"); _disallowProperty(obj, "extras", "A class descriptor"); var finisher = _optionalCallableProperty(obj, "finisher"); var elements = _toElementDescriptors(obj.elements); return { elements: elements, finisher: finisher }; }
+
+  function _disallowProperty(obj, name, objectType) { if (obj[name] !== undefined) { throw new TypeError(objectType + " can't have a ." + name + " property."); } }
+
+  function _optionalCallableProperty(obj, name) { var value = obj[name]; if (value !== undefined && typeof value !== "function") { throw new TypeError("Expected '" + name + "' to be a function"); } return value; }
+
+  function _runClassFinishers(constructor, finishers) { for (var i = 0; i < finishers.length; i++) { var newConstructor = (0, finishers[i])(constructor); if (newConstructor !== undefined) { if (typeof newConstructor !== "function") { throw new TypeError("Finishers must return a constructor."); } constructor = newConstructor; } } return constructor; }
+
+  function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof_1(key) === "symbol" ? key : String(key); }
+
+  function _toPrimitive(input, hint) { if (_typeof_1(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof_1(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+  var XstyleSheet = _decorate([props('xmlns')], function (_initialize, _Node) {
+    var XstyleSheet =
+    /*#__PURE__*/
+    function (_Node2) {
+      inherits(XstyleSheet, _Node2);
+
+      function XstyleSheet(_ref, children) {
+        var _this;
+
+        var _ref$xmlns = _ref.xmlns,
+            xmlns = _ref$xmlns === void 0 ? 'http://schemas.openxmlformats.org/spreadsheetml/2006/main' : _ref$xmlns;
+
+        classCallCheck(this, XstyleSheet);
+
+        _this = possibleConstructorReturn(this, getPrototypeOf(XstyleSheet).call(this, {
+          xmlns: xmlns
+        }, children));
+
+        _initialize(assertThisInitialized(assertThisInitialized(_this)));
+
+        _this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
+        return _this;
+      }
+
+      return XstyleSheet;
+    }(_Node);
+
+    return {
+      F: XstyleSheet,
+      d: [{
+        kind: "field",
+        key: "fonts",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "fills",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "borders",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "cellStyles",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "cellStyleXfs",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "cellXfs",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "numFmts",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "numFmtRefTable",
+        value: function value() {
+          return {};
+        }
+      }, {
+        kind: "method",
+        key: "render",
+        value: function value() {
+          this.children = [];
+          if (this.numFmts) this.children.push(this.numFmts);
+          if (this.fonts) this.children.push(this.fonts);
+          if (this.fills) this.children.push(this.fills);
+          if (this.borders) this.children.push(this.borders);
+          if (this.cellStyleXfs) this.children.push(this.cellStyleXfs);
+          if (this.cellXfs) this.children.push(this.cellXfs);
+          if (this.cellStyles) this.children.push(this.cellStyles);
+          return get(getPrototypeOf(XstyleSheet.prototype), "render", this).call(this);
+        }
+      }, {
+        kind: "method",
+        key: "reset",
+        value: function value() {
+          this.children = [];
+          this.fonts = new Xfonts();
+          this.fills = new Xfills();
+          this.borders = new Xborders();
+          this.cellXfs = new XcellXfs({
+            count: 1
+          }, [new Xxf()]);
+          this.numFmts = new XnumFmts();
+          this.addBorder(new Xborder({
+            left: {
+              style: 'none'
+            },
+            right: {
+              style: 'none'
+            },
+            top: {
+              style: 'none'
+            },
+            bottom: {
+              style: 'none'
+            }
+          }));
+        }
+      }, {
+        kind: "method",
+        key: "addFont",
+        value: function value(xFont) {
+          if (!xFont.name) return 0;
+          var list = this.fonts.children;
+          var len = list.length;
+
+          for (var i = 0; i < list.length; i++) {
+            if (xFont.equals(list[i])) return i;
+          }
+
+          list.push(xFont);
+          this.fonts.count = list.length;
+          return len;
+        }
+      }, {
+        kind: "method",
+        key: "addFill",
+        value: function value(xFill) {
+          var list = this.fills.children;
+          var len = list.length;
+
+          for (var i = 0; i < list.length; i++) {
+            if (xFill.equals(list[i])) return i;
+          }
+
+          list.push(xFill);
+          this.fills.count = list.length;
+          return len;
+        }
+      }, {
+        kind: "method",
+        key: "addBorder",
+        value: function value(xBorder) {
+          var list = this.borders.children;
+          var len = list.length;
+
+          for (var i = 0; i < list.length; i++) {
+            if (xBorder.equals(list[i])) return i;
+          }
+
+          list.push(xBorder);
+          this.borders.count = list.length;
+          return len;
+        }
+      }, {
+        kind: "method",
+        key: "addCellXf",
+        value: function value(xXf) {
+          var list = this.cellXfs.children;
+          var len = list.length;
+
+          for (var i = 0; i < list.length; i++) {
+            if (xXf.equals(list[i])) return i;
+          }
+
+          list.push(xXf);
+          this.cellXfs.count = list.length;
+          return len;
+        }
+      }, {
+        kind: "method",
+        key: "addNumFmt",
+        value: function value(xNumFmt) {
+          if (xNumFmt.numFmtId <= NumFmtsCount) return;
+
+          if (this.numFmtRefTable[xNumFmt.numFmtId] === undefined) {
+            this.numFmts.children.push(xNumFmt);
+            this.numFmts.count = this.numFmts.children.length;
+            this.numFmtRefTable[xNumFmt.numFmtId] = xNumFmt;
+          }
+        }
+      }, {
+        kind: "method",
+        key: "newNumFmt",
+        value: function value(formatCode) {
+          if (!formatCode) return new XnumFmt({
+            numFmtId: 0,
+            formatCode: 'general'
+          });
+          var numFmtId = NumFmtInv[formatCode];
+
+          if (numFmtId !== undefined) {
+            return new XnumFmt({
+              numFmtId: numFmtId,
+              formatCode: formatCode
+            });
+          }
+
+          var _iteratorNormalCompletion = true;
+          var _didIteratorError = false;
+          var _iteratorError = undefined;
+
+          try {
+            for (var _iterator = this.numFmts.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              var numFmt = _step.value;
+              if (formatCode === numFmt.formatCode) return numFmt;
+            }
+          } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion && _iterator.return != null) {
+                _iterator.return();
+              }
+            } finally {
+              if (_didIteratorError) {
+                throw _iteratorError;
+              }
+            }
+          }
+
+          numFmtId = NumFmtsCount + 1;
+
+          do {
+            if (this.numFmtRefTable[numFmtId]) {
+              numFmtId++;
+            } else {
+              this.addNumFmt(new XnumFmt({
+                numFmtId: numFmtId,
+                formatCode: formatCode
+              }));
+              break;
+            }
+          } while (1);
+
+          return new XnumFmt({
+            numFmtId: numFmtId,
+            formatCode: formatCode
+          });
+        }
+      }]
+    };
+  }, Node);
+  var XnumFmts = _decorate([props('count')], function (_initialize2, _Node3) {
+    var XnumFmts =
+    /*#__PURE__*/
+    function (_Node4) {
+      inherits(XnumFmts, _Node4);
+
+      function XnumFmts() {
+        var _getPrototypeOf2;
+
+        var _this2;
+
+        classCallCheck(this, XnumFmts);
+
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        _this2 = possibleConstructorReturn(this, (_getPrototypeOf2 = getPrototypeOf(XnumFmts)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+        _initialize2(assertThisInitialized(assertThisInitialized(_this2)));
+
+        return _this2;
+      }
+
+      return XnumFmts;
+    }(_Node3);
+
+    return {
+      F: XnumFmts,
+      d: [{
+        kind: "method",
+        key: "render",
+        value: function value() {
+          if (this.count) return get(getPrototypeOf(XnumFmts.prototype), "render", this).call(this);
+          return '';
+        }
+      }]
+    };
+  }, Node);
+  var XnumFmt = _decorate([props('numFmtId', 'formatCode')], function (_initialize3, _Node5) {
+    var XnumFmt =
+    /*#__PURE__*/
+    function (_Node6) {
+      inherits(XnumFmt, _Node6);
+
+      function XnumFmt() {
+        var _getPrototypeOf3;
+
+        var _this3;
+
+        classCallCheck(this, XnumFmt);
+
+        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments[_key2];
+        }
+
+        _this3 = possibleConstructorReturn(this, (_getPrototypeOf3 = getPrototypeOf(XnumFmt)).call.apply(_getPrototypeOf3, [this].concat(args)));
+
+        _initialize3(assertThisInitialized(assertThisInitialized(_this3)));
+
+        return _this3;
+      }
+
+      return XnumFmt;
+    }(_Node5);
+
+    return {
+      F: XnumFmt,
+      d: []
+    };
+  }, Node);
+  var Xfonts = _decorate([props('count')], function (_initialize4, _Node7) {
+    var Xfonts =
+    /*#__PURE__*/
+    function (_Node8) {
+      inherits(Xfonts, _Node8);
+
+      function Xfonts() {
+        var _getPrototypeOf4;
+
+        var _this4;
+
+        classCallCheck(this, Xfonts);
+
+        for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          args[_key3] = arguments[_key3];
+        }
+
+        _this4 = possibleConstructorReturn(this, (_getPrototypeOf4 = getPrototypeOf(Xfonts)).call.apply(_getPrototypeOf4, [this].concat(args)));
+
+        _initialize4(assertThisInitialized(assertThisInitialized(_this4)));
+
+        return _this4;
+      }
+
+      return Xfonts;
+    }(_Node7);
+
+    return {
+      F: Xfonts,
+      d: [{
+        kind: "method",
+        key: "render",
+        value: function value() {
+          if (this.count) return get(getPrototypeOf(Xfonts.prototype), "render", this).call(this);
+          return '';
+        }
+      }]
+    };
+  }, Node);
+  var Xfont = _decorate([props('sz', 'name', 'family', 'charset', 'color', 'b', 'i', 'u')], function (_initialize5, _Node9) {
+    var Xfont =
+    /*#__PURE__*/
+    function (_Node10) {
+      inherits(Xfont, _Node10);
+
+      function Xfont() {
+        var _getPrototypeOf5;
+
+        var _this5;
+
+        classCallCheck(this, Xfont);
+
+        for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          args[_key4] = arguments[_key4];
+        }
+
+        _this5 = possibleConstructorReturn(this, (_getPrototypeOf5 = getPrototypeOf(Xfont)).call.apply(_getPrototypeOf5, [this].concat(args)));
+
+        _initialize5(assertThisInitialized(assertThisInitialized(_this5)));
+
+        return _this5;
+      }
+
+      return Xfont;
+    }(_Node9);
+
+    return {
+      F: Xfont,
+      d: [{
+        kind: "method",
+        key: "render",
+        value: function value() {
+          var str = '<font>';
+          if (this.sz) str += "<sz val=\"".concat(this.sz, "\"/>");
+          if (this.name) str += "<name val=\"".concat(this.name, "\"/>");
+          if (this.family) str += "<family val=\"".concat(this.family, "\"/>");
+          if (this.charset) str += "<charset val=\"".concat(this.charset, "\"/>");
+          if (this.color) str += "<color rgb=\"".concat(this.color, "\"/>");
+          if (this.b) str += "<b/>";
+          if (this.i) str += "<i/>";
+          if (this.u) str += "<u/>";
+          return str + '</font>';
+        }
+      }, {
+        kind: "method",
+        key: "equals",
+        value: function value(o) {
+          return this.sz === o.sz && this.name === o.name && this.family === o.family && this.charset === o.charset && this.color === o.color && this.b === o.b && this.i === o.i && this.u === o.u;
+        }
+      }]
+    };
+  }, Node);
+  var Xfills = _decorate([props('count')], function (_initialize6, _Node11) {
+    var Xfills =
+    /*#__PURE__*/
+    function (_Node12) {
+      inherits(Xfills, _Node12);
+
+      function Xfills() {
+        var _getPrototypeOf6;
+
+        var _this6;
+
+        classCallCheck(this, Xfills);
+
+        for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+          args[_key5] = arguments[_key5];
+        }
+
+        _this6 = possibleConstructorReturn(this, (_getPrototypeOf6 = getPrototypeOf(Xfills)).call.apply(_getPrototypeOf6, [this].concat(args)));
+
+        _initialize6(assertThisInitialized(assertThisInitialized(_this6)));
+
+        return _this6;
+      }
+
+      return Xfills;
+    }(_Node11);
+
+    return {
+      F: Xfills,
+      d: [{
+        kind: "method",
+        key: "render",
+        value: function value() {
+          if (this.count) return get(getPrototypeOf(Xfills.prototype), "render", this).call(this);
+          return '';
+        }
+      }]
+    };
+  }, Node);
+  var Xfill = _decorate([props('patternFill')], function (_initialize7, _Node13) {
+    var Xfill =
+    /*#__PURE__*/
+    function (_Node14) {
+      inherits(Xfill, _Node14);
+
+      function Xfill() {
+        var _getPrototypeOf7;
+
+        var _this7;
+
+        classCallCheck(this, Xfill);
+
+        for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+          args[_key6] = arguments[_key6];
+        }
+
+        _this7 = possibleConstructorReturn(this, (_getPrototypeOf7 = getPrototypeOf(Xfill)).call.apply(_getPrototypeOf7, [this].concat(args)));
+
+        _initialize7(assertThisInitialized(assertThisInitialized(_this7)));
+
+        return _this7;
+      }
+
+      return Xfill;
+    }(_Node13);
+
+    return {
+      F: Xfill,
+      d: [{
+        kind: "method",
+        key: "render",
+        value: function value() {
+          return "<fill>".concat(this.patternFill.render(), "</fill>");
+        }
+      }, {
+        kind: "method",
+        key: "equals",
+        value: function value(o) {
+          var pf1 = this.patternFill;
+          var pf2 = o.patternFill;
+
+          if (pf1 && pf2) {
+            return pf1.patternType === pf2.patternType && pf1.fgColor === pf2.fgColor && pf1.bgColor === pf2.bgColor;
+          }
+
+          return !pf1 && !pf2;
+        }
+      }]
+    };
+  }, Node);
+  var XpatternFill = _decorate([props('patternType', 'fgColor', 'bgColor')], function (_initialize8, _Node15) {
+    var XpatternFill =
+    /*#__PURE__*/
+    function (_Node16) {
+      inherits(XpatternFill, _Node16);
+
+      function XpatternFill() {
+        var _getPrototypeOf8;
+
+        var _this8;
+
+        classCallCheck(this, XpatternFill);
+
+        for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+          args[_key7] = arguments[_key7];
+        }
+
+        _this8 = possibleConstructorReturn(this, (_getPrototypeOf8 = getPrototypeOf(XpatternFill)).call.apply(_getPrototypeOf8, [this].concat(args)));
+
+        _initialize8(assertThisInitialized(assertThisInitialized(_this8)));
+
+        return _this8;
+      }
+
+      return XpatternFill;
+    }(_Node15);
+
+    return {
+      F: XpatternFill,
+      d: [{
+        kind: "method",
+        key: "render",
+        value: function value() {
+          var str = "<patternFill patternType=\"".concat(this.patternType, "\">");
+          if (this.fgColor) str += "<fgColor rgb=\"".concat(this.fgColor, "\"/>");
+          if (this.bgColor) str += "<bgColor rgb=\"".concat(this.bgColor, "\"/>");
+          return str + '</patternFill>';
+        }
+      }]
+    };
+  }, Node);
+  var Xborders = _decorate([props('count')], function (_initialize9, _Node17) {
+    var Xborders =
+    /*#__PURE__*/
+    function (_Node18) {
+      inherits(Xborders, _Node18);
+
+      function Xborders() {
+        var _getPrototypeOf9;
+
+        var _this9;
+
+        classCallCheck(this, Xborders);
+
+        for (var _len8 = arguments.length, args = new Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
+          args[_key8] = arguments[_key8];
+        }
+
+        _this9 = possibleConstructorReturn(this, (_getPrototypeOf9 = getPrototypeOf(Xborders)).call.apply(_getPrototypeOf9, [this].concat(args)));
+
+        _initialize9(assertThisInitialized(assertThisInitialized(_this9)));
+
+        return _this9;
+      }
+
+      return Xborders;
+    }(_Node17);
+
+    return {
+      F: Xborders,
+      d: [{
+        kind: "method",
+        key: "render",
+        value: function value() {
+          if (this.count) return get(getPrototypeOf(Xborders.prototype), "render", this).call(this);
+          return '';
+        }
+      }]
+    };
+  }, Node);
+  var Xborder = _decorate([props('left', 'right', 'top', 'bottom')], function (_initialize10, _Node19) {
+    var Xborder =
+    /*#__PURE__*/
+    function (_Node20) {
+      inherits(Xborder, _Node20);
+
+      function Xborder() {
+        var _getPrototypeOf10;
+
+        var _this10;
+
+        classCallCheck(this, Xborder);
+
+        for (var _len9 = arguments.length, args = new Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
+          args[_key9] = arguments[_key9];
+        }
+
+        _this10 = possibleConstructorReturn(this, (_getPrototypeOf10 = getPrototypeOf(Xborder)).call.apply(_getPrototypeOf10, [this].concat(args)));
+
+        _initialize10(assertThisInitialized(assertThisInitialized(_this10)));
+
+        return _this10;
+      }
+
+      return Xborder;
+    }(_Node19);
+
+    return {
+      F: Xborder,
+      d: [{
+        kind: "method",
+        key: "_renderLine",
+        value: function value(pos) {
+          var posVal = this[pos];
+          if (!posVal) return '';
+          var str = "<".concat(pos, " style=\"").concat(posVal.style, "\">");
+          if (posVal.color) str += "<color rgb=\"".concat(posVal.color, "\"/>");
+          return str + "</".concat(pos, ">");
+        }
+      }, {
+        kind: "method",
+        key: "render",
+        value: function value() {
+          var str = '<border>';
+          str += this._renderLine('left');
+          str += this._renderLine('right');
+          str += this._renderLine('top');
+          str += this._renderLine('bottom');
+          return str + '</border>';
+        }
+      }, {
+        kind: "method",
+        key: "equals",
+        value: function value(o) {
+          var check = function check(a, b) {
+            if (a && b) {
+              return a.style === b.style && a.color === b.color;
+            }
+
+            return !a && !b;
+          };
+
+          return check(this.left, o.left) && check(this.right, o.right) && check(this.top, o.top) && check(this.bottom, o.bottom);
+        }
+      }]
+    };
+  }, Node);
+  var XcellStyles = _decorate([props('count')], function (_initialize11, _Node21) {
+    var XcellStyles =
+    /*#__PURE__*/
+    function (_Node22) {
+      inherits(XcellStyles, _Node22);
+
+      function XcellStyles() {
+        var _getPrototypeOf11;
+
+        var _this11;
+
+        classCallCheck(this, XcellStyles);
+
+        for (var _len10 = arguments.length, args = new Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
+          args[_key10] = arguments[_key10];
+        }
+
+        _this11 = possibleConstructorReturn(this, (_getPrototypeOf11 = getPrototypeOf(XcellStyles)).call.apply(_getPrototypeOf11, [this].concat(args)));
+
+        _initialize11(assertThisInitialized(assertThisInitialized(_this11)));
+
+        return _this11;
+      }
+
+      return XcellStyles;
+    }(_Node21);
+
+    return {
+      F: XcellStyles,
+      d: [{
+        kind: "method",
+        key: "render",
+        value: function value() {
+          if (this.count) return get(getPrototypeOf(XcellStyles.prototype), "render", this).call(this);
+          return '';
+        }
+      }]
+    };
+  }, Node);
+  var XcellStyle = _decorate([props('builtInId', 'customBuiltIn', 'hidden', 'iLevel', 'name', 'xfId')], function (_initialize12, _Node23) {
+    var XcellStyle =
+    /*#__PURE__*/
+    function (_Node24) {
+      inherits(XcellStyle, _Node24);
+
+      function XcellStyle() {
+        var _getPrototypeOf12;
+
+        var _this12;
+
+        classCallCheck(this, XcellStyle);
+
+        for (var _len11 = arguments.length, args = new Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
+          args[_key11] = arguments[_key11];
+        }
+
+        _this12 = possibleConstructorReturn(this, (_getPrototypeOf12 = getPrototypeOf(XcellStyle)).call.apply(_getPrototypeOf12, [this].concat(args)));
+
+        _initialize12(assertThisInitialized(assertThisInitialized(_this12)));
+
+        return _this12;
+      }
+
+      return XcellStyle;
+    }(_Node23);
+
+    return {
+      F: XcellStyle,
+      d: []
+    };
+  }, Node);
+  var XcellStyleXfs = _decorate([props('count')], function (_initialize13, _Node25) {
+    var XcellStyleXfs =
+    /*#__PURE__*/
+    function (_Node26) {
+      inherits(XcellStyleXfs, _Node26);
+
+      function XcellStyleXfs() {
+        var _getPrototypeOf13;
+
+        var _this13;
+
+        classCallCheck(this, XcellStyleXfs);
+
+        for (var _len12 = arguments.length, args = new Array(_len12), _key12 = 0; _key12 < _len12; _key12++) {
+          args[_key12] = arguments[_key12];
+        }
+
+        _this13 = possibleConstructorReturn(this, (_getPrototypeOf13 = getPrototypeOf(XcellStyleXfs)).call.apply(_getPrototypeOf13, [this].concat(args)));
+
+        _initialize13(assertThisInitialized(assertThisInitialized(_this13)));
+
+        return _this13;
+      }
+
+      return XcellStyleXfs;
+    }(_Node25);
+
+    return {
+      F: XcellStyleXfs,
+      d: [{
+        kind: "method",
+        key: "render",
+        value: function value() {
+          if (this.count) return get(getPrototypeOf(XcellStyleXfs.prototype), "render", this).call(this);
+          return '';
+        }
+      }]
+    };
+  }, Node);
+  var XcellXfs = _decorate([props('count')], function (_initialize14, _Node27) {
+    var XcellXfs =
+    /*#__PURE__*/
+    function (_Node28) {
+      inherits(XcellXfs, _Node28);
+
+      function XcellXfs() {
+        var _getPrototypeOf14;
+
+        var _this14;
+
+        classCallCheck(this, XcellXfs);
+
+        for (var _len13 = arguments.length, args = new Array(_len13), _key13 = 0; _key13 < _len13; _key13++) {
+          args[_key13] = arguments[_key13];
+        }
+
+        _this14 = possibleConstructorReturn(this, (_getPrototypeOf14 = getPrototypeOf(XcellXfs)).call.apply(_getPrototypeOf14, [this].concat(args)));
+
+        _initialize14(assertThisInitialized(assertThisInitialized(_this14)));
+
+        return _this14;
+      }
+
+      return XcellXfs;
+    }(_Node27);
+
+    return {
+      F: XcellXfs,
+      d: [{
+        kind: "method",
+        key: "render",
+        value: function value() {
+          if (this.count) return get(getPrototypeOf(XcellXfs.prototype), "render", this).call(this);
+          return '';
+        }
+      }]
+    };
+  }, Node);
+  var Xxf = _decorate([props('applyAlignment', 'applyBorder', 'applyFont', 'applyFill', 'applyNumberFormat', 'applyProtection', 'borderId', 'fillId', 'fontId', 'numFmtId', 'xfId')], function (_initialize15, _Node29) {
+    var Xxf =
+    /*#__PURE__*/
+    function (_Node30) {
+      inherits(Xxf, _Node30);
+
+      function Xxf(attrs, children) {
+        var _this15;
+
+        classCallCheck(this, Xxf);
+
+        var defaults = {
+          applyAlignment: false,
+          applyBorder: false,
+          applyFont: false,
+          applyFill: false,
+          applyNumberFormat: false,
+          applyProtection: false,
+          borderId: 0,
+          fillId: 0,
+          fontId: 0,
+          numFmtId: 0
+        };
+        _this15 = possibleConstructorReturn(this, getPrototypeOf(Xxf).call(this, objectSpread({}, defaults, attrs), children));
+
+        _initialize15(assertThisInitialized(assertThisInitialized(_this15)));
+
+        _this15.alignment = new Xalignment();
+        return _this15;
+      }
+
+      return Xxf;
+    }(_Node29);
+
+    return {
+      F: Xxf,
+      d: [{
+        kind: "method",
+        key: "render",
+        value: function value() {
+          if (this.alignment) {
+            this.children = [this.alignment];
+          }
+
+          return get(getPrototypeOf(Xxf.prototype), "render", this).call(this);
+        }
+      }, {
+        kind: "method",
+        key: "equals",
+        value: function value(o) {
+          return this.applyAlignment === o.applyAlignment && this.applyBorder === o.applyBorder && this.applyFont === o.applyFont && this.applyFill === o.applyFill && this.applyProtection === o.applyProtection && this.borderId === o.borderId && this.fillId === o.fillId && this.fontId === o.fontId && this.numFmtId === o.numFmtId && this.xfId === o.xfId && this.alignment.equals(o.alignment);
+        }
+      }]
+    };
+  }, Node);
+  var Xalignment = _decorate([props('horizontal', 'indent', 'shrinkToFit', 'textRotation', 'vertical', 'wrapText')], function (_initialize16, _Node31) {
+    var Xalignment =
+    /*#__PURE__*/
+    function (_Node32) {
+      inherits(Xalignment, _Node32);
+
+      function Xalignment(attrs) {
+        var _this16;
+
+        var children = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
+        classCallCheck(this, Xalignment);
+
+        var defaults = {
+          horizontal: 'general',
+          indent: 0,
+          shrinkToFit: false,
+          textRotation: 0,
+          vertical: 'bottom',
+          wrapText: false
+        };
+        _this16 = possibleConstructorReturn(this, getPrototypeOf(Xalignment).call(this, objectSpread({}, defaults, attrs), children));
+
+        _initialize16(assertThisInitialized(assertThisInitialized(_this16)));
+
+        return _this16;
+      }
+
+      return Xalignment;
+    }(_Node31);
+
+    return {
+      F: Xalignment,
+      d: [{
+        kind: "method",
+        key: "equals",
+        value: function value(o) {
+          return this.horizontal === o.horizontal && this.indent === o.indent && this.shrinkToFit === o.shrinkToFit && this.textRotation === o.textRotation && this.vertical === o.vertical && this.wrapText === o.wrapText;
+        }
+      }]
+    };
+  }, Node);
+
+  function handleStyle(style, numFmtId, styles) {
+    var _style$makeXStyleElem = style.makeXStyleElements(),
+        xFont = _style$makeXStyleElem.xFont,
+        xFill = _style$makeXStyleElem.xFill,
+        xBorder = _style$makeXStyleElem.xBorder,
+        xXf = _style$makeXStyleElem.xXf;
+
+    var fontId = styles.addFont(xFont);
+    var fillId = styles.addFill(xFill); // HACK - adding light grey fill, as in OO and Google
+
+    var greyfill = new Xfill({
+      patternFill: new XpatternFill({
+        patternType: 'lightGray'
+      })
+    });
+    styles.addFill(greyfill);
+    var borderId = styles.addBorder(xBorder);
+    xXf.fontId = fontId;
+    xXf.fillId = fillId;
+    xXf.borderId = borderId;
+    xXf.numFmtId = numFmtId; // apply the numFmtId when it is not the default cellxf
+
+    if (xXf.numFmtId > 0) {
+      xXf.applyNumberFormat = true;
+    }
+
+    xXf.alignment.horizontal = style.align.h;
+    xXf.alignment.indent = style.align.indent;
+    xXf.alignment.shrinkToFit = style.align.shrinkToFit;
+    xXf.alignment.textRotation = style.align.textRotation;
+    xXf.alignment.vertical = style.align.v;
+    xXf.alignment.wrapText = style.align.wrapText;
+    return styles.addCellXf(xXf);
+  }
+  function handleNumFmtId(numFmtId, styles) {
+    var xf = new Xxf({
+      numFmtId: numFmtId
+    });
+
+    if (numFmtId > 0) {
+      xf.applyNumberFormat = true;
+    }
+
+    return styles.addCellXf(xf);
+  }
+  /**
+   * Style class for set Cell styles.
+   */
+
+  var Style =
+  /*#__PURE__*/
+  function () {
+    function Style() {
+      classCallCheck(this, Style);
+
+      defineProperty(this, "applyBorder", false);
+
+      defineProperty(this, "applyFill", false);
+
+      defineProperty(this, "applyFont", false);
+
+      defineProperty(this, "applyAlignment", false);
+
+      defineProperty(this, "namedStyleIndex", null);
+
+      /**
+       * Cell border
+       * @type {Border}
+       */
+      this.border = new Border({});
+      /**
+       * Cell fill background or foreground
+       * @type {Fill}
+       */
+
+      this.fill = new Fill({});
+      /**
+       * Cell font
+       * @type {Font}
+       */
+
+      this.font = new Font({});
+      /**
+       * Cell alignment
+       * @type {Alignment}
+       */
+
+      this.align = new Alignment({});
+    }
+
+    createClass(Style, [{
+      key: "makeXStyleElements",
+      value: function makeXStyleElements() {
+        var xFont = new Xfont({
+          sz: this.font.size,
+          name: this.font.name,
+          family: this.font.family,
+          charset: this.font.charset,
+          color: this.font.color,
+          b: this.font.bold,
+          i: this.font.italic,
+          u: this.font.underline
+        });
+        var xFill = new Xfill({
+          patternFill: new XpatternFill({
+            patternType: this.fill.patternType,
+            fgColor: this.fill.fgColor,
+            bgColor: this.fill.bgColor
+          })
+        });
+        var xBorder = new Xborder({
+          left: {
+            style: this.border.left,
+            color: this.border.leftColor
+          },
+          right: {
+            style: this.border.right,
+            color: this.border.rightColor
+          },
+          top: {
+            style: this.border.top,
+            color: this.border.topColor
+          },
+          bottom: {
+            style: this.border.bottom,
+            color: this.border.bottomColor
+          }
+        });
+        var xXf = new Xxf({
+          numFmtId: 0,
+          applyBorder: this.applyBorder,
+          applyFill: this.applyFill,
+          applyFont: this.applyFont,
+          applyAlignment: this.applyAlignment
+        });
+        xXf.alignment = new Xalignment({
+          horizontal: this.align.h,
+          indent: this.align.indent,
+          shrinkToFit: this.align.shrinkToFit,
+          textRotation: this.align.textRotation,
+          vertical: this.align.v,
+          wrapText: this.align.wrapText
+        });
+
+        if (this.namedStyleIndex !== null) {
+          xXf.xfId = this.namedStyleIndex;
+        }
+
+        return {
+          xFont: xFont,
+          xFill: xFill,
+          xBorder: xBorder,
+          xXf: xXf
+        };
+      }
+    }]);
+
+    return Style;
+  }();
+  /**
+   * Border of the Style and border type have: `none`, `thin`, `medium`, `thick`, `dashed`, `dotted`, `double`
+   *
+   */
+
+  var Border =
+  /**
+   * left border color
+   * @type {String}
+   */
+
+  /**
+   * right border color
+   * @type {String}
+   */
+
+  /**
+   * top border color
+   * @type {String}
+   */
+
+  /**
+   * bottom border color
+   * @type {String}
+   */
+  function Border(_ref) {
+    var _ref$left = _ref.left,
+        left = _ref$left === void 0 ? 'none' : _ref$left,
+        _ref$right = _ref.right,
+        right = _ref$right === void 0 ? 'none' : _ref$right,
+        _ref$top = _ref.top,
+        top = _ref$top === void 0 ? 'none' : _ref$top,
+        _ref$bottom = _ref.bottom,
+        bottom = _ref$bottom === void 0 ? 'none' : _ref$bottom;
+
+    classCallCheck(this, Border);
+
+    defineProperty(this, "leftColor", undefined);
+
+    defineProperty(this, "rightColor", undefined);
+
+    defineProperty(this, "topColor", undefined);
+
+    defineProperty(this, "bottomColor", undefined);
+
+    /**
+     * left border type
+     * @type {String}
+     */
+    this.left = left;
+    /**
+     * right border type
+     * @type {String}
+     */
+
+    this.right = right;
+    /**
+     * top border type
+     * @type {String}
+     */
+
+    this.top = top;
+    /**
+     * bottom border type
+     * @type {String}
+     */
+
+    this.bottom = bottom;
+  };
+  /**
+   * Fill of the Style
+   */
+
+  var Fill = function Fill(_ref2) {
+    var _ref2$patternType = _ref2.patternType,
+        patternType = _ref2$patternType === void 0 ? 'none' : _ref2$patternType,
+        _ref2$fgColor = _ref2.fgColor,
+        fgColor = _ref2$fgColor === void 0 ? 'FFFFFFFF' : _ref2$fgColor,
+        _ref2$bgColor = _ref2.bgColor,
+        bgColor = _ref2$bgColor === void 0 ? '00000000' : _ref2$bgColor;
+
+    classCallCheck(this, Fill);
+
+    /**
+     * pattern type of the fill
+     * @type {String}
+     */
+    this.patternType = patternType;
+    /**
+     * foreground color of the fill
+     * @type {String}
+     */
+
+    this.fgColor = fgColor;
+    /**
+     * background color of the fill
+     * @type {String}
+     */
+
+    this.bgColor = bgColor;
+  };
+  /**
+   * Font of the Style
+   */
+
+  var Font =
+  /**
+   * font color
+   * @type {String}
+   */
+
+  /**
+   * Is bold style
+   * @type {Boolean}
+   */
+
+  /**
+   * Is italic style
+   * @type {Boolean}
+   */
+
+  /**
+   * IS underline style
+   * @type {Boolean}
+   */
+  function Font(_ref3) {
+    var _ref3$size = _ref3.size,
+        size = _ref3$size === void 0 ? 12 : _ref3$size,
+        _ref3$name = _ref3.name,
+        name = _ref3$name === void 0 ? 'Verdana' : _ref3$name;
+
+    classCallCheck(this, Font);
+
+    defineProperty(this, "family", 0);
+
+    defineProperty(this, "charset", 0);
+
+    defineProperty(this, "color", undefined);
+
+    defineProperty(this, "bold", false);
+
+    defineProperty(this, "italic", false);
+
+    defineProperty(this, "underline", false);
+
+    /**
+     * font size [default 12]
+     * @type {Number}
+     */
+    this.size = size;
+    this.name = name;
+  };
+  /**
+   * Alignment of the Style.
+   */
+
+  var Alignment = function Alignment(_ref4) {
+    var _ref4$h = _ref4.h,
+        h = _ref4$h === void 0 ? 'general' : _ref4$h,
+        _ref4$v = _ref4.v,
+        v = _ref4$v === void 0 ? 'bottom' : _ref4$v;
+
+    classCallCheck(this, Alignment);
+
+    defineProperty(this, "indent", 0);
+
+    defineProperty(this, "shrinkToFit", false);
+
+    defineProperty(this, "textRotation", 0);
+
+    defineProperty(this, "wrapText", false);
+
+    /**
+     * Horizontal align: `general`, `center`, `left`, `right`
+     * @type {String}
+     */
+    this.h = h;
+    /**
+     * Vertical align: `general`, `top`, `bottom`, `center`
+     * @type {String}
+     */
+
+    this.v = v;
+  };
+
+  var style = /*#__PURE__*/Object.freeze({
+    handleStyle: handleStyle,
+    handleNumFmtId: handleNumFmtId,
+    Style: Style,
+    Border: Border,
+    Fill: Fill,
+    Font: Font,
+    Alignment: Alignment
+  });
+
+  var toString = Object.prototype.toString;
+
+  var kindOf = function kindOf(val) {
+    if (val === void 0) return 'undefined';
+    if (val === null) return 'null';
+
+    var type = typeof val;
+    if (type === 'boolean') return 'boolean';
+    if (type === 'string') return 'string';
+    if (type === 'number') return 'number';
+    if (type === 'symbol') return 'symbol';
+    if (type === 'function') {
+      return isGeneratorFn(val) ? 'generatorfunction' : 'function';
+    }
+
+    if (isArray(val)) return 'array';
+    if (isBuffer(val)) return 'buffer';
+    if (isArguments(val)) return 'arguments';
+    if (isDate(val)) return 'date';
+    if (isError(val)) return 'error';
+    if (isRegexp(val)) return 'regexp';
+
+    switch (ctorName(val)) {
+      case 'Symbol': return 'symbol';
+      case 'Promise': return 'promise';
+
+      // Set, Map, WeakSet, WeakMap
+      case 'WeakMap': return 'weakmap';
+      case 'WeakSet': return 'weakset';
+      case 'Map': return 'map';
+      case 'Set': return 'set';
+
+      // 8-bit typed arrays
+      case 'Int8Array': return 'int8array';
+      case 'Uint8Array': return 'uint8array';
+      case 'Uint8ClampedArray': return 'uint8clampedarray';
+
+      // 16-bit typed arrays
+      case 'Int16Array': return 'int16array';
+      case 'Uint16Array': return 'uint16array';
+
+      // 32-bit typed arrays
+      case 'Int32Array': return 'int32array';
+      case 'Uint32Array': return 'uint32array';
+      case 'Float32Array': return 'float32array';
+      case 'Float64Array': return 'float64array';
+    }
+
+    if (isGeneratorObj(val)) {
+      return 'generator';
+    }
+
+    // Non-plain objects
+    type = toString.call(val);
+    switch (type) {
+      case '[object Object]': return 'object';
+      // iterators
+      case '[object Map Iterator]': return 'mapiterator';
+      case '[object Set Iterator]': return 'setiterator';
+      case '[object String Iterator]': return 'stringiterator';
+      case '[object Array Iterator]': return 'arrayiterator';
+    }
+
+    // other
+    return type.slice(8, -1).toLowerCase().replace(/\s/g, '');
+  };
+
+  function ctorName(val) {
+    return val.constructor ? val.constructor.name : null;
+  }
+
+  function isArray(val) {
+    if (Array.isArray) return Array.isArray(val);
+    return val instanceof Array;
+  }
+
+  function isError(val) {
+    return val instanceof Error || (typeof val.message === 'string' && val.constructor && typeof val.constructor.stackTraceLimit === 'number');
+  }
+
+  function isDate(val) {
+    if (val instanceof Date) return true;
+    return typeof val.toDateString === 'function'
+      && typeof val.getDate === 'function'
+      && typeof val.setDate === 'function';
+  }
+
+  function isRegexp(val) {
+    if (val instanceof RegExp) return true;
+    return typeof val.flags === 'string'
+      && typeof val.ignoreCase === 'boolean'
+      && typeof val.multiline === 'boolean'
+      && typeof val.global === 'boolean';
+  }
+
+  function isGeneratorFn(name, val) {
+    return ctorName(name) === 'GeneratorFunction';
+  }
+
+  function isGeneratorObj(val) {
+    return typeof val.throw === 'function'
+      && typeof val.return === 'function'
+      && typeof val.next === 'function';
+  }
+
+  function isArguments(val) {
+    try {
+      if (typeof val.length === 'number' && typeof val.callee === 'function') {
+        return true;
+      }
+    } catch (err) {
+      if (err.message.indexOf('callee') !== -1) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * If you need to support Safari 5-7 (8-10 yr-old browser),
+   * take a look at https://github.com/feross/is-buffer
+   */
+
+  function isBuffer(val) {
+    if (val.constructor && typeof val.constructor.isBuffer === 'function') {
+      return val.constructor.isBuffer(val);
+    }
+    return false;
+  }
+
+  var CellType = {
+    TypeString: 49,
+    TypeFormula: 0,
+    TypeNumeric: 1,
+    TypeBool: 0,
+    TypeInline: 0,
+    TypeError: 0,
+    TypeDate: 14,
+    TypeGeneral: 0
+  };
+  /**
+   * Cell intended to provide user access to the contents of Cell within an xlsx.Row.
+   *
+   * ```js
+   * const cell = row.addCell();
+   * cell.value = 'I am a cell!';
+   * cell.hMerge = 2;
+   * cell.vMerge = 1;
+   * cell.style.fill.patternType = 'solid';
+   * cell.style.fill.fgColor = '00FF0000';
+   * cell.style.fill.bgColor = 'FF000000';
+   * cell.style.align.h = 'center';
+   * cell.style.align.v = 'center';
+   * ```
+   *
+   * Set the cell value
+   *
+   * ```js
+   * const cell = row.addCell();
+   * // Date type
+   * cell.setDate(new Date());
+   * // Number type
+   * cell.setNumber(123456);
+   * cell.numFmt = '$#,##0.00';
+   * ```
+   */
+
+  var Cell =
+  /*#__PURE__*/
+  function () {
+    /**
+     * Number format @see {@link NumFmt}
+     * @type {String}
+     */
+
+    /**
+     * Hide the cell.
+     * @type {Boolean}
+     */
+
+    /**
+     * Horizontal merge with other cells.
+     * @type {Number}
+     */
+
+    /**
+     * Vertical merge with other cells.
+     * @type {Number}
+     */
+
+    /**
+     * Create a cell and add it to a row.
+     * @private
+     * @param  {Object} options.row Row of add to
+     */
+    function Cell(_ref) {
+      var row = _ref.row;
+
+      classCallCheck(this, Cell);
+
+      defineProperty(this, "_value", '');
+
+      defineProperty(this, "_style", null);
+
+      defineProperty(this, "formula", '');
+
+      defineProperty(this, "numFmt", '');
+
+      defineProperty(this, "date1904", false);
+
+      defineProperty(this, "hidden", false);
+
+      defineProperty(this, "hMerge", 0);
+
+      defineProperty(this, "vMerge", 0);
+
+      defineProperty(this, "cellType", 'TypeString');
+
+      this.row = row;
+    }
+    /**
+     * Get the cell style.
+     * @return {Style}
+     */
+
+
+    createClass(Cell, [{
+      key: "setString",
+
+      /**
+       * Set cell value with String type.
+       * @param {String} v
+       */
+      value: function setString(v) {
+        this._value = v;
+        this.formula = '';
+        this.cellType = 'TypeString';
+      }
+      /**
+       * Set cell value with Date type.
+       * @param {Date} v
+       */
+
+    }, {
+      key: "setDate",
+      value: function setDate(v) {
+        this._value = parseInt(toExcelTime(v));
+        this.formula = '';
+        this.numFmt = NumFmt[14];
+        this.cellType = 'TypeDate';
+      }
+      /**
+       * Set cell value with DateTime type.
+       * @param {Date} v
+       */
+
+    }, {
+      key: "setDateTime",
+      value: function setDateTime(v) {
+        this._value = toExcelTime(v);
+        this.formula = '';
+        this.numFmt = NumFmt[22];
+        this.cellType = 'TypeDate';
+      }
+      /**
+       * Set cell value with Number type.
+       * @param {Number} v
+       */
+
+    }, {
+      key: "setNumber",
+      value: function setNumber(v) {
+        this._value = v;
+        this.formula = '';
+        this.numFmt = NumFmt[0];
+        this.cellType = 'TypeNumeric';
+      }
+      /**
+       * Set cell value with Boolean type.
+       * @param {Boolean} v
+       */
+
+    }, {
+      key: "setBool",
+      value: function setBool(v) {
+        this._value = v ? 1 : 0;
+        this.cellType = 'TypeBool';
+      }
+      /**
+       * Set cell formula.
+       * @param {String} f - Formula like `B2*C2-D2`.
+       */
+
+    }, {
+      key: "setFormula",
+      value: function setFormula(f) {
+        this.formula = f;
+        this.cellType = 'TypeFormula';
+      }
+    }, {
+      key: "style",
+      get: function get() {
+        if (this._style === null) {
+          this._style = new Style();
+        }
+
+        return this._style;
+      }
+      /**
+       * Set the style of the cell.
+       * @param  {Style} s
+       */
+      ,
+      set: function set(s) {
+        this._style = s;
+      }
+      /**
+       * Get the cell value.
+       */
+
+    }, {
+      key: "value",
+      get: function get() {
+        return this._value;
+      }
+      /**
+       * Set the cell value.
+       * @param  {String|Date|Number|Boolean} v
+       */
+      ,
+      set: function set(v) {
+        var t = kindOf(v);
+
+        if (t === 'null' || t === 'undefined') {
+          return this.setString('');
+        }
+
+        if (t === 'date') {
+          return this.setDateTime(v);
+        }
+
+        if (t === 'number') {
+          return this.setNumber(v);
+        }
+
+        if (t === 'string') {
+          return this.setString(v);
+        }
+
+        if (t === 'boolean') {
+          return this.setBool(v);
+        }
+
+        return this.setString(v.toString());
+      }
+    }]);
+
+    return Cell;
+  }();
+
+  var cell = /*#__PURE__*/Object.freeze({
+    CellType: CellType,
+    Cell: Cell
+  });
+
+  /**
+   * The column of the Sheet.
+   *
+   * ```js
+   * const col = sheet.col(0);
+   * col.width = 20;
+   * col.style.fill.patternType = 'solid';
+   * col.style.fill.fgColor = '00FF0000';
+   * col.style.fill.bgColor = 'FF000000';
+   * col.style.align.h = 'center';
+   * col.style.align.v = 'center';
+   * ```
+   */
+
+  var Col =
+  /*#__PURE__*/
+  function () {
+    /**
+     * Number format for all column @see {@link NumFmt}
+     * @type {String}
+     */
+    function Col(_ref) {
+      var min = _ref.min,
+          max = _ref.max,
+          _ref$hidden = _ref.hidden,
+          hidden = _ref$hidden === void 0 ? false : _ref$hidden,
+          _ref$collapsed = _ref.collapsed,
+          collapsed = _ref$collapsed === void 0 ? false : _ref$collapsed,
+          _ref$width = _ref.width,
+          width = _ref$width === void 0 ? 0 : _ref$width;
+
+      classCallCheck(this, Col);
+
+      defineProperty(this, "outlineLevel", 0);
+
+      defineProperty(this, "numFmt", '');
+
+      this.min = min;
+      this.max = max;
+      this.hidden = hidden;
+      this.collapsed = collapsed;
+      /**
+       * Column width [default 9.5]
+       * @type {Number}
+       */
+
+      this.width = width;
+      /**
+       * Style of the column.
+       * @type {Style}
+       */
+
+      this.style = new Style();
+    }
+
+    createClass(Col, [{
+      key: "setType",
+      value: function setType(cellType) {
+        this.numFmt = NumFmt[cellType];
+      }
+    }]);
+
+    return Col;
+  }();
+
+  var col = /*#__PURE__*/Object.freeze({
+    Col: Col
+  });
+
+  /**
+   * Row of the sheet.
+   * ```js
+   * const row = sheet.addRow();
+   * row.setHeightCM(0.8);
+   * ```
+   */
+
+  var Row =
+  /*#__PURE__*/
+  function () {
+    /**
+     * Row height
+     * @type {Number}
+     */
+    function Row(_ref) {
+      var sheet = _ref.sheet;
+
+      classCallCheck(this, Row);
+
+      defineProperty(this, "cells", []);
+
+      defineProperty(this, "hidden", false);
+
+      defineProperty(this, "height", 0);
+
+      defineProperty(this, "outlineLevel", 0);
+
+      defineProperty(this, "isCustom", false);
+
+      this.sheet = sheet;
+    }
+    /**
+     * Set height of the Row with `cm` unit.
+     * @param {Number} ht Height with `cm` unit
+     */
+
+
+    createClass(Row, [{
+      key: "setHeightCM",
+      value: function setHeightCM(ht) {
+        this.height = ht * 28.3464567;
+        this.isCustom = true;
+      }
+      /**
+       * Create a cell and add it into the Row.
+       * @return {Cell}
+       */
+
+    }, {
+      key: "addCell",
+      value: function addCell() {
+        var cell = new Cell({
+          row: this
+        });
+        this.cells.push(cell);
+        this.sheet.maybeAddCol(this.cells.length);
+        return cell;
+      }
+    }]);
+
+    return Row;
+  }();
+
+  var row = /*#__PURE__*/Object.freeze({
+    Row: Row
+  });
+
+  function _decorate$1(decorators, factory, superClass) { var r = factory(function initialize(O) { _initializeInstanceElements$1(O, decorated.elements); }, superClass); var decorated = _decorateClass$1(_coalesceClassElements$1(r.d.map(_createElementDescriptor$1)), decorators); _initializeClassElements$1(r.F, decorated.elements); return _runClassFinishers$1(r.F, decorated.finishers); }
+
+  function _createElementDescriptor$1(def) { var key = _toPropertyKey$1(def.key); var descriptor; if (def.kind === "method") { descriptor = { value: def.value, writable: true, configurable: true, enumerable: false }; Object.defineProperty(def.value, "name", { value: _typeof_1(key) === "symbol" ? "" : key, configurable: true }); } else if (def.kind === "get") { descriptor = { get: def.value, configurable: true, enumerable: false }; } else if (def.kind === "set") { descriptor = { set: def.value, configurable: true, enumerable: false }; } else if (def.kind === "field") { descriptor = { configurable: true, writable: true, enumerable: true }; } var element = { kind: def.kind === "field" ? "field" : "method", key: key, placement: def.static ? "static" : def.kind === "field" ? "own" : "prototype", descriptor: descriptor }; if (def.decorators) element.decorators = def.decorators; if (def.kind === "field") element.initializer = def.value; return element; }
+
+  function _coalesceGetterSetter$1(element, other) { if (element.descriptor.get !== undefined) { other.descriptor.get = element.descriptor.get; } else { other.descriptor.set = element.descriptor.set; } }
+
+  function _coalesceClassElements$1(elements) { var newElements = []; var isSameElement = function isSameElement(other) { return other.kind === "method" && other.key === element.key && other.placement === element.placement; }; for (var i = 0; i < elements.length; i++) { var element = elements[i]; var other; if (element.kind === "method" && (other = newElements.find(isSameElement))) { if (_isDataDescriptor$1(element.descriptor) || _isDataDescriptor$1(other.descriptor)) { if (_hasDecorators$1(element) || _hasDecorators$1(other)) { throw new ReferenceError("Duplicated methods (" + element.key + ") can't be decorated."); } other.descriptor = element.descriptor; } else { if (_hasDecorators$1(element)) { if (_hasDecorators$1(other)) { throw new ReferenceError("Decorators can't be placed on different accessors with for " + "the same property (" + element.key + ")."); } other.decorators = element.decorators; } _coalesceGetterSetter$1(element, other); } } else { newElements.push(element); } } return newElements; }
+
+  function _hasDecorators$1(element) { return element.decorators && element.decorators.length; }
+
+  function _isDataDescriptor$1(desc) { return desc !== undefined && !(desc.value === undefined && desc.writable === undefined); }
+
+  function _initializeClassElements$1(F, elements) { var proto = F.prototype; ["method", "field"].forEach(function (kind) { elements.forEach(function (element) { var placement = element.placement; if (element.kind === kind && (placement === "static" || placement === "prototype")) { var receiver = placement === "static" ? F : proto; _defineClassElement$1(receiver, element); } }); }); }
+
+  function _initializeInstanceElements$1(O, elements) { ["method", "field"].forEach(function (kind) { elements.forEach(function (element) { if (element.kind === kind && element.placement === "own") { _defineClassElement$1(O, element); } }); }); }
+
+  function _defineClassElement$1(receiver, element) { var descriptor = element.descriptor; if (element.kind === "field") { var initializer = element.initializer; descriptor = { enumerable: descriptor.enumerable, writable: descriptor.writable, configurable: descriptor.configurable, value: initializer === void 0 ? void 0 : initializer.call(receiver) }; } Object.defineProperty(receiver, element.key, descriptor); }
+
+  function _decorateClass$1(elements, decorators) { var newElements = []; var finishers = []; var placements = { static: [], prototype: [], own: [] }; elements.forEach(function (element) { _addElementPlacement$1(element, placements); }); elements.forEach(function (element) { if (!_hasDecorators$1(element)) return newElements.push(element); var elementFinishersExtras = _decorateElement$1(element, placements); newElements.push(elementFinishersExtras.element); newElements.push.apply(newElements, elementFinishersExtras.extras); finishers.push.apply(finishers, elementFinishersExtras.finishers); }); if (!decorators) { return { elements: newElements, finishers: finishers }; } var result = _decorateConstructor$1(newElements, decorators); finishers.push.apply(finishers, result.finishers); result.finishers = finishers; return result; }
+
+  function _addElementPlacement$1(element, placements, silent) { var keys = placements[element.placement]; if (!silent && keys.indexOf(element.key) !== -1) { throw new TypeError("Duplicated element (" + element.key + ")"); } keys.push(element.key); }
+
+  function _decorateElement$1(element, placements) { var extras = []; var finishers = []; for (var decorators = element.decorators, i = decorators.length - 1; i >= 0; i--) { var keys = placements[element.placement]; keys.splice(keys.indexOf(element.key), 1); var elementObject = _fromElementDescriptor$1(element); var elementFinisherExtras = _toElementFinisherExtras$1((0, decorators[i])(elementObject) || elementObject); element = elementFinisherExtras.element; _addElementPlacement$1(element, placements); if (elementFinisherExtras.finisher) { finishers.push(elementFinisherExtras.finisher); } var newExtras = elementFinisherExtras.extras; if (newExtras) { for (var j = 0; j < newExtras.length; j++) { _addElementPlacement$1(newExtras[j], placements); } extras.push.apply(extras, newExtras); } } return { element: element, finishers: finishers, extras: extras }; }
+
+  function _decorateConstructor$1(elements, decorators) { var finishers = []; for (var i = decorators.length - 1; i >= 0; i--) { var obj = _fromClassDescriptor$1(elements); var elementsAndFinisher = _toClassDescriptor$1((0, decorators[i])(obj) || obj); if (elementsAndFinisher.finisher !== undefined) { finishers.push(elementsAndFinisher.finisher); } if (elementsAndFinisher.elements !== undefined) { elements = elementsAndFinisher.elements; for (var j = 0; j < elements.length - 1; j++) { for (var k = j + 1; k < elements.length; k++) { if (elements[j].key === elements[k].key && elements[j].placement === elements[k].placement) { throw new TypeError("Duplicated element (" + elements[j].key + ")"); } } } } } return { elements: elements, finishers: finishers }; }
+
+  function _fromElementDescriptor$1(element) { var obj = { kind: element.kind, key: element.key, placement: element.placement, descriptor: element.descriptor }; var desc = { value: "Descriptor", configurable: true }; Object.defineProperty(obj, Symbol.toStringTag, desc); if (element.kind === "field") obj.initializer = element.initializer; return obj; }
+
+  function _toElementDescriptors$1(elementObjects) { if (elementObjects === undefined) return; return toArray(elementObjects).map(function (elementObject) { var element = _toElementDescriptor$1(elementObject); _disallowProperty$1(elementObject, "finisher", "An element descriptor"); _disallowProperty$1(elementObject, "extras", "An element descriptor"); return element; }); }
+
+  function _toElementDescriptor$1(elementObject) { var kind = String(elementObject.kind); if (kind !== "method" && kind !== "field") { throw new TypeError('An element descriptor\'s .kind property must be either "method" or' + ' "field", but a decorator created an element descriptor with' + ' .kind "' + kind + '"'); } var key = _toPropertyKey$1(elementObject.key); var placement = String(elementObject.placement); if (placement !== "static" && placement !== "prototype" && placement !== "own") { throw new TypeError('An element descriptor\'s .placement property must be one of "static",' + ' "prototype" or "own", but a decorator created an element descriptor' + ' with .placement "' + placement + '"'); } var descriptor = elementObject.descriptor; _disallowProperty$1(elementObject, "elements", "An element descriptor"); var element = { kind: kind, key: key, placement: placement, descriptor: Object.assign({}, descriptor) }; if (kind !== "field") { _disallowProperty$1(elementObject, "initializer", "A method descriptor"); } else { _disallowProperty$1(descriptor, "get", "The property descriptor of a field descriptor"); _disallowProperty$1(descriptor, "set", "The property descriptor of a field descriptor"); _disallowProperty$1(descriptor, "value", "The property descriptor of a field descriptor"); element.initializer = elementObject.initializer; } return element; }
+
+  function _toElementFinisherExtras$1(elementObject) { var element = _toElementDescriptor$1(elementObject); var finisher = _optionalCallableProperty$1(elementObject, "finisher"); var extras = _toElementDescriptors$1(elementObject.extras); return { element: element, finisher: finisher, extras: extras }; }
+
+  function _fromClassDescriptor$1(elements) { var obj = { kind: "class", elements: elements.map(_fromElementDescriptor$1) }; var desc = { value: "Descriptor", configurable: true }; Object.defineProperty(obj, Symbol.toStringTag, desc); return obj; }
+
+  function _toClassDescriptor$1(obj) { var kind = String(obj.kind); if (kind !== "class") { throw new TypeError('A class descriptor\'s .kind property must be "class", but a decorator' + ' created a class descriptor with .kind "' + kind + '"'); } _disallowProperty$1(obj, "key", "A class descriptor"); _disallowProperty$1(obj, "placement", "A class descriptor"); _disallowProperty$1(obj, "descriptor", "A class descriptor"); _disallowProperty$1(obj, "initializer", "A class descriptor"); _disallowProperty$1(obj, "extras", "A class descriptor"); var finisher = _optionalCallableProperty$1(obj, "finisher"); var elements = _toElementDescriptors$1(obj.elements); return { elements: elements, finisher: finisher }; }
+
+  function _disallowProperty$1(obj, name, objectType) { if (obj[name] !== undefined) { throw new TypeError(objectType + " can't have a ." + name + " property."); } }
+
+  function _optionalCallableProperty$1(obj, name) { var value = obj[name]; if (value !== undefined && typeof value !== "function") { throw new TypeError("Expected '" + name + "' to be a function"); } return value; }
+
+  function _runClassFinishers$1(constructor, finishers) { for (var i = 0; i < finishers.length; i++) { var newConstructor = (0, finishers[i])(constructor); if (newConstructor !== undefined) { if (typeof newConstructor !== "function") { throw new TypeError("Finishers must return a constructor."); } constructor = newConstructor; } } return constructor; }
+
+  function _toPropertyKey$1(arg) { var key = _toPrimitive$1(arg, "string"); return _typeof_1(key) === "symbol" ? key : String(key); }
+
+  function _toPrimitive$1(input, hint) { if (_typeof_1(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof_1(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+  var Xworksheet = _decorate$1([props('xmlns', 'xmlns:r')], function (_initialize, _Node) {
+    var Xworksheet =
+    /*#__PURE__*/
+    function (_Node2) {
+      inherits(Xworksheet, _Node2);
+
+      function Xworksheet() {
+        var _this;
+
+        var attrs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var children = arguments.length > 1 ? arguments[1] : undefined;
+
+        classCallCheck(this, Xworksheet);
+
+        attrs['xmlns'] = attrs['xmlns'] || 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
+        attrs['xmlns:r'] = attrs['xmlns:r'] || 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+        _this = possibleConstructorReturn(this, getPrototypeOf(Xworksheet).call(this, attrs, children));
+
+        _initialize(assertThisInitialized(assertThisInitialized(_this)));
+
+        _this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
+        return _this;
+      }
+
+      return Xworksheet;
+    }(_Node);
+
+    return {
+      F: Xworksheet,
+      d: [{
+        kind: "field",
+        key: "sheetPr",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "sheetViews",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "sheetFormatPr",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "printOptions",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "pageMargins",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "pageSetup",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "headerFooter",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "mergeCells",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "dimension",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "cols",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "sheetData",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "method",
+        key: "render",
+        value: function value() {
+          this.children = [];
+          if (this.sheetPr) this.children.push(this.sheetPr);
+          if (this.dimension) this.children.push(this.dimension);
+          if (this.sheetViews) this.children.push(this.sheetViews);
+          if (this.sheetFormatPr) this.children.push(this.sheetFormatPr);
+          if (this.cols) this.children.push(this.cols);
+          if (this.sheetData) this.children.push(this.sheetData);
+          if (this.mergeCells) this.children.push(this.mergeCells);
+          if (this.printOptions) this.children.push(this.printOptions);
+          if (this.pageMargins) this.children.push(this.pageMargins);
+          if (this.pageSetup) this.children.push(this.pageSetup);
+          if (this.headerFooter) this.children.push(this.headerFooter);
+          return get(getPrototypeOf(Xworksheet.prototype), "render", this).call(this);
+        }
+      }]
+    };
+  }, Node);
+  var XsheetPr = _decorate$1([props('filterMode')], function (_initialize2, _Node3) {
+    var XsheetPr =
+    /*#__PURE__*/
+    function (_Node4) {
+      inherits(XsheetPr, _Node4);
+
+      function XsheetPr() {
+        var _getPrototypeOf2;
+
+        var _this2;
+
+        classCallCheck(this, XsheetPr);
+
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        _this2 = possibleConstructorReturn(this, (_getPrototypeOf2 = getPrototypeOf(XsheetPr)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+        _initialize2(assertThisInitialized(assertThisInitialized(_this2)));
+
+        return _this2;
+      }
+
+      return XsheetPr;
+    }(_Node3);
+
+    return {
+      F: XsheetPr,
+      d: []
+    };
+  }, Node);
+  var XpageSetUpPr = _decorate$1([props('fitToPage')], function (_initialize3, _Node5) {
+    var XpageSetUpPr =
+    /*#__PURE__*/
+    function (_Node6) {
+      inherits(XpageSetUpPr, _Node6);
+
+      function XpageSetUpPr() {
+        var _getPrototypeOf3;
+
+        var _this3;
+
+        classCallCheck(this, XpageSetUpPr);
+
+        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments[_key2];
+        }
+
+        _this3 = possibleConstructorReturn(this, (_getPrototypeOf3 = getPrototypeOf(XpageSetUpPr)).call.apply(_getPrototypeOf3, [this].concat(args)));
+
+        _initialize3(assertThisInitialized(assertThisInitialized(_this3)));
+
+        return _this3;
+      }
+
+      return XpageSetUpPr;
+    }(_Node5);
+
+    return {
+      F: XpageSetUpPr,
+      d: []
+    };
+  }, Node);
+  var Xdimension = _decorate$1([props('ref')], function (_initialize4, _Node7) {
+    var Xdimension =
+    /*#__PURE__*/
+    function (_Node8) {
+      inherits(Xdimension, _Node8);
+
+      function Xdimension() {
+        var _getPrototypeOf4;
+
+        var _this4;
+
+        classCallCheck(this, Xdimension);
+
+        for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          args[_key3] = arguments[_key3];
+        }
+
+        _this4 = possibleConstructorReturn(this, (_getPrototypeOf4 = getPrototypeOf(Xdimension)).call.apply(_getPrototypeOf4, [this].concat(args)));
+
+        _initialize4(assertThisInitialized(assertThisInitialized(_this4)));
+
+        return _this4;
+      }
+
+      return Xdimension;
+    }(_Node7);
+
+    return {
+      F: Xdimension,
+      d: []
+    };
+  }, Node);
+  var XsheetViews =
+  /*#__PURE__*/
+  function (_Node9) {
+    inherits(XsheetViews, _Node9);
+
+    function XsheetViews() {
+      classCallCheck(this, XsheetViews);
+
+      return possibleConstructorReturn(this, getPrototypeOf(XsheetViews).apply(this, arguments));
+    }
+
+    return XsheetViews;
+  }(Node);
+  var XsheetView = _decorate$1([props('windowProtection', 'showFormulas', 'showGridLines', 'showRowColHeaders', 'showZeros', 'rightToLeft', 'tabSelected', 'showOutlineSymbols', 'defaultGridColor', 'view', 'topLeftCell', 'colorId', 'zoomScale', 'zoomScaleNormal', 'zoomScalePageLayoutView', 'workbookViewId')], function (_initialize5, _Node10) {
+    var XsheetView =
+    /*#__PURE__*/
+    function (_Node11) {
+      inherits(XsheetView, _Node11);
+
+      function XsheetView() {
+        var _getPrototypeOf5;
+
+        var _this5;
+
+        classCallCheck(this, XsheetView);
+
+        for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          args[_key4] = arguments[_key4];
+        }
+
+        _this5 = possibleConstructorReturn(this, (_getPrototypeOf5 = getPrototypeOf(XsheetView)).call.apply(_getPrototypeOf5, [this].concat(args)));
+
+        _initialize5(assertThisInitialized(assertThisInitialized(_this5)));
+
+        return _this5;
+      }
+
+      return XsheetView;
+    }(_Node10);
+
+    return {
+      F: XsheetView,
+      d: []
+    };
+  }, Node);
+  var Xselection = _decorate$1([props('pane', 'activeCell', 'activeCellId', 'sqref')], function (_initialize6, _Node12) {
+    var Xselection =
+    /*#__PURE__*/
+    function (_Node13) {
+      inherits(Xselection, _Node13);
+
+      function Xselection() {
+        var _getPrototypeOf6;
+
+        var _this6;
+
+        classCallCheck(this, Xselection);
+
+        for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+          args[_key5] = arguments[_key5];
+        }
+
+        _this6 = possibleConstructorReturn(this, (_getPrototypeOf6 = getPrototypeOf(Xselection)).call.apply(_getPrototypeOf6, [this].concat(args)));
+
+        _initialize6(assertThisInitialized(assertThisInitialized(_this6)));
+
+        return _this6;
+      }
+
+      return Xselection;
+    }(_Node12);
+
+    return {
+      F: Xselection,
+      d: []
+    };
+  }, Node);
+  var Xpane = _decorate$1([props('xSplit', 'ySplit', 'topLeftCell', 'activePane', 'state')], function (_initialize7, _Node14) {
+    var Xpane =
+    /*#__PURE__*/
+    function (_Node15) {
+      inherits(Xpane, _Node15);
+
+      function Xpane() {
+        var _getPrototypeOf7;
+
+        var _this7;
+
+        classCallCheck(this, Xpane);
+
+        for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+          args[_key6] = arguments[_key6];
+        }
+
+        _this7 = possibleConstructorReturn(this, (_getPrototypeOf7 = getPrototypeOf(Xpane)).call.apply(_getPrototypeOf7, [this].concat(args)));
+
+        _initialize7(assertThisInitialized(assertThisInitialized(_this7)));
+
+        return _this7;
+      }
+
+      return Xpane;
+    }(_Node14);
+
+    return {
+      F: Xpane,
+      d: []
+    };
+  }, Node);
+  var XsheetFormatPr = _decorate$1([props('defaultColWidth', 'defaultRowHeight', 'outlineLevelCol', 'outlineLevelRow')], function (_initialize8, _Node16) {
+    var XsheetFormatPr =
+    /*#__PURE__*/
+    function (_Node17) {
+      inherits(XsheetFormatPr, _Node17);
+
+      function XsheetFormatPr() {
+        var _getPrototypeOf8;
+
+        var _this8;
+
+        classCallCheck(this, XsheetFormatPr);
+
+        for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+          args[_key7] = arguments[_key7];
+        }
+
+        _this8 = possibleConstructorReturn(this, (_getPrototypeOf8 = getPrototypeOf(XsheetFormatPr)).call.apply(_getPrototypeOf8, [this].concat(args)));
+
+        _initialize8(assertThisInitialized(assertThisInitialized(_this8)));
+
+        return _this8;
+      }
+
+      return XsheetFormatPr;
+    }(_Node16);
+
+    return {
+      F: XsheetFormatPr,
+      d: []
+    };
+  }, Node);
+  var Xcols =
+  /*#__PURE__*/
+  function (_Node18) {
+    inherits(Xcols, _Node18);
+
+    function Xcols() {
+      classCallCheck(this, Xcols);
+
+      return possibleConstructorReturn(this, getPrototypeOf(Xcols).apply(this, arguments));
+    }
+
+    return Xcols;
+  }(Node);
+  var Xcol = _decorate$1([props('collapsed', 'hidden', 'max', 'min', 'style', 'width', 'customWidth', 'outlineLevel')], function (_initialize9, _Node19) {
+    var Xcol =
+    /*#__PURE__*/
+    function (_Node20) {
+      inherits(Xcol, _Node20);
+
+      function Xcol() {
+        var _getPrototypeOf9;
+
+        var _this9;
+
+        classCallCheck(this, Xcol);
+
+        for (var _len8 = arguments.length, args = new Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
+          args[_key8] = arguments[_key8];
+        }
+
+        _this9 = possibleConstructorReturn(this, (_getPrototypeOf9 = getPrototypeOf(Xcol)).call.apply(_getPrototypeOf9, [this].concat(args)));
+
+        _initialize9(assertThisInitialized(assertThisInitialized(_this9)));
+
+        return _this9;
+      }
+
+      return Xcol;
+    }(_Node19);
+
+    return {
+      F: Xcol,
+      d: []
+    };
+  }, Node);
+  var XsheetData =
+  /*#__PURE__*/
+  function (_Node21) {
+    inherits(XsheetData, _Node21);
+
+    function XsheetData() {
+      classCallCheck(this, XsheetData);
+
+      return possibleConstructorReturn(this, getPrototypeOf(XsheetData).apply(this, arguments));
+    }
+
+    return XsheetData;
+  }(Node);
+  var Xrow = _decorate$1([props('r', 'spans', 'hidden', 'ht', 'customHeight', 'outlineLevel')], function (_initialize10, _Node22) {
+    var Xrow =
+    /*#__PURE__*/
+    function (_Node23) {
+      inherits(Xrow, _Node23);
+
+      function Xrow() {
+        var _getPrototypeOf10;
+
+        var _this10;
+
+        classCallCheck(this, Xrow);
+
+        for (var _len9 = arguments.length, args = new Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
+          args[_key9] = arguments[_key9];
+        }
+
+        _this10 = possibleConstructorReturn(this, (_getPrototypeOf10 = getPrototypeOf(Xrow)).call.apply(_getPrototypeOf10, [this].concat(args)));
+
+        _initialize10(assertThisInitialized(assertThisInitialized(_this10)));
+
+        return _this10;
+      }
+
+      return Xrow;
+    }(_Node22);
+
+    return {
+      F: Xrow,
+      d: []
+    };
+  }, Node);
+  var Xc = _decorate$1([props('r', 's', 't')], function (_initialize11, _Node24) {
+    var Xc =
+    /*#__PURE__*/
+    function (_Node25) {
+      inherits(Xc, _Node25);
+
+      function Xc(attrs, children) {
+        var _this11;
+
+        classCallCheck(this, Xc);
+
+        _this11 = possibleConstructorReturn(this, getPrototypeOf(Xc).call(this, attrs, children));
+
+        _initialize11(assertThisInitialized(assertThisInitialized(_this11)));
+
+        _this11.f = null;
+        _this11.v = null;
+        return _this11;
+      }
+
+      return Xc;
+    }(_Node24);
+
+    return {
+      F: Xc,
+      d: [{
+        kind: "method",
+        key: "render",
+        value: function value() {
+          if (this.f !== null) this.children.push(this.f);
+          if (this.v !== null) this.children.push(new Node({}, [this.v], 'v'));
+          return get(getPrototypeOf(Xc.prototype), "render", this).call(this);
+        }
+      }]
+    };
+  }, Node);
+  var Xf = _decorate$1([props('t', 'ref', 'si')], function (_initialize12, _Node26) {
+    var Xf =
+    /*#__PURE__*/
+    function (_Node27) {
+      inherits(Xf, _Node27);
+
+      function Xf() {
+        var _getPrototypeOf11;
+
+        var _this12;
+
+        classCallCheck(this, Xf);
+
+        for (var _len10 = arguments.length, args = new Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
+          args[_key10] = arguments[_key10];
+        }
+
+        _this12 = possibleConstructorReturn(this, (_getPrototypeOf11 = getPrototypeOf(Xf)).call.apply(_getPrototypeOf11, [this].concat(args)));
+
+        _initialize12(assertThisInitialized(assertThisInitialized(_this12)));
+
+        return _this12;
+      }
+
+      return Xf;
+    }(_Node26);
+
+    return {
+      F: Xf,
+      d: []
+    };
+  }, Node);
+  var XmergeCells = _decorate$1([props('count')], function (_initialize13, _Node28) {
+    var XmergeCells =
+    /*#__PURE__*/
+    function (_Node29) {
+      inherits(XmergeCells, _Node29);
+
+      function XmergeCells() {
+        var _getPrototypeOf12;
+
+        var _this13;
+
+        classCallCheck(this, XmergeCells);
+
+        for (var _len11 = arguments.length, args = new Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
+          args[_key11] = arguments[_key11];
+        }
+
+        _this13 = possibleConstructorReturn(this, (_getPrototypeOf12 = getPrototypeOf(XmergeCells)).call.apply(_getPrototypeOf12, [this].concat(args)));
+
+        _initialize13(assertThisInitialized(assertThisInitialized(_this13)));
+
+        return _this13;
+      }
+
+      return XmergeCells;
+    }(_Node28);
+
+    return {
+      F: XmergeCells,
+      d: []
+    };
+  }, Node);
+  var XmergeCell = _decorate$1([props('ref')], function (_initialize14, _Node30) {
+    var XmergeCell =
+    /*#__PURE__*/
+    function (_Node31) {
+      inherits(XmergeCell, _Node31);
+
+      function XmergeCell() {
+        var _getPrototypeOf13;
+
+        var _this14;
+
+        classCallCheck(this, XmergeCell);
+
+        for (var _len12 = arguments.length, args = new Array(_len12), _key12 = 0; _key12 < _len12; _key12++) {
+          args[_key12] = arguments[_key12];
+        }
+
+        _this14 = possibleConstructorReturn(this, (_getPrototypeOf13 = getPrototypeOf(XmergeCell)).call.apply(_getPrototypeOf13, [this].concat(args)));
+
+        _initialize14(assertThisInitialized(assertThisInitialized(_this14)));
+
+        return _this14;
+      }
+
+      return XmergeCell;
+    }(_Node30);
+
+    return {
+      F: XmergeCell,
+      d: []
+    };
+  }, Node);
+  var XprintOptions = _decorate$1([props('headings', 'gridLines', 'gridLinesSet', 'horizontalCentered', 'verticalCentered')], function (_initialize15, _Node32) {
+    var XprintOptions =
+    /*#__PURE__*/
+    function (_Node33) {
+      inherits(XprintOptions, _Node33);
+
+      function XprintOptions() {
+        var _getPrototypeOf14;
+
+        var _this15;
+
+        classCallCheck(this, XprintOptions);
+
+        for (var _len13 = arguments.length, args = new Array(_len13), _key13 = 0; _key13 < _len13; _key13++) {
+          args[_key13] = arguments[_key13];
+        }
+
+        _this15 = possibleConstructorReturn(this, (_getPrototypeOf14 = getPrototypeOf(XprintOptions)).call.apply(_getPrototypeOf14, [this].concat(args)));
+
+        _initialize15(assertThisInitialized(assertThisInitialized(_this15)));
+
+        return _this15;
+      }
+
+      return XprintOptions;
+    }(_Node32);
+
+    return {
+      F: XprintOptions,
+      d: []
+    };
+  }, Node);
+  var XpageMargins = _decorate$1([props('left', 'right', 'top', 'bottom', 'header', 'footer')], function (_initialize16, _Node34) {
+    var XpageMargins =
+    /*#__PURE__*/
+    function (_Node35) {
+      inherits(XpageMargins, _Node35);
+
+      function XpageMargins() {
+        var _getPrototypeOf15;
+
+        var _this16;
+
+        classCallCheck(this, XpageMargins);
+
+        for (var _len14 = arguments.length, args = new Array(_len14), _key14 = 0; _key14 < _len14; _key14++) {
+          args[_key14] = arguments[_key14];
+        }
+
+        _this16 = possibleConstructorReturn(this, (_getPrototypeOf15 = getPrototypeOf(XpageMargins)).call.apply(_getPrototypeOf15, [this].concat(args)));
+
+        _initialize16(assertThisInitialized(assertThisInitialized(_this16)));
+
+        return _this16;
+      }
+
+      return XpageMargins;
+    }(_Node34);
+
+    return {
+      F: XpageMargins,
+      d: []
+    };
+  }, Node);
+  var XpageSetup = _decorate$1([props('paperSize', 'scale', 'firstPageNumber', 'fitToWidth', 'fitToHeight', 'pageOrder', 'orientation', 'usePrinterDefaults', 'blackAndWhite', 'draft', 'cellComments', 'useFirstPageNumber', 'horizontalDpi', 'verticalDpi', 'copies')], function (_initialize17, _Node36) {
+    var XpageSetup =
+    /*#__PURE__*/
+    function (_Node37) {
+      inherits(XpageSetup, _Node37);
+
+      function XpageSetup() {
+        var _getPrototypeOf16;
+
+        var _this17;
+
+        classCallCheck(this, XpageSetup);
+
+        for (var _len15 = arguments.length, args = new Array(_len15), _key15 = 0; _key15 < _len15; _key15++) {
+          args[_key15] = arguments[_key15];
+        }
+
+        _this17 = possibleConstructorReturn(this, (_getPrototypeOf16 = getPrototypeOf(XpageSetup)).call.apply(_getPrototypeOf16, [this].concat(args)));
+
+        _initialize17(assertThisInitialized(assertThisInitialized(_this17)));
+
+        return _this17;
+      }
+
+      return XpageSetup;
+    }(_Node36);
+
+    return {
+      F: XpageSetup,
+      d: []
+    };
+  }, Node);
+  var XheaderFooter = _decorate$1([props('differentFirst', 'differentOddEven')], function (_initialize18, _Node38) {
+    var XheaderFooter =
+    /*#__PURE__*/
+    function (_Node39) {
+      inherits(XheaderFooter, _Node39);
+
+      function XheaderFooter(attrs, children) {
+        var _this18;
+
+        classCallCheck(this, XheaderFooter);
+
+        _this18 = possibleConstructorReturn(this, getPrototypeOf(XheaderFooter).call(this, attrs, children));
+
+        _initialize18(assertThisInitialized(assertThisInitialized(_this18)));
+
+        _this18.oddHeader = null;
+        _this18.oddFooter = null;
+        return _this18;
+      }
+
+      return XheaderFooter;
+    }(_Node38);
+
+    return {
+      F: XheaderFooter,
+      d: [{
+        kind: "method",
+        key: "render",
+        value: function value() {
+          if (this.oddHeader !== null) this.children.push(new Node({}, [this.oddHeader], 'oddHeader'));
+          if (this.oddFooter !== null) this.children.push(new Node({}, [this.oddFooter], 'oddFooter'));
+          return get(getPrototypeOf(XheaderFooter.prototype), "render", this).call(this);
+        }
+      }]
+    };
+  }, Node);
+  function makeXworksheet() {
+    var sheet = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Xworksheet();
+    sheet.sheetPr = new XsheetPr({
+      filterMode: false
+    }, [new XpageSetUpPr({
+      fitToPage: false
+    })]);
+    sheet.sheetViews = new XsheetViews({}, [new XsheetView({
+      colorId: 64,
+      defaultGridColor: true,
+      rightToLeft: false,
+      showFormulas: false,
+      showGridLines: true,
+      showOutlineSymbols: true,
+      showRowColHeaders: true,
+      showZeros: true,
+      tabSelected: false,
+      topLeftCell: 'A1',
+      view: 'normal',
+      windowProtection: false,
+      workbookViewId: 0,
+      zoomScale: 100,
+      zoomScaleNormal: 100,
+      zoomScalePageLayoutView: 100
+    }, [new Xselection({
+      activeCell: 'A1',
+      activeCellId: 0,
+      pane: 'topLeft',
+      sqref: 'A1'
+    })])]);
+    sheet.sheetFormatPr = new XsheetFormatPr({
+      defaultRowHeight: '12.85'
+    });
+    sheet.printOptions = new XprintOptions({
+      gridLines: false,
+      gridLinesSet: true,
+      headings: false,
+      horizontalCentered: false,
+      verticalCentered: false
+    });
+    sheet.pageMargins = new XpageMargins({
+      left: 0.7875,
+      right: 0.7875,
+      top: 1.05277777777778,
+      bottom: 1.05277777777778,
+      header: 0.7875,
+      footer: 0.7875
+    });
+    sheet.pageSetup = new XpageSetup({
+      blackAndWhite: false,
+      cellComments: 'none',
+      copies: 1,
+      draft: false,
+      firstPageNumber: 1,
+      fitToHeight: 1,
+      fitToWidth: 1,
+      horizontalDpi: 300,
+      orientation: 'portrait',
+      pageOrder: 'downThenOver',
+      paperSize: 9,
+      scale: 100,
+      useFirstPageNumber: true,
+      usePrinterDefaults: false,
+      verticalDpi: 300
+    });
+    var headerFooter = new XheaderFooter();
+    headerFooter.oddHeader = '&C&"Times New Roman,Regular"&12&A';
+    headerFooter.oddFooter = '&C&"Times New Roman,Regular"&12Page &P';
+    sheet.headerFooter = headerFooter;
+    return sheet;
+  }
+
+  /**
+   * Sheet of the xlsx file.
+   * ```js
+   * import { File } from 'better-xlsx';
+   * const file = new File();
+   * const sheet = file.addSheet('Sheet-1');
+   * const row = sheet.addRow();
+   * const cell = row.addCell();
+   * ```
+   */
+
+  var Sheet =
+  /*#__PURE__*/
+  function () {
+    function Sheet(_ref) {
+      var name = _ref.name,
+          file = _ref.file,
+          selected = _ref.selected;
+
+      classCallCheck(this, Sheet);
+
+      defineProperty(this, "rows", []);
+
+      defineProperty(this, "cols", []);
+
+      defineProperty(this, "maxRow", 0);
+
+      defineProperty(this, "maxCol", 0);
+
+      defineProperty(this, "hidden", false);
+
+      defineProperty(this, "sheetViews", []);
+
+      defineProperty(this, "sheetFormat", {
+        defaultColWidth: 0,
+        defaultRowHeight: 0,
+        outlineLevelCol: 0,
+        outlineLevelRow: 0
+      });
+
+      this.name = name;
+      this.file = file;
+      this.selected = selected;
+    }
+    /**
+     * Create a Row and add it into the Sheet.
+     * @return {Row}
+     */
+
+
+    createClass(Sheet, [{
+      key: "addRow",
+      value: function addRow() {
+        var row = new Row({
+          sheet: this
+        });
+        this.rows.push(row);
+
+        if (this.rows.length > this.maxRow) {
+          this.maxRow = this.rows.length;
+        }
+
+        return row;
+      }
+    }, {
+      key: "maybeAddCol",
+      value: function maybeAddCol(cellCount) {
+        if (cellCount > this.maxCol) {
+          var col = new Col({
+            min: cellCount,
+            max: cellCount,
+            hidden: false,
+            collapsed: false
+          });
+          this.cols.push(col);
+          this.maxCol = cellCount;
+        }
+      }
+      /**
+       * Get Col of the sheet with index and create cols when `index > maxCol`.
+       * @param  {Number} idx Index of the Col [from 0].
+       * @return {Col}
+       */
+
+    }, {
+      key: "col",
+      value: function col(idx) {
+        this.maybeAddCol(idx + 1);
+        return this.cols[idx];
+      }
+      /**
+       * Get Row of the sheet with index and create rows when `index > maxRow`.
+       * @param  {Number} idx Index of the Row [from 0].
+       * @return {Row}
+       */
+
+    }, {
+      key: "row",
+      value: function row(idx) {
+        for (var len = this.rows.length; len <= idx; len++) {
+          this.addRow();
+        }
+
+        return this.rows[idx];
+      }
+      /**
+       * Get Cell of the sheet with `(row, col)` and create cell when out of range.
+       * @param  {Number} row
+       * @param {Number} col
+       * @return {Cell}
+       */
+
+    }, {
+      key: "cell",
+      value: function cell(row, col) {
+        for (var len = this.rows.length; len <= row; len++) {
+          this.addRow();
+        }
+
+        var r = this.rows[row];
+
+        for (var _len = r.cells.length; _len <= col; _len++) {
+          r.addCell();
+        }
+
+        return r.cells[col];
+      }
+      /**
+       * Set columns width from `startcol` to `endcol`.
+       * @param {Number} startcol
+       * @param {Number} endcol
+       * @param {Number} width
+       */
+
+    }, {
+      key: "setColWidth",
+      value: function setColWidth(startcol, endcol, width) {
+        if (startcol > endcol) {
+          throw new Error("Could not set width for range ".concat(startcol, "-").concat(endcol, ": startcol must be less than endcol."));
+        }
+
+        var col = new Col({
+          min: startcol + 1,
+          max: endcol + 1,
+          hidden: false,
+          collapsed: false,
+          width: width
+        });
+        this.cols.push(col);
+
+        if (endcol + 1 > this.maxCol) {
+          this.maxCol = endcol + 1;
+        }
+      }
+    }, {
+      key: "handleMerged",
+      value: function handleMerged() {
+        var merged = [];
+
+        for (var r = 0; r < this.rows.length; r++) {
+          var row = this.rows[r];
+
+          for (var c = 0; c < row.cells.length; c++) {
+            var cell = row.cells[c];
+
+            if (cell.hMerge > 0 || cell.vMerge > 0) {
+              merged.push({
+                r: r,
+                c: c,
+                cell: cell
+              });
+            }
+          }
+        }
+
+        for (var _i = 0; _i < merged.length; _i++) {
+          var _merged$_i = merged[_i],
+              _r = _merged$_i.r,
+              _c = _merged$_i.c,
+              _cell = _merged$_i.cell;
+          var left = _cell.style.border.left;
+          var right = _cell.style.border.right;
+          var top = _cell.style.border.top;
+          var bottom = _cell.style.border.bottom;
+          _cell.style.border.left = 'none';
+          _cell.style.border.right = 'none';
+          _cell.style.border.top = 'none';
+          _cell.style.border.bottom = 'none';
+
+          for (var rownum = 0; rownum <= _cell.vMerge; rownum++) {
+            for (var colnum = 0; colnum <= _cell.hMerge; colnum++) {
+              var tmpcell = this.cell(_r + rownum, _c + colnum);
+              tmpcell.style.applyBorder = true;
+
+              if (rownum === 0) {
+                tmpcell.style.border.top = top;
+              }
+
+              if (rownum === _cell.vMerge) {
+                tmpcell.style.border.bottom = bottom;
+              }
+
+              if (colnum === 0) {
+                tmpcell.style.border.left = left;
+              }
+
+              if (colnum === _cell.hMerge) {
+                tmpcell.style.border.right = right;
+              }
+            }
+          }
+        }
+      }
+    }, {
+      key: "makeXSheet",
+      value: function makeXSheet(refTable, styles) {
+        var sheet = makeXworksheet();
+        var xSheet = new XsheetData();
+        var maxRow = 0;
+        var maxCell = 0;
+        var maxLevelCol;
+        var maxLevelRow;
+        this.handleMerged();
+
+        for (var i = 0; i < this.sheetViews.length; i++) {
+          var view = this.sheetViews[i];
+
+          if (view && view.pane) {
+            sheet.sheetViews.children[i].children.push(new Xpane({
+              xSplit: view.pane.xSplit,
+              ySplit: view.pane.ySplit,
+              topLeftCell: view.pane.topLeftCell,
+              activePane: view.pane.activePane,
+              state: view.pane.state
+            }));
+          }
+        }
+
+        if (this.selected) {
+          sheet.sheetViews.children[0].tabSelected = true;
+        }
+
+        if (this.sheetFormat.defaultRowHeight !== 0) {
+          sheet.sheetFormatPr.defaultRowHeight = this.sheetFormat.defaultRowHeight;
+        }
+
+        if (this.sheetFormat.defaultColWidth !== 0) {
+          sheet.sheetFormatPr.defaultColWidth = this.sheetFormat.defaultColWidth;
+        }
+
+        var fIdList = [];
+        sheet.cols = new Xcols();
+
+        for (var c = 0; c < this.cols.length; c++) {
+          var col = this.cols[c];
+          col.min = col.min || 1;
+          col.max = col.max || 1;
+          var xNumFmt = styles.newNumFmt(col.numFmt);
+          var fId = handleStyle(col.style, xNumFmt.numFmtId, styles);
+          fIdList.push(fId);
+          var customWidth = 0;
+
+          if (col.width === 0) {
+            col.width = 9.5;
+          } else {
+            customWidth = 1;
+          }
+
+          sheet.cols.children.push(new Xcol({
+            min: col.min,
+            max: col.max,
+            hidden: col.hidden,
+            width: col.width,
+            customWidth: customWidth,
+            collapsed: col.collapsed,
+            outlineLevel: col.outlineLevel,
+            style: fId
+          }));
+
+          if (col.outlineLevel > maxLevelCol) {
+            maxLevelCol = col.outlineLevel;
+          }
+        }
+
+        for (var r = 0; r < this.rows.length; r++) {
+          var row = this.rows[r];
+          if (r > maxRow) maxRow = r;
+          var xRow = new Xrow({
+            r: r + 1
+          });
+
+          if (row.isCustom) {
+            xRow.customHeight = true;
+            xRow.ht = row.height;
+          }
+
+          xRow.outlineLevel = row.outlineLevel;
+
+          if (row.outlineLevel > maxLevelRow) {
+            maxLevelRow = row.outlineLevel;
+          }
+
+          for (var _c2 = 0; _c2 < row.cells.length; _c2++) {
+            var _fId = fIdList[_c2];
+            var cell = row.cells[_c2];
+
+            var _xNumFmt = styles.newNumFmt(cell.numFmt);
+
+            var style = cell.style;
+
+            if (style !== null) {
+              _fId = handleStyle(style, _xNumFmt.numFmtId, styles);
+            } else if (cell.numFmt && this.cols[_c2].numFmt !== cell.numFmt) {
+              _fId = handleNumFmtId(_xNumFmt.NumFmtId, styles);
+            }
+
+            if (_c2 > maxCell) maxCell = _c2;
+            var xC = new Xc({
+              r: "".concat(num2col(_c2)).concat(r + 1)
+            });
+
+            switch (cell.cellType) {
+              case 'TypeString':
+                if (cell.value) {
+                  xC.v = refTable.addString(cell.value);
+                }
+
+                xC.t = 's';
+                xC.s = _fId;
+                break;
+
+              case 'TypeBool':
+                xC.v = cell.value;
+                xC.t = 'b';
+                xC.s = _fId;
+                break;
+
+              case 'TypeNumeric':
+                xC.v = cell.value;
+                xC.s = _fId;
+                break;
+
+              case 'TypeDate':
+                xC.v = cell.value;
+                xC.s = _fId;
+                break;
+
+              case 'TypeFormula':
+                xC.v = cell.value;
+                xC.f = new Xf({}, [cell.formula]);
+                xC.s = _fId;
+                break;
+
+              case 'TypeError':
+                xC.v = cell.value;
+                xC.f = new Xf({}, [cell.formula]);
+                xC.t = 'e';
+                xC.s = _fId;
+                break;
+
+              case 'TypeGeneral':
+                xC.v = cell.value;
+                xC.s = _fId;
+                break;
+            }
+
+            xRow.children.push(xC);
+
+            if (cell.hMerge > 0 || cell.vMerge > 0) {
+              // r == rownum, c == colnum
+              var start = "".concat(num2col(_c2)).concat(r + 1);
+              var endcol = _c2 + cell.hMerge;
+              var endrow = r + cell.vMerge + 1;
+              var end = "".concat(num2col(endcol)).concat(endrow);
+              var mc = new XmergeCell({
+                ref: start + ':' + end
+              });
+
+              if (sheet.mergeCells === null) {
+                sheet.mergeCells = new XmergeCells();
+              }
+
+              sheet.mergeCells.children.push(mc);
+            }
+          }
+
+          xSheet.children.push(xRow);
+        } // Update sheet format with the freshly determined max levels
+
+
+        this.sheetFormat.outlineLevelCol = maxLevelCol;
+        this.sheetFormat.outlineLevelRow = maxLevelRow; // .. and then also apply this to the xml worksheet
+
+        sheet.sheetFormatPr.outlineLevelCol = this.sheetFormat.outlineLevelCol;
+        sheet.sheetFormatPr.outlineLevelRow = this.sheetFormat.outlineLevelRow;
+
+        if (sheet.mergeCells !== null) {
+          sheet.mergeCells.count = sheet.mergeCells.children.length;
+        }
+
+        sheet.sheetData = xSheet;
+        var dimension = new Xdimension({
+          ref: "A1:".concat(num2col(maxCell)).concat(maxRow + 1)
+        });
+
+        if (dimension.ref === 'A1:A1') {
+          dimension.ref = 'A1';
+        }
+
+        sheet.dimension = dimension;
+
+        if (this.afterMake) {
+          this.afterMake(sheet);
+        }
+
+        return sheet;
+      }
+    }]);
+
+    return Sheet;
+  }();
+
+  var sheet = /*#__PURE__*/Object.freeze({
+    Sheet: Sheet
+  });
+
+  var DOT_RELS = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">\n  <Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument\" Target=\"xl/workbook.xml\"/>\n  <Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties\" Target=\"docProps/core.xml\"/>\n  <Relationship Id=\"rId3\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties\" Target=\"docProps/app.xml\"/>\n</Relationships>";
+  var DOCPROPS_APP = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Properties xmlns=\"http://schemas.openxmlformats.org/officeDocument/2006/extended-properties\" xmlns:vt=\"http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes\">\n  <TotalTime>0</TotalTime>\n  <Application>JS XLSX</Application>\n</Properties>";
+  var DOCPROPS_CORE = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcmitype=\"http://purl.org/dc/dcmitype/\" xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"></cp:coreProperties>";
+  var XL_THEME_THEME = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<a:theme xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" name=\"Office-Design\">\n  <a:themeElements>\n    <a:clrScheme name=\"Office\">\n      <a:dk1>\n        <a:sysClr val=\"windowText\" lastClr=\"000000\"/>\n      </a:dk1>\n      <a:lt1>\n        <a:sysClr val=\"window\" lastClr=\"FFFFFF\"/>\n      </a:lt1>\n      <a:dk2>\n        <a:srgbClr val=\"1F497D\"/>\n      </a:dk2>\n      <a:lt2>\n        <a:srgbClr val=\"EEECE1\"/>\n      </a:lt2>\n      <a:accent1>\n        <a:srgbClr val=\"4F81BD\"/>\n      </a:accent1>\n      <a:accent2>\n        <a:srgbClr val=\"C0504D\"/>\n      </a:accent2>\n      <a:accent3>\n        <a:srgbClr val=\"9BBB59\"/>\n      </a:accent3>\n      <a:accent4>\n        <a:srgbClr val=\"8064A2\"/>\n      </a:accent4>\n      <a:accent5>\n        <a:srgbClr val=\"4BACC6\"/>\n      </a:accent5>\n      <a:accent6>\n        <a:srgbClr val=\"F79646\"/>\n      </a:accent6>\n      <a:hlink>\n        <a:srgbClr val=\"0000FF\"/>\n      </a:hlink>\n      <a:folHlink>\n        <a:srgbClr val=\"800080\"/>\n      </a:folHlink>\n    </a:clrScheme>\n    <a:fontScheme name=\"Office\">\n      <a:majorFont>\n        <a:latin typeface=\"Cambria\"/>\n        <a:ea typeface=\"\"/>\n        <a:cs typeface=\"\"/>\n        <a:font script=\"Jpan\" typeface=\"\uFF2D\uFF33 \uFF30\u30B4\u30B7\u30C3\u30AF\"/>\n        <a:font script=\"Hang\" typeface=\"\uB9D1\uC740 \uACE0\uB515\"/>\n        <a:font script=\"Hans\" typeface=\"\u5B8B\u4F53\"/>\n        <a:font script=\"Hant\" typeface=\"\u65B0\u7D30\u660E\u9AD4\"/>\n        <a:font script=\"Arab\" typeface=\"Times New Roman\"/>\n        <a:font script=\"Hebr\" typeface=\"Times New Roman\"/>\n        <a:font script=\"Thai\" typeface=\"Tahoma\"/>\n        <a:font script=\"Ethi\" typeface=\"Nyala\"/>\n        <a:font script=\"Beng\" typeface=\"Vrinda\"/>\n        <a:font script=\"Gujr\" typeface=\"Shruti\"/>\n        <a:font script=\"Khmr\" typeface=\"MoolBoran\"/>\n        <a:font script=\"Knda\" typeface=\"Tunga\"/>\n        <a:font script=\"Guru\" typeface=\"Raavi\"/>\n        <a:font script=\"Cans\" typeface=\"Euphemia\"/>\n        <a:font script=\"Cher\" typeface=\"Plantagenet Cherokee\"/>\n        <a:font script=\"Yiii\" typeface=\"Microsoft Yi Baiti\"/>\n        <a:font script=\"Tibt\" typeface=\"Microsoft Himalaya\"/>\n        <a:font script=\"Thaa\" typeface=\"MV Boli\"/>\n        <a:font script=\"Deva\" typeface=\"Mangal\"/>\n        <a:font script=\"Telu\" typeface=\"Gautami\"/>\n        <a:font script=\"Taml\" typeface=\"Latha\"/>\n        <a:font script=\"Syrc\" typeface=\"Estrangelo Edessa\"/>\n        <a:font script=\"Orya\" typeface=\"Kalinga\"/>\n        <a:font script=\"Mlym\" typeface=\"Kartika\"/>\n        <a:font script=\"Laoo\" typeface=\"DokChampa\"/>\n        <a:font script=\"Sinh\" typeface=\"Iskoola Pota\"/>\n        <a:font script=\"Mong\" typeface=\"Mongolian Baiti\"/>\n        <a:font script=\"Viet\" typeface=\"Times New Roman\"/>\n        <a:font script=\"Uigh\" typeface=\"Microsoft Uighur\"/>\n        <a:font script=\"Geor\" typeface=\"Sylfaen\"/>\n      </a:majorFont>\n      <a:minorFont>\n        <a:latin typeface=\"Calibri\"/>\n        <a:ea typeface=\"\"/>\n        <a:cs typeface=\"\"/>\n        <a:font script=\"Jpan\" typeface=\"\uFF2D\uFF33 \uFF30\u30B4\u30B7\u30C3\u30AF\"/>\n        <a:font script=\"Hang\" typeface=\"\uB9D1\uC740 \uACE0\uB515\"/>\n        <a:font script=\"Hans\" typeface=\"\u5B8B\u4F53\"/>\n        <a:font script=\"Hant\" typeface=\"\u65B0\u7D30\u660E\u9AD4\"/>\n        <a:font script=\"Arab\" typeface=\"Arial\"/>\n        <a:font script=\"Hebr\" typeface=\"Arial\"/>\n        <a:font script=\"Thai\" typeface=\"Tahoma\"/>\n        <a:font script=\"Ethi\" typeface=\"Nyala\"/>\n        <a:font script=\"Beng\" typeface=\"Vrinda\"/>\n        <a:font script=\"Gujr\" typeface=\"Shruti\"/>\n        <a:font script=\"Khmr\" typeface=\"DaunPenh\"/>\n        <a:font script=\"Knda\" typeface=\"Tunga\"/>\n        <a:font script=\"Guru\" typeface=\"Raavi\"/>\n        <a:font script=\"Cans\" typeface=\"Euphemia\"/>\n        <a:font script=\"Cher\" typeface=\"Plantagenet Cherokee\"/>\n        <a:font script=\"Yiii\" typeface=\"Microsoft Yi Baiti\"/>\n        <a:font script=\"Tibt\" typeface=\"Microsoft Himalaya\"/>\n        <a:font script=\"Thaa\" typeface=\"MV Boli\"/>\n        <a:font script=\"Deva\" typeface=\"Mangal\"/>\n        <a:font script=\"Telu\" typeface=\"Gautami\"/>\n        <a:font script=\"Taml\" typeface=\"Latha\"/>\n        <a:font script=\"Syrc\" typeface=\"Estrangelo Edessa\"/>\n        <a:font script=\"Orya\" typeface=\"Kalinga\"/>\n        <a:font script=\"Mlym\" typeface=\"Kartika\"/>\n        <a:font script=\"Laoo\" typeface=\"DokChampa\"/>\n        <a:font script=\"Sinh\" typeface=\"Iskoola Pota\"/>\n        <a:font script=\"Mong\" typeface=\"Mongolian Baiti\"/>\n        <a:font script=\"Viet\" typeface=\"Arial\"/>\n        <a:font script=\"Uigh\" typeface=\"Microsoft Uighur\"/>\n        <a:font script=\"Geor\" typeface=\"Sylfaen\"/>\n      </a:minorFont>\n    </a:fontScheme>\n    <a:fmtScheme name=\"Office\">\n      <a:fillStyleLst>\n        <a:solidFill>\n          <a:schemeClr val=\"phClr\"/>\n        </a:solidFill>\n        <a:gradFill rotWithShape=\"1\">\n          <a:gsLst>\n            <a:gs pos=\"0\">\n              <a:schemeClr val=\"phClr\">\n                <a:tint val=\"50000\"/>\n                <a:satMod val=\"300000\"/>\n              </a:schemeClr>\n            </a:gs>\n            <a:gs pos=\"35000\">\n              <a:schemeClr val=\"phClr\">\n                <a:tint val=\"37000\"/>\n                <a:satMod val=\"300000\"/>\n              </a:schemeClr>\n            </a:gs>\n            <a:gs pos=\"100000\">\n              <a:schemeClr val=\"phClr\">\n                <a:tint val=\"15000\"/>\n                <a:satMod val=\"350000\"/>\n              </a:schemeClr>\n            </a:gs>\n          </a:gsLst>\n          <a:lin ang=\"16200000\" scaled=\"1\"/>\n        </a:gradFill>\n        <a:gradFill rotWithShape=\"1\">\n          <a:gsLst>\n            <a:gs pos=\"0\">\n              <a:schemeClr val=\"phClr\">\n                <a:tint val=\"100000\"/>\n                <a:shade val=\"100000\"/>\n                <a:satMod val=\"130000\"/>\n              </a:schemeClr>\n            </a:gs>\n            <a:gs pos=\"100000\">\n              <a:schemeClr val=\"phClr\">\n                <a:tint val=\"50000\"/>\n                <a:shade val=\"100000\"/>\n                <a:satMod val=\"350000\"/>\n              </a:schemeClr>\n            </a:gs>\n          </a:gsLst>\n          <a:lin ang=\"16200000\" scaled=\"0\"/>\n        </a:gradFill>\n      </a:fillStyleLst>\n      <a:lnStyleLst>\n        <a:ln w=\"9525\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\">\n          <a:solidFill>\n            <a:schemeClr val=\"phClr\">\n              <a:shade val=\"95000\"/>\n              <a:satMod val=\"105000\"/>\n            </a:schemeClr>\n          </a:solidFill>\n          <a:prstDash val=\"solid\"/>\n        </a:ln>\n        <a:ln w=\"25400\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\">\n          <a:solidFill>\n            <a:schemeClr val=\"phClr\"/>\n          </a:solidFill>\n          <a:prstDash val=\"solid\"/>\n        </a:ln>\n        <a:ln w=\"38100\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\">\n          <a:solidFill>\n            <a:schemeClr val=\"phClr\"/>\n          </a:solidFill>\n          <a:prstDash val=\"solid\"/>\n        </a:ln>\n      </a:lnStyleLst>\n      <a:effectStyleLst>\n        <a:effectStyle>\n          <a:effectLst>\n            <a:outerShdw blurRad=\"40000\" dist=\"20000\" dir=\"5400000\" rotWithShape=\"0\">\n              <a:srgbClr val=\"000000\">\n                <a:alpha val=\"38000\"/>\n              </a:srgbClr>\n            </a:outerShdw>\n          </a:effectLst>\n        </a:effectStyle>\n        <a:effectStyle>\n          <a:effectLst>\n            <a:outerShdw blurRad=\"40000\" dist=\"23000\" dir=\"5400000\" rotWithShape=\"0\">\n              <a:srgbClr val=\"000000\">\n                <a:alpha val=\"35000\"/>\n              </a:srgbClr>\n            </a:outerShdw>\n          </a:effectLst>\n        </a:effectStyle>\n        <a:effectStyle>\n          <a:effectLst>\n            <a:outerShdw blurRad=\"40000\" dist=\"23000\" dir=\"5400000\" rotWithShape=\"0\">\n              <a:srgbClr val=\"000000\">\n                <a:alpha val=\"35000\"/>\n              </a:srgbClr>\n            </a:outerShdw>\n          </a:effectLst>\n          <a:scene3d>\n            <a:camera prst=\"orthographicFront\">\n              <a:rot lat=\"0\" lon=\"0\" rev=\"0\"/>\n            </a:camera>\n            <a:lightRig rig=\"threePt\" dir=\"t\">\n              <a:rot lat=\"0\" lon=\"0\" rev=\"1200000\"/>\n            </a:lightRig>\n          </a:scene3d>\n          <a:sp3d>\n            <a:bevelT w=\"63500\" h=\"25400\"/>\n          </a:sp3d>\n        </a:effectStyle>\n      </a:effectStyleLst>\n      <a:bgFillStyleLst>\n        <a:solidFill>\n          <a:schemeClr val=\"phClr\"/>\n        </a:solidFill>\n        <a:gradFill rotWithShape=\"1\">\n          <a:gsLst>\n            <a:gs pos=\"0\">\n              <a:schemeClr val=\"phClr\">\n                <a:tint val=\"40000\"/>\n                <a:satMod val=\"350000\"/>\n              </a:schemeClr>\n            </a:gs>\n            <a:gs pos=\"40000\">\n              <a:schemeClr val=\"phClr\">\n                <a:tint val=\"45000\"/>\n                <a:shade val=\"99000\"/>\n                <a:satMod val=\"350000\"/>\n              </a:schemeClr>\n            </a:gs>\n            <a:gs pos=\"100000\">\n              <a:schemeClr val=\"phClr\">\n                <a:shade val=\"20000\"/>\n                <a:satMod val=\"255000\"/>\n              </a:schemeClr>\n            </a:gs>\n          </a:gsLst>\n          <a:path path=\"circle\">\n            <a:fillToRect l=\"50000\" t=\"-80000\" r=\"50000\" b=\"180000\"/>\n          </a:path>\n        </a:gradFill>\n        <a:gradFill rotWithShape=\"1\">\n          <a:gsLst>\n            <a:gs pos=\"0\">\n              <a:schemeClr val=\"phClr\">\n                <a:tint val=\"80000\"/>\n                <a:satMod val=\"300000\"/>\n              </a:schemeClr>\n            </a:gs>\n            <a:gs pos=\"100000\">\n              <a:schemeClr val=\"phClr\">\n                <a:shade val=\"30000\"/>\n                <a:satMod val=\"200000\"/>\n              </a:schemeClr>\n            </a:gs>\n          </a:gsLst>\n          <a:path path=\"circle\">\n            <a:fillToRect l=\"50000\" t=\"50000\" r=\"50000\" b=\"50000\"/>\n          </a:path>\n        </a:gradFill>\n      </a:bgFillStyleLst>\n    </a:fmtScheme>\n  </a:themeElements>\n  <a:objectDefaults>\n    <a:spDef>\n      <a:spPr/>\n      <a:bodyPr/>\n      <a:lstStyle/>\n      <a:style>\n        <a:lnRef idx=\"1\">\n          <a:schemeClr val=\"accent1\"/>\n        </a:lnRef>\n        <a:fillRef idx=\"3\">\n          <a:schemeClr val=\"accent1\"/>\n        </a:fillRef>\n        <a:effectRef idx=\"2\">\n          <a:schemeClr val=\"accent1\"/>\n        </a:effectRef>\n        <a:fontRef idx=\"minor\">\n          <a:schemeClr val=\"lt1\"/>\n        </a:fontRef>\n      </a:style>\n    </a:spDef>\n    <a:lnDef>\n      <a:spPr/>\n      <a:bodyPr/>\n      <a:lstStyle/>\n      <a:style>\n        <a:lnRef idx=\"2\">\n          <a:schemeClr val=\"accent1\"/>\n        </a:lnRef>\n        <a:fillRef idx=\"0\">\n          <a:schemeClr val=\"accent1\"/>\n        </a:fillRef>\n        <a:effectRef idx=\"1\">\n          <a:schemeClr val=\"accent1\"/>\n        </a:effectRef>\n        <a:fontRef idx=\"minor\">\n          <a:schemeClr val=\"tx1\"/>\n        </a:fontRef>\n      </a:style>\n    </a:lnDef>\n  </a:objectDefaults>\n  <a:extraClrSchemeLst/>\n</a:theme>";
+
+  function _decorate$2(decorators, factory, superClass) { var r = factory(function initialize(O) { _initializeInstanceElements$2(O, decorated.elements); }, superClass); var decorated = _decorateClass$2(_coalesceClassElements$2(r.d.map(_createElementDescriptor$2)), decorators); _initializeClassElements$2(r.F, decorated.elements); return _runClassFinishers$2(r.F, decorated.finishers); }
+
+  function _createElementDescriptor$2(def) { var key = _toPropertyKey$2(def.key); var descriptor; if (def.kind === "method") { descriptor = { value: def.value, writable: true, configurable: true, enumerable: false }; Object.defineProperty(def.value, "name", { value: _typeof_1(key) === "symbol" ? "" : key, configurable: true }); } else if (def.kind === "get") { descriptor = { get: def.value, configurable: true, enumerable: false }; } else if (def.kind === "set") { descriptor = { set: def.value, configurable: true, enumerable: false }; } else if (def.kind === "field") { descriptor = { configurable: true, writable: true, enumerable: true }; } var element = { kind: def.kind === "field" ? "field" : "method", key: key, placement: def.static ? "static" : def.kind === "field" ? "own" : "prototype", descriptor: descriptor }; if (def.decorators) element.decorators = def.decorators; if (def.kind === "field") element.initializer = def.value; return element; }
+
+  function _coalesceGetterSetter$2(element, other) { if (element.descriptor.get !== undefined) { other.descriptor.get = element.descriptor.get; } else { other.descriptor.set = element.descriptor.set; } }
+
+  function _coalesceClassElements$2(elements) { var newElements = []; var isSameElement = function isSameElement(other) { return other.kind === "method" && other.key === element.key && other.placement === element.placement; }; for (var i = 0; i < elements.length; i++) { var element = elements[i]; var other; if (element.kind === "method" && (other = newElements.find(isSameElement))) { if (_isDataDescriptor$2(element.descriptor) || _isDataDescriptor$2(other.descriptor)) { if (_hasDecorators$2(element) || _hasDecorators$2(other)) { throw new ReferenceError("Duplicated methods (" + element.key + ") can't be decorated."); } other.descriptor = element.descriptor; } else { if (_hasDecorators$2(element)) { if (_hasDecorators$2(other)) { throw new ReferenceError("Decorators can't be placed on different accessors with for " + "the same property (" + element.key + ")."); } other.decorators = element.decorators; } _coalesceGetterSetter$2(element, other); } } else { newElements.push(element); } } return newElements; }
+
+  function _hasDecorators$2(element) { return element.decorators && element.decorators.length; }
+
+  function _isDataDescriptor$2(desc) { return desc !== undefined && !(desc.value === undefined && desc.writable === undefined); }
+
+  function _initializeClassElements$2(F, elements) { var proto = F.prototype; ["method", "field"].forEach(function (kind) { elements.forEach(function (element) { var placement = element.placement; if (element.kind === kind && (placement === "static" || placement === "prototype")) { var receiver = placement === "static" ? F : proto; _defineClassElement$2(receiver, element); } }); }); }
+
+  function _initializeInstanceElements$2(O, elements) { ["method", "field"].forEach(function (kind) { elements.forEach(function (element) { if (element.kind === kind && element.placement === "own") { _defineClassElement$2(O, element); } }); }); }
+
+  function _defineClassElement$2(receiver, element) { var descriptor = element.descriptor; if (element.kind === "field") { var initializer = element.initializer; descriptor = { enumerable: descriptor.enumerable, writable: descriptor.writable, configurable: descriptor.configurable, value: initializer === void 0 ? void 0 : initializer.call(receiver) }; } Object.defineProperty(receiver, element.key, descriptor); }
+
+  function _decorateClass$2(elements, decorators) { var newElements = []; var finishers = []; var placements = { static: [], prototype: [], own: [] }; elements.forEach(function (element) { _addElementPlacement$2(element, placements); }); elements.forEach(function (element) { if (!_hasDecorators$2(element)) return newElements.push(element); var elementFinishersExtras = _decorateElement$2(element, placements); newElements.push(elementFinishersExtras.element); newElements.push.apply(newElements, elementFinishersExtras.extras); finishers.push.apply(finishers, elementFinishersExtras.finishers); }); if (!decorators) { return { elements: newElements, finishers: finishers }; } var result = _decorateConstructor$2(newElements, decorators); finishers.push.apply(finishers, result.finishers); result.finishers = finishers; return result; }
+
+  function _addElementPlacement$2(element, placements, silent) { var keys = placements[element.placement]; if (!silent && keys.indexOf(element.key) !== -1) { throw new TypeError("Duplicated element (" + element.key + ")"); } keys.push(element.key); }
+
+  function _decorateElement$2(element, placements) { var extras = []; var finishers = []; for (var decorators = element.decorators, i = decorators.length - 1; i >= 0; i--) { var keys = placements[element.placement]; keys.splice(keys.indexOf(element.key), 1); var elementObject = _fromElementDescriptor$2(element); var elementFinisherExtras = _toElementFinisherExtras$2((0, decorators[i])(elementObject) || elementObject); element = elementFinisherExtras.element; _addElementPlacement$2(element, placements); if (elementFinisherExtras.finisher) { finishers.push(elementFinisherExtras.finisher); } var newExtras = elementFinisherExtras.extras; if (newExtras) { for (var j = 0; j < newExtras.length; j++) { _addElementPlacement$2(newExtras[j], placements); } extras.push.apply(extras, newExtras); } } return { element: element, finishers: finishers, extras: extras }; }
+
+  function _decorateConstructor$2(elements, decorators) { var finishers = []; for (var i = decorators.length - 1; i >= 0; i--) { var obj = _fromClassDescriptor$2(elements); var elementsAndFinisher = _toClassDescriptor$2((0, decorators[i])(obj) || obj); if (elementsAndFinisher.finisher !== undefined) { finishers.push(elementsAndFinisher.finisher); } if (elementsAndFinisher.elements !== undefined) { elements = elementsAndFinisher.elements; for (var j = 0; j < elements.length - 1; j++) { for (var k = j + 1; k < elements.length; k++) { if (elements[j].key === elements[k].key && elements[j].placement === elements[k].placement) { throw new TypeError("Duplicated element (" + elements[j].key + ")"); } } } } } return { elements: elements, finishers: finishers }; }
+
+  function _fromElementDescriptor$2(element) { var obj = { kind: element.kind, key: element.key, placement: element.placement, descriptor: element.descriptor }; var desc = { value: "Descriptor", configurable: true }; Object.defineProperty(obj, Symbol.toStringTag, desc); if (element.kind === "field") obj.initializer = element.initializer; return obj; }
+
+  function _toElementDescriptors$2(elementObjects) { if (elementObjects === undefined) return; return toArray(elementObjects).map(function (elementObject) { var element = _toElementDescriptor$2(elementObject); _disallowProperty$2(elementObject, "finisher", "An element descriptor"); _disallowProperty$2(elementObject, "extras", "An element descriptor"); return element; }); }
+
+  function _toElementDescriptor$2(elementObject) { var kind = String(elementObject.kind); if (kind !== "method" && kind !== "field") { throw new TypeError('An element descriptor\'s .kind property must be either "method" or' + ' "field", but a decorator created an element descriptor with' + ' .kind "' + kind + '"'); } var key = _toPropertyKey$2(elementObject.key); var placement = String(elementObject.placement); if (placement !== "static" && placement !== "prototype" && placement !== "own") { throw new TypeError('An element descriptor\'s .placement property must be one of "static",' + ' "prototype" or "own", but a decorator created an element descriptor' + ' with .placement "' + placement + '"'); } var descriptor = elementObject.descriptor; _disallowProperty$2(elementObject, "elements", "An element descriptor"); var element = { kind: kind, key: key, placement: placement, descriptor: Object.assign({}, descriptor) }; if (kind !== "field") { _disallowProperty$2(elementObject, "initializer", "A method descriptor"); } else { _disallowProperty$2(descriptor, "get", "The property descriptor of a field descriptor"); _disallowProperty$2(descriptor, "set", "The property descriptor of a field descriptor"); _disallowProperty$2(descriptor, "value", "The property descriptor of a field descriptor"); element.initializer = elementObject.initializer; } return element; }
+
+  function _toElementFinisherExtras$2(elementObject) { var element = _toElementDescriptor$2(elementObject); var finisher = _optionalCallableProperty$2(elementObject, "finisher"); var extras = _toElementDescriptors$2(elementObject.extras); return { element: element, finisher: finisher, extras: extras }; }
+
+  function _fromClassDescriptor$2(elements) { var obj = { kind: "class", elements: elements.map(_fromElementDescriptor$2) }; var desc = { value: "Descriptor", configurable: true }; Object.defineProperty(obj, Symbol.toStringTag, desc); return obj; }
+
+  function _toClassDescriptor$2(obj) { var kind = String(obj.kind); if (kind !== "class") { throw new TypeError('A class descriptor\'s .kind property must be "class", but a decorator' + ' created a class descriptor with .kind "' + kind + '"'); } _disallowProperty$2(obj, "key", "A class descriptor"); _disallowProperty$2(obj, "placement", "A class descriptor"); _disallowProperty$2(obj, "descriptor", "A class descriptor"); _disallowProperty$2(obj, "initializer", "A class descriptor"); _disallowProperty$2(obj, "extras", "A class descriptor"); var finisher = _optionalCallableProperty$2(obj, "finisher"); var elements = _toElementDescriptors$2(obj.elements); return { elements: elements, finisher: finisher }; }
+
+  function _disallowProperty$2(obj, name, objectType) { if (obj[name] !== undefined) { throw new TypeError(objectType + " can't have a ." + name + " property."); } }
+
+  function _optionalCallableProperty$2(obj, name) { var value = obj[name]; if (value !== undefined && typeof value !== "function") { throw new TypeError("Expected '" + name + "' to be a function"); } return value; }
+
+  function _runClassFinishers$2(constructor, finishers) { for (var i = 0; i < finishers.length; i++) { var newConstructor = (0, finishers[i])(constructor); if (newConstructor !== undefined) { if (typeof newConstructor !== "function") { throw new TypeError("Finishers must return a constructor."); } constructor = newConstructor; } } return constructor; }
+
+  function _toPropertyKey$2(arg) { var key = _toPrimitive$2(arg, "string"); return _typeof_1(key) === "symbol" ? key : String(key); }
+
+  function _toPrimitive$2(input, hint) { if (_typeof_1(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof_1(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+  var Xsst = _decorate$2([props('xmlns', 'count', 'uniqueCount')], function (_initialize, _Node) {
+    var Xsst =
+    /*#__PURE__*/
+    function (_Node2) {
+      inherits(Xsst, _Node2);
+
+      function Xsst(_ref, children) {
+        var _this;
+
+        var _ref$xmlns = _ref.xmlns,
+            xmlns = _ref$xmlns === void 0 ? 'http://schemas.openxmlformats.org/spreadsheetml/2006/main' : _ref$xmlns;
+
+        classCallCheck(this, Xsst);
+
+        _this = possibleConstructorReturn(this, getPrototypeOf(Xsst).call(this, {
+          xmlns: xmlns
+        }, children));
+
+        _initialize(assertThisInitialized(assertThisInitialized(_this)));
+
+        _this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
+        return _this;
+      }
+
+      return Xsst;
+    }(_Node);
+
+    return {
+      F: Xsst,
+      d: []
+    };
+  }, Node);
+  var Xsi =
+  /*#__PURE__*/
+  function (_Node3) {
+    inherits(Xsi, _Node3);
+
+    function Xsi() {
+      classCallCheck(this, Xsi);
+
+      return possibleConstructorReturn(this, getPrototypeOf(Xsi).apply(this, arguments));
+    }
+
+    return Xsi;
+  }(Node);
+  var Xt = _decorate$2([props('xml:space')], function (_initialize2, _Node4) {
+    var Xt =
+    /*#__PURE__*/
+    function (_Node5) {
+      inherits(Xt, _Node5);
+
+      function Xt() {
+        var _getPrototypeOf2;
+
+        var _this2;
+
+        classCallCheck(this, Xt);
+
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        _this2 = possibleConstructorReturn(this, (_getPrototypeOf2 = getPrototypeOf(Xt)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+        _initialize2(assertThisInitialized(assertThisInitialized(_this2)));
+
+        return _this2;
+      }
+
+      return Xt;
+    }(_Node4);
+
+    return {
+      F: Xt,
+      d: []
+    };
+  }, Node);
+  var Xr =
+  /*#__PURE__*/
+  function (_Node6) {
+    inherits(Xr, _Node6);
+
+    function Xr() {
+      classCallCheck(this, Xr);
+
+      return possibleConstructorReturn(this, getPrototypeOf(Xr).apply(this, arguments));
+    }
+
+    return Xr;
+  }(Node);
+
+  var RefTable =
+  /*#__PURE__*/
+  function () {
+    function RefTable() {
+      classCallCheck(this, RefTable);
+
+      this.strings = [];
+      this.known = {};
+    }
+
+    createClass(RefTable, [{
+      key: "makeXsst",
+      value: function makeXsst() {
+        var len = this.strings.length;
+        var sst = new Xsst({
+          count: len,
+          uniqueCount: len
+        });
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = this.strings[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var str = _step.value;
+            var si = new Xsi({}, [new Xt({}, [str])]);
+            sst.children.push(si);
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return != null) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+
+        return sst;
+      }
+    }, {
+      key: "addString",
+      value: function addString(str) {
+        if (this.known[str] === undefined) {
+          var index = this.strings.length;
+          this.strings.push(str);
+          this.known[str] = index;
+          return index;
+        }
+
+        return this.known[str];
+      }
+    }, {
+      key: "getString",
+      value: function getString(index) {
+        return this.strings[index];
+      }
+    }, {
+      key: "length",
+      value: function length() {
+        return this.strings.length;
+      }
+    }]);
+
+    return RefTable;
+  }();
+
+  function _decorate$3(decorators, factory, superClass) { var r = factory(function initialize(O) { _initializeInstanceElements$3(O, decorated.elements); }, superClass); var decorated = _decorateClass$3(_coalesceClassElements$3(r.d.map(_createElementDescriptor$3)), decorators); _initializeClassElements$3(r.F, decorated.elements); return _runClassFinishers$3(r.F, decorated.finishers); }
+
+  function _createElementDescriptor$3(def) { var key = _toPropertyKey$3(def.key); var descriptor; if (def.kind === "method") { descriptor = { value: def.value, writable: true, configurable: true, enumerable: false }; Object.defineProperty(def.value, "name", { value: _typeof_1(key) === "symbol" ? "" : key, configurable: true }); } else if (def.kind === "get") { descriptor = { get: def.value, configurable: true, enumerable: false }; } else if (def.kind === "set") { descriptor = { set: def.value, configurable: true, enumerable: false }; } else if (def.kind === "field") { descriptor = { configurable: true, writable: true, enumerable: true }; } var element = { kind: def.kind === "field" ? "field" : "method", key: key, placement: def.static ? "static" : def.kind === "field" ? "own" : "prototype", descriptor: descriptor }; if (def.decorators) element.decorators = def.decorators; if (def.kind === "field") element.initializer = def.value; return element; }
+
+  function _coalesceGetterSetter$3(element, other) { if (element.descriptor.get !== undefined) { other.descriptor.get = element.descriptor.get; } else { other.descriptor.set = element.descriptor.set; } }
+
+  function _coalesceClassElements$3(elements) { var newElements = []; var isSameElement = function isSameElement(other) { return other.kind === "method" && other.key === element.key && other.placement === element.placement; }; for (var i = 0; i < elements.length; i++) { var element = elements[i]; var other; if (element.kind === "method" && (other = newElements.find(isSameElement))) { if (_isDataDescriptor$3(element.descriptor) || _isDataDescriptor$3(other.descriptor)) { if (_hasDecorators$3(element) || _hasDecorators$3(other)) { throw new ReferenceError("Duplicated methods (" + element.key + ") can't be decorated."); } other.descriptor = element.descriptor; } else { if (_hasDecorators$3(element)) { if (_hasDecorators$3(other)) { throw new ReferenceError("Decorators can't be placed on different accessors with for " + "the same property (" + element.key + ")."); } other.decorators = element.decorators; } _coalesceGetterSetter$3(element, other); } } else { newElements.push(element); } } return newElements; }
+
+  function _hasDecorators$3(element) { return element.decorators && element.decorators.length; }
+
+  function _isDataDescriptor$3(desc) { return desc !== undefined && !(desc.value === undefined && desc.writable === undefined); }
+
+  function _initializeClassElements$3(F, elements) { var proto = F.prototype; ["method", "field"].forEach(function (kind) { elements.forEach(function (element) { var placement = element.placement; if (element.kind === kind && (placement === "static" || placement === "prototype")) { var receiver = placement === "static" ? F : proto; _defineClassElement$3(receiver, element); } }); }); }
+
+  function _initializeInstanceElements$3(O, elements) { ["method", "field"].forEach(function (kind) { elements.forEach(function (element) { if (element.kind === kind && element.placement === "own") { _defineClassElement$3(O, element); } }); }); }
+
+  function _defineClassElement$3(receiver, element) { var descriptor = element.descriptor; if (element.kind === "field") { var initializer = element.initializer; descriptor = { enumerable: descriptor.enumerable, writable: descriptor.writable, configurable: descriptor.configurable, value: initializer === void 0 ? void 0 : initializer.call(receiver) }; } Object.defineProperty(receiver, element.key, descriptor); }
+
+  function _decorateClass$3(elements, decorators) { var newElements = []; var finishers = []; var placements = { static: [], prototype: [], own: [] }; elements.forEach(function (element) { _addElementPlacement$3(element, placements); }); elements.forEach(function (element) { if (!_hasDecorators$3(element)) return newElements.push(element); var elementFinishersExtras = _decorateElement$3(element, placements); newElements.push(elementFinishersExtras.element); newElements.push.apply(newElements, elementFinishersExtras.extras); finishers.push.apply(finishers, elementFinishersExtras.finishers); }); if (!decorators) { return { elements: newElements, finishers: finishers }; } var result = _decorateConstructor$3(newElements, decorators); finishers.push.apply(finishers, result.finishers); result.finishers = finishers; return result; }
+
+  function _addElementPlacement$3(element, placements, silent) { var keys = placements[element.placement]; if (!silent && keys.indexOf(element.key) !== -1) { throw new TypeError("Duplicated element (" + element.key + ")"); } keys.push(element.key); }
+
+  function _decorateElement$3(element, placements) { var extras = []; var finishers = []; for (var decorators = element.decorators, i = decorators.length - 1; i >= 0; i--) { var keys = placements[element.placement]; keys.splice(keys.indexOf(element.key), 1); var elementObject = _fromElementDescriptor$3(element); var elementFinisherExtras = _toElementFinisherExtras$3((0, decorators[i])(elementObject) || elementObject); element = elementFinisherExtras.element; _addElementPlacement$3(element, placements); if (elementFinisherExtras.finisher) { finishers.push(elementFinisherExtras.finisher); } var newExtras = elementFinisherExtras.extras; if (newExtras) { for (var j = 0; j < newExtras.length; j++) { _addElementPlacement$3(newExtras[j], placements); } extras.push.apply(extras, newExtras); } } return { element: element, finishers: finishers, extras: extras }; }
+
+  function _decorateConstructor$3(elements, decorators) { var finishers = []; for (var i = decorators.length - 1; i >= 0; i--) { var obj = _fromClassDescriptor$3(elements); var elementsAndFinisher = _toClassDescriptor$3((0, decorators[i])(obj) || obj); if (elementsAndFinisher.finisher !== undefined) { finishers.push(elementsAndFinisher.finisher); } if (elementsAndFinisher.elements !== undefined) { elements = elementsAndFinisher.elements; for (var j = 0; j < elements.length - 1; j++) { for (var k = j + 1; k < elements.length; k++) { if (elements[j].key === elements[k].key && elements[j].placement === elements[k].placement) { throw new TypeError("Duplicated element (" + elements[j].key + ")"); } } } } } return { elements: elements, finishers: finishers }; }
+
+  function _fromElementDescriptor$3(element) { var obj = { kind: element.kind, key: element.key, placement: element.placement, descriptor: element.descriptor }; var desc = { value: "Descriptor", configurable: true }; Object.defineProperty(obj, Symbol.toStringTag, desc); if (element.kind === "field") obj.initializer = element.initializer; return obj; }
+
+  function _toElementDescriptors$3(elementObjects) { if (elementObjects === undefined) return; return toArray(elementObjects).map(function (elementObject) { var element = _toElementDescriptor$3(elementObject); _disallowProperty$3(elementObject, "finisher", "An element descriptor"); _disallowProperty$3(elementObject, "extras", "An element descriptor"); return element; }); }
+
+  function _toElementDescriptor$3(elementObject) { var kind = String(elementObject.kind); if (kind !== "method" && kind !== "field") { throw new TypeError('An element descriptor\'s .kind property must be either "method" or' + ' "field", but a decorator created an element descriptor with' + ' .kind "' + kind + '"'); } var key = _toPropertyKey$3(elementObject.key); var placement = String(elementObject.placement); if (placement !== "static" && placement !== "prototype" && placement !== "own") { throw new TypeError('An element descriptor\'s .placement property must be one of "static",' + ' "prototype" or "own", but a decorator created an element descriptor' + ' with .placement "' + placement + '"'); } var descriptor = elementObject.descriptor; _disallowProperty$3(elementObject, "elements", "An element descriptor"); var element = { kind: kind, key: key, placement: placement, descriptor: Object.assign({}, descriptor) }; if (kind !== "field") { _disallowProperty$3(elementObject, "initializer", "A method descriptor"); } else { _disallowProperty$3(descriptor, "get", "The property descriptor of a field descriptor"); _disallowProperty$3(descriptor, "set", "The property descriptor of a field descriptor"); _disallowProperty$3(descriptor, "value", "The property descriptor of a field descriptor"); element.initializer = elementObject.initializer; } return element; }
+
+  function _toElementFinisherExtras$3(elementObject) { var element = _toElementDescriptor$3(elementObject); var finisher = _optionalCallableProperty$3(elementObject, "finisher"); var extras = _toElementDescriptors$3(elementObject.extras); return { element: element, finisher: finisher, extras: extras }; }
+
+  function _fromClassDescriptor$3(elements) { var obj = { kind: "class", elements: elements.map(_fromElementDescriptor$3) }; var desc = { value: "Descriptor", configurable: true }; Object.defineProperty(obj, Symbol.toStringTag, desc); return obj; }
+
+  function _toClassDescriptor$3(obj) { var kind = String(obj.kind); if (kind !== "class") { throw new TypeError('A class descriptor\'s .kind property must be "class", but a decorator' + ' created a class descriptor with .kind "' + kind + '"'); } _disallowProperty$3(obj, "key", "A class descriptor"); _disallowProperty$3(obj, "placement", "A class descriptor"); _disallowProperty$3(obj, "descriptor", "A class descriptor"); _disallowProperty$3(obj, "initializer", "A class descriptor"); _disallowProperty$3(obj, "extras", "A class descriptor"); var finisher = _optionalCallableProperty$3(obj, "finisher"); var elements = _toElementDescriptors$3(obj.elements); return { elements: elements, finisher: finisher }; }
+
+  function _disallowProperty$3(obj, name, objectType) { if (obj[name] !== undefined) { throw new TypeError(objectType + " can't have a ." + name + " property."); } }
+
+  function _optionalCallableProperty$3(obj, name) { var value = obj[name]; if (value !== undefined && typeof value !== "function") { throw new TypeError("Expected '" + name + "' to be a function"); } return value; }
+
+  function _runClassFinishers$3(constructor, finishers) { for (var i = 0; i < finishers.length; i++) { var newConstructor = (0, finishers[i])(constructor); if (newConstructor !== undefined) { if (typeof newConstructor !== "function") { throw new TypeError("Finishers must return a constructor."); } constructor = newConstructor; } } return constructor; }
+
+  function _toPropertyKey$3(arg) { var key = _toPrimitive$3(arg, "string"); return _typeof_1(key) === "symbol" ? key : String(key); }
+
+  function _toPrimitive$3(input, hint) { if (_typeof_1(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof_1(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+  var XRelationships = _decorate$3([props('xmlns')], function (_initialize, _Node) {
+    var XRelationships =
+    /*#__PURE__*/
+    function (_Node2) {
+      inherits(XRelationships, _Node2);
+
+      function XRelationships(_ref, children) {
+        var _this;
+
+        var _ref$xmlns = _ref.xmlns,
+            xmlns = _ref$xmlns === void 0 ? 'http://schemas.openxmlformats.org/package/2006/relationships' : _ref$xmlns;
+
+        classCallCheck(this, XRelationships);
+
+        _this = possibleConstructorReturn(this, getPrototypeOf(XRelationships).call(this, {
+          xmlns: xmlns
+        }, children));
+
+        _initialize(assertThisInitialized(assertThisInitialized(_this)));
+
+        _this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
+        return _this;
+      }
+
+      return XRelationships;
+    }(_Node);
+
+    return {
+      F: XRelationships,
+      d: []
+    };
+  }, Node);
+  var XRelationship = _decorate$3([props('Id', 'Target', 'Type')], function (_initialize2, _Node3) {
+    var XRelationship =
+    /*#__PURE__*/
+    function (_Node4) {
+      inherits(XRelationship, _Node4);
+
+      function XRelationship() {
+        var _getPrototypeOf2;
+
+        var _this2;
+
+        classCallCheck(this, XRelationship);
+
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        _this2 = possibleConstructorReturn(this, (_getPrototypeOf2 = getPrototypeOf(XRelationship)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+        _initialize2(assertThisInitialized(assertThisInitialized(_this2)));
+
+        return _this2;
+      }
+
+      return XRelationship;
+    }(_Node3);
+
+    return {
+      F: XRelationship,
+      d: []
+    };
+  }, Node);
+  var Xworkbook = _decorate$3([props('xmlns', 'xmlns:r')], function (_initialize3, _Node5) {
+    var Xworkbook =
+    /*#__PURE__*/
+    function (_Node6) {
+      inherits(Xworkbook, _Node6);
+
+      function Xworkbook() {
+        var _this3;
+
+        var attrs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var children = arguments.length > 1 ? arguments[1] : undefined;
+
+        classCallCheck(this, Xworkbook);
+
+        attrs['xmlns'] = attrs['xmlns'] || 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
+        attrs['xmlns:r'] = attrs['xmlns:r'] || 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+        _this3 = possibleConstructorReturn(this, getPrototypeOf(Xworkbook).call(this, attrs, children));
+
+        _initialize3(assertThisInitialized(assertThisInitialized(_this3)));
+
+        _this3[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
+        return _this3;
+      }
+
+      return Xworkbook;
+    }(_Node5);
+
+    return {
+      F: Xworkbook,
+      d: [{
+        kind: "field",
+        key: "fileVersion",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "workbookPr",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "bookViews",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "sheets",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "field",
+        key: "calcPr",
+        value: function value() {
+          return null;
+        }
+      }, {
+        kind: "method",
+        key: "render",
+        value: function value() {
+          this.children = [];
+          if (this.fileVersion) this.children.push(this.fileVersion);
+          if (this.workbookPr) this.children.push(this.workbookPr);
+          if (this.bookViews) this.children.push(this.bookViews);
+          if (this.sheets) this.children.push(this.sheets);
+          if (this.calcPr) this.children.push(this.calcPr);
+          return get(getPrototypeOf(Xworkbook.prototype), "render", this).call(this);
+        }
+      }]
+    };
+  }, Node);
+  var XfileVersion = _decorate$3([props('appName', 'lastEdited', 'lowestEdited', 'rupBuild')], function (_initialize4, _Node7) {
+    var XfileVersion =
+    /*#__PURE__*/
+    function (_Node8) {
+      inherits(XfileVersion, _Node8);
+
+      function XfileVersion() {
+        var _getPrototypeOf3;
+
+        var _this4;
+
+        classCallCheck(this, XfileVersion);
+
+        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments[_key2];
+        }
+
+        _this4 = possibleConstructorReturn(this, (_getPrototypeOf3 = getPrototypeOf(XfileVersion)).call.apply(_getPrototypeOf3, [this].concat(args)));
+
+        _initialize4(assertThisInitialized(assertThisInitialized(_this4)));
+
+        return _this4;
+      }
+
+      return XfileVersion;
+    }(_Node7);
+
+    return {
+      F: XfileVersion,
+      d: []
+    };
+  }, Node);
+  var XworkbookPr = _decorate$3([props('defaultThemeVersion', 'backupFile', 'showObjects', 'date1904')], function (_initialize5, _Node9) {
+    var XworkbookPr =
+    /*#__PURE__*/
+    function (_Node10) {
+      inherits(XworkbookPr, _Node10);
+
+      function XworkbookPr() {
+        var _getPrototypeOf4;
+
+        var _this5;
+
+        classCallCheck(this, XworkbookPr);
+
+        for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          args[_key3] = arguments[_key3];
+        }
+
+        _this5 = possibleConstructorReturn(this, (_getPrototypeOf4 = getPrototypeOf(XworkbookPr)).call.apply(_getPrototypeOf4, [this].concat(args)));
+
+        _initialize5(assertThisInitialized(assertThisInitialized(_this5)));
+
+        return _this5;
+      }
+
+      return XworkbookPr;
+    }(_Node9);
+
+    return {
+      F: XworkbookPr,
+      d: []
+    };
+  }, Node);
+  var XworkbookProtection =
+  /*#__PURE__*/
+  function (_Node11) {
+    inherits(XworkbookProtection, _Node11);
+
+    function XworkbookProtection() {
+      classCallCheck(this, XworkbookProtection);
+
+      return possibleConstructorReturn(this, getPrototypeOf(XworkbookProtection).apply(this, arguments));
+    }
+
+    return XworkbookProtection;
+  }(Node);
+  var XbookViews =
+  /*#__PURE__*/
+  function (_Node12) {
+    inherits(XbookViews, _Node12);
+
+    function XbookViews() {
+      classCallCheck(this, XbookViews);
+
+      return possibleConstructorReturn(this, getPrototypeOf(XbookViews).apply(this, arguments));
+    }
+
+    return XbookViews;
+  }(Node);
+  var XworkbookView = _decorate$3([props('activeTab', 'firstSheet', 'showHorizontalScroll', 'showVerticalScroll', 'showSheetTabs', 'tabRatio', 'windowHeight', 'windowWidth', 'xWindow', 'yWindow')], function (_initialize6, _Node13) {
+    var XworkbookView =
+    /*#__PURE__*/
+    function (_Node14) {
+      inherits(XworkbookView, _Node14);
+
+      function XworkbookView() {
+        var _getPrototypeOf5;
+
+        var _this6;
+
+        classCallCheck(this, XworkbookView);
+
+        for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          args[_key4] = arguments[_key4];
+        }
+
+        _this6 = possibleConstructorReturn(this, (_getPrototypeOf5 = getPrototypeOf(XworkbookView)).call.apply(_getPrototypeOf5, [this].concat(args)));
+
+        _initialize6(assertThisInitialized(assertThisInitialized(_this6)));
+
+        return _this6;
+      }
+
+      return XworkbookView;
+    }(_Node13);
+
+    return {
+      F: XworkbookView,
+      d: []
+    };
+  }, Node);
+  var Xsheets =
+  /*#__PURE__*/
+  function (_Node15) {
+    inherits(Xsheets, _Node15);
+
+    function Xsheets() {
+      classCallCheck(this, Xsheets);
+
+      return possibleConstructorReturn(this, getPrototypeOf(Xsheets).apply(this, arguments));
+    }
+
+    return Xsheets;
+  }(Node);
+  var Xsheet = _decorate$3([props('name', 'sheetId', 'r:id', 'state')], function (_initialize7, _Node16) {
+    var Xsheet =
+    /*#__PURE__*/
+    function (_Node17) {
+      inherits(Xsheet, _Node17);
+
+      function Xsheet() {
+        var _getPrototypeOf6;
+
+        var _this7;
+
+        classCallCheck(this, Xsheet);
+
+        for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+          args[_key5] = arguments[_key5];
+        }
+
+        _this7 = possibleConstructorReturn(this, (_getPrototypeOf6 = getPrototypeOf(Xsheet)).call.apply(_getPrototypeOf6, [this].concat(args)));
+
+        _initialize7(assertThisInitialized(assertThisInitialized(_this7)));
+
+        return _this7;
+      }
+
+      return Xsheet;
+    }(_Node16);
+
+    return {
+      F: Xsheet,
+      d: []
+    };
+  }, Node);
+  var XcalcPr = _decorate$3([props('calcId', 'iterateCount', 'refMode', 'iterate', 'iterateDelta')], function (_initialize8, _Node18) {
+    var XcalcPr =
+    /*#__PURE__*/
+    function (_Node19) {
+      inherits(XcalcPr, _Node19);
+
+      function XcalcPr() {
+        var _getPrototypeOf7;
+
+        var _this8;
+
+        classCallCheck(this, XcalcPr);
+
+        for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+          args[_key6] = arguments[_key6];
+        }
+
+        _this8 = possibleConstructorReturn(this, (_getPrototypeOf7 = getPrototypeOf(XcalcPr)).call.apply(_getPrototypeOf7, [this].concat(args)));
+
+        _initialize8(assertThisInitialized(assertThisInitialized(_this8)));
+
+        return _this8;
+      }
+
+      return XcalcPr;
+    }(_Node18);
+
+    return {
+      F: XcalcPr,
+      d: []
+    };
+  }, Node);
+  function makeWorkbookRels(sheetCount) {
+    var rels = new XRelationships({});
+
+    for (var i = 1; i <= sheetCount; i++) {
+      rels.children.push(new XRelationship({
+        Id: "rId".concat(i),
+        Target: "worksheets/sheet".concat(i, ".xml"),
+        Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet'
+      }));
+    }
+
+    rels.children.push(new XRelationship({
+      Id: "rId".concat(sheetCount + 1),
+      Target: 'sharedStrings.xml',
+      Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings'
+    }));
+    rels.children.push(new XRelationship({
+      Id: "rId".concat(sheetCount + 2),
+      Target: 'theme/theme1.xml',
+      Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme'
+    }));
+    rels.children.push(new XRelationship({
+      Id: "rId".concat(sheetCount + 3),
+      Target: 'styles.xml',
+      Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles'
+    }));
+    return rels;
+  }
+  function makeXworkbook() {
+    var workbook = new Xworkbook();
+    workbook.fileVersion = new XfileVersion({
+      appName: 'JS XLSX'
+    });
+    workbook.workbookPr = new XworkbookPr({
+      showObjects: 'all'
+    });
+    workbook.bookViews = new XbookViews({}, [new XworkbookView({
+      showHorizontalScroll: true,
+      showSheetTabs: true,
+      showVerticalScroll: true,
+      tabRatio: 204,
+      windowHeight: 8192,
+      windowWidth: 16384,
+      xWindow: 0,
+      yWindow: 0
+    })]);
+    workbook.calcPr = new XcalcPr({
+      iterateCount: 100,
+      iterate: false,
+      iterateDelta: 0.001,
+      refMode: 'A1'
+    });
+    return workbook;
+  }
+
+  function _decorate$4(decorators, factory, superClass) { var r = factory(function initialize(O) { _initializeInstanceElements$4(O, decorated.elements); }, superClass); var decorated = _decorateClass$4(_coalesceClassElements$4(r.d.map(_createElementDescriptor$4)), decorators); _initializeClassElements$4(r.F, decorated.elements); return _runClassFinishers$4(r.F, decorated.finishers); }
+
+  function _createElementDescriptor$4(def) { var key = _toPropertyKey$4(def.key); var descriptor; if (def.kind === "method") { descriptor = { value: def.value, writable: true, configurable: true, enumerable: false }; Object.defineProperty(def.value, "name", { value: _typeof_1(key) === "symbol" ? "" : key, configurable: true }); } else if (def.kind === "get") { descriptor = { get: def.value, configurable: true, enumerable: false }; } else if (def.kind === "set") { descriptor = { set: def.value, configurable: true, enumerable: false }; } else if (def.kind === "field") { descriptor = { configurable: true, writable: true, enumerable: true }; } var element = { kind: def.kind === "field" ? "field" : "method", key: key, placement: def.static ? "static" : def.kind === "field" ? "own" : "prototype", descriptor: descriptor }; if (def.decorators) element.decorators = def.decorators; if (def.kind === "field") element.initializer = def.value; return element; }
+
+  function _coalesceGetterSetter$4(element, other) { if (element.descriptor.get !== undefined) { other.descriptor.get = element.descriptor.get; } else { other.descriptor.set = element.descriptor.set; } }
+
+  function _coalesceClassElements$4(elements) { var newElements = []; var isSameElement = function isSameElement(other) { return other.kind === "method" && other.key === element.key && other.placement === element.placement; }; for (var i = 0; i < elements.length; i++) { var element = elements[i]; var other; if (element.kind === "method" && (other = newElements.find(isSameElement))) { if (_isDataDescriptor$4(element.descriptor) || _isDataDescriptor$4(other.descriptor)) { if (_hasDecorators$4(element) || _hasDecorators$4(other)) { throw new ReferenceError("Duplicated methods (" + element.key + ") can't be decorated."); } other.descriptor = element.descriptor; } else { if (_hasDecorators$4(element)) { if (_hasDecorators$4(other)) { throw new ReferenceError("Decorators can't be placed on different accessors with for " + "the same property (" + element.key + ")."); } other.decorators = element.decorators; } _coalesceGetterSetter$4(element, other); } } else { newElements.push(element); } } return newElements; }
+
+  function _hasDecorators$4(element) { return element.decorators && element.decorators.length; }
+
+  function _isDataDescriptor$4(desc) { return desc !== undefined && !(desc.value === undefined && desc.writable === undefined); }
+
+  function _initializeClassElements$4(F, elements) { var proto = F.prototype; ["method", "field"].forEach(function (kind) { elements.forEach(function (element) { var placement = element.placement; if (element.kind === kind && (placement === "static" || placement === "prototype")) { var receiver = placement === "static" ? F : proto; _defineClassElement$4(receiver, element); } }); }); }
+
+  function _initializeInstanceElements$4(O, elements) { ["method", "field"].forEach(function (kind) { elements.forEach(function (element) { if (element.kind === kind && element.placement === "own") { _defineClassElement$4(O, element); } }); }); }
+
+  function _defineClassElement$4(receiver, element) { var descriptor = element.descriptor; if (element.kind === "field") { var initializer = element.initializer; descriptor = { enumerable: descriptor.enumerable, writable: descriptor.writable, configurable: descriptor.configurable, value: initializer === void 0 ? void 0 : initializer.call(receiver) }; } Object.defineProperty(receiver, element.key, descriptor); }
+
+  function _decorateClass$4(elements, decorators) { var newElements = []; var finishers = []; var placements = { static: [], prototype: [], own: [] }; elements.forEach(function (element) { _addElementPlacement$4(element, placements); }); elements.forEach(function (element) { if (!_hasDecorators$4(element)) return newElements.push(element); var elementFinishersExtras = _decorateElement$4(element, placements); newElements.push(elementFinishersExtras.element); newElements.push.apply(newElements, elementFinishersExtras.extras); finishers.push.apply(finishers, elementFinishersExtras.finishers); }); if (!decorators) { return { elements: newElements, finishers: finishers }; } var result = _decorateConstructor$4(newElements, decorators); finishers.push.apply(finishers, result.finishers); result.finishers = finishers; return result; }
+
+  function _addElementPlacement$4(element, placements, silent) { var keys = placements[element.placement]; if (!silent && keys.indexOf(element.key) !== -1) { throw new TypeError("Duplicated element (" + element.key + ")"); } keys.push(element.key); }
+
+  function _decorateElement$4(element, placements) { var extras = []; var finishers = []; for (var decorators = element.decorators, i = decorators.length - 1; i >= 0; i--) { var keys = placements[element.placement]; keys.splice(keys.indexOf(element.key), 1); var elementObject = _fromElementDescriptor$4(element); var elementFinisherExtras = _toElementFinisherExtras$4((0, decorators[i])(elementObject) || elementObject); element = elementFinisherExtras.element; _addElementPlacement$4(element, placements); if (elementFinisherExtras.finisher) { finishers.push(elementFinisherExtras.finisher); } var newExtras = elementFinisherExtras.extras; if (newExtras) { for (var j = 0; j < newExtras.length; j++) { _addElementPlacement$4(newExtras[j], placements); } extras.push.apply(extras, newExtras); } } return { element: element, finishers: finishers, extras: extras }; }
+
+  function _decorateConstructor$4(elements, decorators) { var finishers = []; for (var i = decorators.length - 1; i >= 0; i--) { var obj = _fromClassDescriptor$4(elements); var elementsAndFinisher = _toClassDescriptor$4((0, decorators[i])(obj) || obj); if (elementsAndFinisher.finisher !== undefined) { finishers.push(elementsAndFinisher.finisher); } if (elementsAndFinisher.elements !== undefined) { elements = elementsAndFinisher.elements; for (var j = 0; j < elements.length - 1; j++) { for (var k = j + 1; k < elements.length; k++) { if (elements[j].key === elements[k].key && elements[j].placement === elements[k].placement) { throw new TypeError("Duplicated element (" + elements[j].key + ")"); } } } } } return { elements: elements, finishers: finishers }; }
+
+  function _fromElementDescriptor$4(element) { var obj = { kind: element.kind, key: element.key, placement: element.placement, descriptor: element.descriptor }; var desc = { value: "Descriptor", configurable: true }; Object.defineProperty(obj, Symbol.toStringTag, desc); if (element.kind === "field") obj.initializer = element.initializer; return obj; }
+
+  function _toElementDescriptors$4(elementObjects) { if (elementObjects === undefined) return; return toArray(elementObjects).map(function (elementObject) { var element = _toElementDescriptor$4(elementObject); _disallowProperty$4(elementObject, "finisher", "An element descriptor"); _disallowProperty$4(elementObject, "extras", "An element descriptor"); return element; }); }
+
+  function _toElementDescriptor$4(elementObject) { var kind = String(elementObject.kind); if (kind !== "method" && kind !== "field") { throw new TypeError('An element descriptor\'s .kind property must be either "method" or' + ' "field", but a decorator created an element descriptor with' + ' .kind "' + kind + '"'); } var key = _toPropertyKey$4(elementObject.key); var placement = String(elementObject.placement); if (placement !== "static" && placement !== "prototype" && placement !== "own") { throw new TypeError('An element descriptor\'s .placement property must be one of "static",' + ' "prototype" or "own", but a decorator created an element descriptor' + ' with .placement "' + placement + '"'); } var descriptor = elementObject.descriptor; _disallowProperty$4(elementObject, "elements", "An element descriptor"); var element = { kind: kind, key: key, placement: placement, descriptor: Object.assign({}, descriptor) }; if (kind !== "field") { _disallowProperty$4(elementObject, "initializer", "A method descriptor"); } else { _disallowProperty$4(descriptor, "get", "The property descriptor of a field descriptor"); _disallowProperty$4(descriptor, "set", "The property descriptor of a field descriptor"); _disallowProperty$4(descriptor, "value", "The property descriptor of a field descriptor"); element.initializer = elementObject.initializer; } return element; }
+
+  function _toElementFinisherExtras$4(elementObject) { var element = _toElementDescriptor$4(elementObject); var finisher = _optionalCallableProperty$4(elementObject, "finisher"); var extras = _toElementDescriptors$4(elementObject.extras); return { element: element, finisher: finisher, extras: extras }; }
+
+  function _fromClassDescriptor$4(elements) { var obj = { kind: "class", elements: elements.map(_fromElementDescriptor$4) }; var desc = { value: "Descriptor", configurable: true }; Object.defineProperty(obj, Symbol.toStringTag, desc); return obj; }
+
+  function _toClassDescriptor$4(obj) { var kind = String(obj.kind); if (kind !== "class") { throw new TypeError('A class descriptor\'s .kind property must be "class", but a decorator' + ' created a class descriptor with .kind "' + kind + '"'); } _disallowProperty$4(obj, "key", "A class descriptor"); _disallowProperty$4(obj, "placement", "A class descriptor"); _disallowProperty$4(obj, "descriptor", "A class descriptor"); _disallowProperty$4(obj, "initializer", "A class descriptor"); _disallowProperty$4(obj, "extras", "A class descriptor"); var finisher = _optionalCallableProperty$4(obj, "finisher"); var elements = _toElementDescriptors$4(obj.elements); return { elements: elements, finisher: finisher }; }
+
+  function _disallowProperty$4(obj, name, objectType) { if (obj[name] !== undefined) { throw new TypeError(objectType + " can't have a ." + name + " property."); } }
+
+  function _optionalCallableProperty$4(obj, name) { var value = obj[name]; if (value !== undefined && typeof value !== "function") { throw new TypeError("Expected '" + name + "' to be a function"); } return value; }
+
+  function _runClassFinishers$4(constructor, finishers) { for (var i = 0; i < finishers.length; i++) { var newConstructor = (0, finishers[i])(constructor); if (newConstructor !== undefined) { if (typeof newConstructor !== "function") { throw new TypeError("Finishers must return a constructor."); } constructor = newConstructor; } } return constructor; }
+
+  function _toPropertyKey$4(arg) { var key = _toPrimitive$4(arg, "string"); return _typeof_1(key) === "symbol" ? key : String(key); }
+
+  function _toPrimitive$4(input, hint) { if (_typeof_1(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof_1(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+  var XTypes = _decorate$4([props('xmlns')], function (_initialize, _Node) {
+    var XTypes =
+    /*#__PURE__*/
+    function (_Node2) {
+      inherits(XTypes, _Node2);
+
+      function XTypes(_ref, children) {
+        var _this;
+
+        var _ref$xmlns = _ref.xmlns,
+            xmlns = _ref$xmlns === void 0 ? 'http://schemas.openxmlformats.org/package/2006/content-types' : _ref$xmlns;
+
+        classCallCheck(this, XTypes);
+
+        _this = possibleConstructorReturn(this, getPrototypeOf(XTypes).call(this, {
+          xmlns: xmlns
+        }, children));
+
+        _initialize(assertThisInitialized(assertThisInitialized(_this)));
+
+        _this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
+        return _this;
+      }
+
+      return XTypes;
+    }(_Node);
+
+    return {
+      F: XTypes,
+      d: []
+    };
+  }, Node);
+  var XDefault = _decorate$4([props('Extension', 'ContentType')], function (_initialize2, _Node3) {
+    var XDefault =
+    /*#__PURE__*/
+    function (_Node4) {
+      inherits(XDefault, _Node4);
+
+      function XDefault() {
+        var _getPrototypeOf2;
+
+        var _this2;
+
+        classCallCheck(this, XDefault);
+
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        _this2 = possibleConstructorReturn(this, (_getPrototypeOf2 = getPrototypeOf(XDefault)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+        _initialize2(assertThisInitialized(assertThisInitialized(_this2)));
+
+        return _this2;
+      }
+
+      return XDefault;
+    }(_Node3);
+
+    return {
+      F: XDefault,
+      d: []
+    };
+  }, Node);
+  var XOverride = _decorate$4([props('PartName', 'ContentType')], function (_initialize3, _Node5) {
+    var XOverride =
+    /*#__PURE__*/
+    function (_Node6) {
+      inherits(XOverride, _Node6);
+
+      function XOverride() {
+        var _getPrototypeOf3;
+
+        var _this3;
+
+        classCallCheck(this, XOverride);
+
+        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments[_key2];
+        }
+
+        _this3 = possibleConstructorReturn(this, (_getPrototypeOf3 = getPrototypeOf(XOverride)).call.apply(_getPrototypeOf3, [this].concat(args)));
+
+        _initialize3(assertThisInitialized(assertThisInitialized(_this3)));
+
+        return _this3;
+      }
+
+      return XOverride;
+    }(_Node5);
+
+    return {
+      F: XOverride,
+      d: []
+    };
+  }, Node);
+  function makeXTypes() {
+    var types = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new XTypes({});
+    var defaults = [{
+      Extension: 'rels',
+      ContentType: 'application/vnd.openxmlformats-package.relationships+xml'
+    }, {
+      Extension: 'xml',
+      ContentType: 'application/xml'
+    }];
+
+    for (var _i = 0; _i < defaults.length; _i++) {
+      var item = defaults[_i];
+      types.children.push(new XDefault(item));
+    }
+
+    var overrides = [{
+      PartName: '/_rels/.rels',
+      ContentType: 'application/vnd.openxmlformats-package.relationships+xml'
+    }, {
+      PartName: '/docProps/app.xml',
+      ContentType: 'application/vnd.openxmlformats-officedocument.extended-properties+xml'
+    }, {
+      PartName: '/docProps/core.xml',
+      ContentType: 'application/vnd.openxmlformats-package.core-properties+xml'
+    }, {
+      PartName: '/xl/_rels/workbook.xml.rels',
+      ContentType: 'application/vnd.openxmlformats-package.relationships+xml'
+    }, {
+      PartName: '/xl/sharedStrings.xml',
+      ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml'
+    }, {
+      PartName: '/xl/styles.xml',
+      ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml'
+    }, {
+      PartName: '/xl/workbook.xml',
+      ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml'
+    }, {
+      PartName: '/xl/theme/theme1.xml',
+      ContentType: 'application/vnd.openxmlformats-officedocument.theme+xml'
+    }];
+
+    for (var _i2 = 0; _i2 < overrides.length; _i2++) {
+      var override = overrides[_i2];
+      types.children.push(new XOverride(override));
+    }
+
+    return types;
+  }
+
+  /**
+   * This is the main class, use it:
+   *
+   * ```js
+   * import { File } from 'better-xlsx';
+   * const file = new File();
+   * const sheet = file.addSheet('Sheet-1');
+   * ```
+   *
+   * @class File
+   */
+
+  var File =
+  /*#__PURE__*/
+  function () {
+    /**
+     * @private
+     */
+
+    /**
+     * @private
+     */
+
+    /**
+     * @private
+     */
+    function File() {
+      classCallCheck(this, File);
+
+      defineProperty(this, "sheet", {});
+
+      defineProperty(this, "sheets", []);
+
+      defineProperty(this, "definedNames", []);
+
+      /**
+       * @private
+       */
+      this.styles = new XstyleSheet({});
+    }
+    /**
+     * Add a new Sheet, with the provided name, to a File
+     * @param {String} name Name of the Sheet
+     * @return {Sheet}
+     */
+
+
+    createClass(File, [{
+      key: "addSheet",
+      value: function addSheet(name) {
+        if (this.sheet[name]) {
+          throw new Error("duplicate sheet name ".concat(name, "."));
+        }
+
+        var sheet = new Sheet({
+          name: name,
+          file: this,
+          selected: this.sheets.length === 0
+        });
+        this.sheet[name] = sheet;
+        this.sheets.push(sheet);
+        return sheet;
+      }
+      /**
+       * Save the File to an xlsx file.
+       * @param  {String} [type='nodebuffer'] For Node.js use `nodebuffer` and browser use `blob` or `base64`.
+       * @param {Boolean} [compress=false] For file compression.
+       * @return {Promise|stream} For Node.js return `stream` and browser return Promise.
+       */
+
+    }, {
+      key: "saveAs",
+      value: function saveAs() {
+        var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'nodebuffer';
+        var compress = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+        var parts = this.makeParts();
+        var zip = new Zip();
+
+        var _arr = Object.keys(parts);
+
+        for (var _i = 0; _i < _arr.length; _i++) {
+          var key = _arr[_i];
+          zip.file(key, parts[key]);
+        }
+
+        var compression = compress ? 'DEFLATE' : 'STORE';
+
+        if (type === 'blob' || type === 'base64') {
+          return zip.generateAsync({
+            type: type,
+            compression: compression
+          });
+        } else {
+          return zip.generateNodeStream({
+            type: 'nodebuffer',
+            compression: compression
+          });
+        }
+      }
+      /**
+       * @private
+       * @return {Object} XML files mapping object
+       */
+
+    }, {
+      key: "makeParts",
+      value: function makeParts() {
+        var parts = {};
+        var refTable = new RefTable();
+        var types = makeXTypes();
+        var workbook = makeXworkbook();
+        this.styles.reset();
+        var i = 1;
+        var sheets = new Xsheets();
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = this.sheets[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var sheet = _step.value;
+            var xSheet = sheet.makeXSheet(refTable, this.styles);
+            types.children.push(new XOverride({
+              PartName: "/xl/worksheets/sheet".concat(i, ".xml"),
+              ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml'
+            }));
+            sheets.children.push(new Xsheet({
+              name: sheet.name,
+              sheetId: i,
+              'r:id': "rId".concat(i),
+              state: 'visible'
+            }));
+            parts["xl/worksheets/sheet".concat(i, ".xml")] = xSheet.render();
+            i++;
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return != null) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+
+        workbook.sheets = sheets;
+        parts['xl/workbook.xml'] = workbook.render();
+        parts['_rels/.rels'] = DOT_RELS;
+        parts['docProps/app.xml'] = DOCPROPS_APP;
+        parts['docProps/core.xml'] = DOCPROPS_CORE;
+        parts['xl/theme/theme1.xml'] = XL_THEME_THEME;
+        parts['xl/sharedStrings.xml'] = refTable.makeXsst().render();
+        parts['xl/_rels/workbook.xml.rels'] = makeWorkbookRels(this.sheets.length).render();
+        parts['[Content_Types].xml'] = types.render();
+        parts['xl/styles.xml'] = this.styles.render();
+        return parts;
+      }
+    }]);
+
+    return File;
+  }();
+
+  var file = /*#__PURE__*/Object.freeze({
+    File: File
+  });
+
+  var index = objectSpread({}, cell, col, file, lib, row, sheet, style, {
+    Zip: Zip
+  });
+
+  return index;
 
 })));

@@ -1,18 +1,18 @@
 import { props, Node, HEAD } from './node';
 
-@props('xmlns')
-export class XRelationships extends Node {
+export @props('xmlns')
+class XRelationships extends Node {
   constructor ({ xmlns = 'http://schemas.openxmlformats.org/package/2006/relationships' }, children) {
     super({ xmlns }, children);
     this[HEAD] = '<?xml version="1.0" encoding="UTF-8"?>';
   }
 }
 
-@props('Id', 'Target', 'Type')
-export class XRelationship extends Node {}
+export @props('Id', 'Target', 'Type')
+class XRelationship extends Node {}
 
-@props('xmlns', 'xmlns:r')
-export class Xworkbook extends Node {
+export @props('xmlns', 'xmlns:r')
+class Xworkbook extends Node {
   fileVersion = null;
   workbookPr = null;
   bookViews = null;
@@ -36,26 +36,26 @@ export class Xworkbook extends Node {
   }
 }
 
-@props('appName', 'lastEdited', 'lowestEdited', 'rupBuild')
-export class XfileVersion extends Node {}
+export @props('appName', 'lastEdited', 'lowestEdited', 'rupBuild')
+class XfileVersion extends Node {}
 
-@props('defaultThemeVersion', 'backupFile', 'showObjects', 'date1904')
-export class XworkbookPr extends Node {}
+export @props('defaultThemeVersion', 'backupFile', 'showObjects', 'date1904')
+class XworkbookPr extends Node {}
 
 export class XworkbookProtection extends Node {}
 
 export class XbookViews extends Node {}
 
-@props('activeTab', 'firstSheet', 'showHorizontalScroll', 'showVerticalScroll', 'showSheetTabs', 'tabRatio', 'windowHeight', 'windowWidth', 'xWindow', 'yWindow')
-export class XworkbookView extends Node {}
+export @props('activeTab', 'firstSheet', 'showHorizontalScroll', 'showVerticalScroll', 'showSheetTabs', 'tabRatio', 'windowHeight', 'windowWidth', 'xWindow', 'yWindow')
+class XworkbookView extends Node {}
 
 export class Xsheets extends Node {}
 
-@props('name', 'sheetId', 'r:id', 'state')
-export class Xsheet extends Node {}
+export @props('name', 'sheetId', 'r:id', 'state')
+class Xsheet extends Node {}
 
-@props('calcId', 'iterateCount', 'refMode', 'iterate', 'iterateDelta')
-export class XcalcPr extends Node {}
+export @props('calcId', 'iterateCount', 'refMode', 'iterate', 'iterateDelta')
+class XcalcPr extends Node {}
 
 export function makeWorkbookRels (sheetCount) {
   const rels = new XRelationships({});

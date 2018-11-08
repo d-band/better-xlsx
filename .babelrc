@@ -1,16 +1,20 @@
 {
   "presets": [
-    ["env", {
-      "targets": {
-        "node": 4.0
-      }
-    }],
-    "stage-0"
+    ["@babel/preset-env", {
+      "targets": { "node": 4 }
+    }]
   ],
-  "plugins": ["transform-decorators-legacy", "add-module-exports"],
+  "plugins": [
+    ["@babel/plugin-proposal-decorators", { "decoratorsBeforeExport": false }],
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-transform-runtime",
+    "add-module-exports"
+  ],
   "env": {
     "test": {
-      "plugins": ["istanbul"]
+      "plugins": [
+        "istanbul"
+      ]
     }
   }
 }

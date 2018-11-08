@@ -15,29 +15,31 @@ function escape (str) {
 
 export const HEAD = Symbol('head');
 
-export function props (...attrs) {
-  return function (clazz) {
-    const target = clazz.prototype || clazz;
-
-    for (const name of attrs) {
-      Object.defineProperty(target, name, {
-        get () {
-          if (this.attributes) {
-            return this.attributes[name];
-          }
-        },
-        set (value) {
-          if (this.attributes === undefined) {
-            this.attributes = {};
-          }
-          this.attributes[name] = value;
-        },
-        configurable: true,
-        enumerable: true
+export function props (...keys) {
+  return (target) => {
+    for (const key of keys) {
+      target.elements.push({
+        key,
+        kind: 'method',
+        placement: 'prototype',
+        descriptor: {
+          get () {
+            if (this.attributes) {
+              return this.attributes[key];
+            }
+          },
+          set (value) {
+            if (this.attributes === undefined) {
+              this.attributes = {};
+            }
+            this.attributes[key] = value;
+          },
+          configurable: true,
+          enumerable: true
+        }
       });
     }
-
-    return clazz;
+    return target;
   };
 }
 

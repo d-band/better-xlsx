@@ -1,8 +1,9 @@
 import { props, Node, HEAD } from './node';
 import { NumFmtInv, NumFmtsCount } from './lib';
 
+export
 @props('xmlns')
-export class XstyleSheet extends Node {
+class XstyleSheet extends Node {
   fonts = null;
   fills = null;
   borders = null;
@@ -113,27 +114,27 @@ export class XstyleSheet extends Node {
   }
 }
 
-@props('count')
-export class XnumFmts extends Node {
+export @props('count')
+class XnumFmts extends Node {
   render () {
     if (this.count) return super.render();
     return '';
   }
 }
 
-@props('numFmtId', 'formatCode')
-export class XnumFmt extends Node {}
+export @props('numFmtId', 'formatCode')
+class XnumFmt extends Node {}
 
-@props('count')
-export class Xfonts extends Node {
+export @props('count')
+class Xfonts extends Node {
   render () {
     if (this.count) return super.render();
     return '';
   }
 }
 
-@props('sz', 'name', 'family', 'charset', 'color', 'b', 'i', 'u')
-export class Xfont extends Node {
+export @props('sz', 'name', 'family', 'charset', 'color', 'b', 'i', 'u')
+class Xfont extends Node {
   render () {
     let str = '<font>';
     if (this.sz) str += `<sz val="${this.sz}"/>`;
@@ -158,16 +159,16 @@ export class Xfont extends Node {
   }
 }
 
-@props('count')
-export class Xfills extends Node {
+export @props('count')
+class Xfills extends Node {
   render () {
     if (this.count) return super.render();
     return '';
   }
 }
 
-@props('patternFill')
-export class Xfill extends Node {
+export @props('patternFill')
+class Xfill extends Node {
   render () {
     return `<fill>${this.patternFill.render()}</fill>`;
   }
@@ -183,8 +184,8 @@ export class Xfill extends Node {
   }
 }
 
-@props('patternType', 'fgColor', 'bgColor')
-export class XpatternFill extends Node {
+export @props('patternType', 'fgColor', 'bgColor')
+class XpatternFill extends Node {
   render () {
     let str = `<patternFill patternType="${this.patternType}">`;
     if (this.fgColor) str += `<fgColor rgb="${this.fgColor}"/>`;
@@ -193,16 +194,16 @@ export class XpatternFill extends Node {
   }
 }
 
-@props('count')
-export class Xborders extends Node {
+export @props('count')
+class Xborders extends Node {
   render () {
     if (this.count) return super.render();
     return '';
   }
 }
 
-@props('left', 'right', 'top', 'bottom')
-export class Xborder extends Node {
+export @props('left', 'right', 'top', 'bottom')
+class Xborder extends Node {
   _renderLine (pos) {
     const posVal = this[pos];
     if (!posVal) return '';
@@ -233,35 +234,35 @@ export class Xborder extends Node {
   }
 }
 
-@props('count')
-export class XcellStyles extends Node {
+export @props('count')
+class XcellStyles extends Node {
   render () {
     if (this.count) return super.render();
     return '';
   }
 }
 
-@props('builtInId', 'customBuiltIn', 'hidden', 'iLevel', 'name', 'xfId')
-export class XcellStyle extends Node {}
+export @props('builtInId', 'customBuiltIn', 'hidden', 'iLevel', 'name', 'xfId')
+class XcellStyle extends Node {}
 
-@props('count')
-export class XcellStyleXfs extends Node {
+export @props('count')
+class XcellStyleXfs extends Node {
   render () {
     if (this.count) return super.render();
     return '';
   }
 }
 
-@props('count')
-export class XcellXfs extends Node {
+export @props('count')
+class XcellXfs extends Node {
   render () {
     if (this.count) return super.render();
     return '';
   }
 }
 
-@props('applyAlignment', 'applyBorder', 'applyFont', 'applyFill', 'applyNumberFormat', 'applyProtection', 'borderId', 'fillId', 'fontId', 'numFmtId', 'xfId')
-export class Xxf extends Node {
+export @props('applyAlignment', 'applyBorder', 'applyFont', 'applyFill', 'applyNumberFormat', 'applyProtection', 'borderId', 'fillId', 'fontId', 'numFmtId', 'xfId')
+class Xxf extends Node {
   constructor (attrs, children) {
     const defaults = {
       applyAlignment: false,
@@ -299,8 +300,8 @@ export class Xxf extends Node {
   }
 }
 
-@props('horizontal', 'indent', 'shrinkToFit', 'textRotation', 'vertical', 'wrapText')
-export class Xalignment extends Node {
+export @props('horizontal', 'indent', 'shrinkToFit', 'textRotation', 'vertical', 'wrapText')
+class Xalignment extends Node {
   constructor (attrs, children = []) {
     const defaults = {
       horizontal: 'general',

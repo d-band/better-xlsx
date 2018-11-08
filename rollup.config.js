@@ -24,15 +24,13 @@ export default {
     babel({
       babelrc: false,
       presets: [
-        ['env', {
-          modules: false
-        }],
-        'stage-0'
+        ['@babel/preset-env', { modules: false }]
       ],
       plugins: [
-        'transform-decorators-legacy',
-        'external-helpers',
-        'transform-runtime'
+        ['@babel/plugin-proposal-decorators', { decoratorsBeforeExport: false }],
+        '@babel/plugin-proposal-class-properties',
+        '@babel/plugin-external-helpers',
+        '@babel/plugin-transform-runtime'
       ],
       runtimeHelpers: true,
       externalHelpers: true,
