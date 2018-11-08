@@ -742,35 +742,5 @@ window.esdocSearchIndex = [
     "file/src/templates.js.html",
     "src/templates.js",
     "file"
-  ],
-  [
-    "src/xmlcontenttypes.js",
-    "file/src/xmlContentTypes.js.html",
-    "src/xmlContentTypes.js",
-    "file"
-  ],
-  [
-    "src/xmlsharedstrings.js",
-    "file/src/xmlSharedStrings.js.html",
-    "src/xmlSharedStrings.js",
-    "file"
-  ],
-  [
-    "src/xmlstyle.js",
-    "file/src/xmlStyle.js.html",
-    "src/xmlStyle.js",
-    "file"
-  ],
-  [
-    "src/xmlworkbook.js",
-    "file/src/xmlWorkbook.js.html",
-    "src/xmlWorkbook.js",
-    "file"
-  ],
-  [
-    "src/xmlworksheet.js",
-    "file/src/xmlWorksheet.js.html",
-    "src/xmlWorksheet.js",
-    "file"
   ]
 ]
