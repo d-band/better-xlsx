@@ -91,16 +91,16 @@ export function props (...keys) {
 }
 
 export class Node {
-  constructor (attributes = {}, children = [], xmlName) {
+  constructor (attributes = {}, children = [], name) {
     for (const key of Object.keys(attributes)) {
       this[key] = attributes[key];
     }
     this.children = children;
-    this._xmlName = xmlName || this.constructor.name.substring(1);
+    this.__name = name || this.constructor.name.substring(1);
   }
   render () {
     function walk (tree) {
-      const name = tree._xmlName;
+      const name = tree.__name;
       const { attributes, children } = tree;
       const tokens = [];
 
