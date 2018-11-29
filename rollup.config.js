@@ -27,6 +27,7 @@ export default {
         ['@babel/preset-env', { modules: false }]
       ],
       plugins: [
+        require('./constructor-name'),
         ['@babel/plugin-proposal-decorators', { decoratorsBeforeExport: false }],
         '@babel/plugin-proposal-class-properties',
         '@babel/plugin-external-helpers',
