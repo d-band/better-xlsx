@@ -415,13 +415,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/cell.js~cell#style",
-    "class/src/cell.js~Cell.html#instance-set-style",
+    "class/src/cell.js~Cell.html#instance-get-style",
     "src/cell.js~Cell#style",
     "member"
   ],
   [
     "src/cell.js~cell#style",
-    "class/src/cell.js~Cell.html#instance-get-style",
+    "class/src/cell.js~Cell.html#instance-set-style",
     "src/cell.js~Cell#style",
     "member"
   ],
@@ -433,13 +433,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/cell.js~cell#value",
-    "class/src/cell.js~Cell.html#instance-set-value",
+    "class/src/cell.js~Cell.html#instance-get-value",
     "src/cell.js~Cell#value",
     "member"
   ],
   [
     "src/cell.js~cell#value",
-    "class/src/cell.js~Cell.html#instance-get-value",
+    "class/src/cell.js~Cell.html#instance-set-value",
     "src/cell.js~Cell#value",
     "member"
   ],
