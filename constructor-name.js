@@ -8,7 +8,7 @@ module.exports = ({ types: t }) => {
       ClassDeclaration(path) {
         if (isExtendsNode(path.node.superClass)) {
           path.get('body').unshiftContainer('body', t.classProperty(
-            t.identifier('_xmlName'),
+            t.identifier('__name'),
             t.stringLiteral(path.node.id.name.substring(1))
           ));
         }

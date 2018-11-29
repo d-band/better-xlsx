@@ -8,3 +8,9 @@ test
 esdoc
 docs
 .nyc_output
+.babelrc               
+.editorconfig          
+.esdoc.json            
+.eslintrc              
+.travis.yml            
+constructor-name.js

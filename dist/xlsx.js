@@ -267,7 +267,7 @@
     function Node() {
       var attributes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       var children = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-      var xmlName = arguments.length > 2 ? arguments[2] : undefined;
+      var name = arguments.length > 2 ? arguments[2] : undefined;
 
       classCallCheck(this, Node);
 
@@ -279,14 +279,14 @@
       }
 
       this.children = children;
-      this._xmlName = xmlName || this.constructor.name.substring(1);
+      this.__name = name || this.constructor.name.substring(1);
     }
 
     createClass(Node, [{
       key: "render",
       value: function render() {
         function walk(tree) {
-          var name = tree._xmlName;
+          var name = tree.__name;
           var attributes = tree.attributes,
               children = tree.children;
           var tokens = [];
@@ -574,7 +574,7 @@
       F: XstyleSheet,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "styleSheet";
         }
@@ -834,7 +834,7 @@
       F: XnumFmts,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "numFmts";
         }
@@ -879,7 +879,7 @@
       F: XnumFmt,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "numFmt";
         }
@@ -917,7 +917,7 @@
       F: Xfonts,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "fonts";
         }
@@ -962,7 +962,7 @@
       F: Xfont,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "font";
         }
@@ -1021,7 +1021,7 @@
       F: Xfills,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "fills";
         }
@@ -1066,7 +1066,7 @@
       F: Xfill,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "fill";
         }
@@ -1123,7 +1123,7 @@
       F: XpatternFill,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "patternFill";
         }
@@ -1170,7 +1170,7 @@
       F: Xborders,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "borders";
         }
@@ -1215,7 +1215,7 @@
       F: Xborder,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "border";
         }
@@ -1288,7 +1288,7 @@
       F: XcellStyles,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "cellStyles";
         }
@@ -1333,7 +1333,7 @@
       F: XcellStyle,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "cellStyle";
         }
@@ -1371,7 +1371,7 @@
       F: XcellStyleXfs,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "cellStyleXfs";
         }
@@ -1416,7 +1416,7 @@
       F: XcellXfs,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "cellXfs";
         }
@@ -1468,7 +1468,7 @@
       F: Xxf,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "xf";
         }
@@ -1526,7 +1526,7 @@
       F: Xalignment,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "alignment";
         }
@@ -2474,7 +2474,7 @@
       F: Xworksheet,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "worksheet";
         }
@@ -2596,7 +2596,7 @@
       F: XsheetPr,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "sheetPr";
         }
@@ -2634,7 +2634,7 @@
       F: XpageSetUpPr,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "pageSetUpPr";
         }
@@ -2672,7 +2672,7 @@
       F: Xdimension,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "dimension";
         }
@@ -2697,7 +2697,7 @@
 
       _this5 = possibleConstructorReturn(this, (_getPrototypeOf5 = getPrototypeOf(XsheetViews)).call.apply(_getPrototypeOf5, [this].concat(args)));
 
-      defineProperty(assertThisInitialized(assertThisInitialized(_this5)), "_xmlName", "sheetViews");
+      defineProperty(assertThisInitialized(assertThisInitialized(_this5)), "__name", "sheetViews");
 
       return _this5;
     }
@@ -2735,7 +2735,7 @@
       F: XsheetView,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "sheetView";
         }
@@ -2773,7 +2773,7 @@
       F: Xselection,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "selection";
         }
@@ -2811,7 +2811,7 @@
       F: Xpane,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "pane";
         }
@@ -2849,7 +2849,7 @@
       F: XsheetFormatPr,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "sheetFormatPr";
         }
@@ -2874,7 +2874,7 @@
 
       _this10 = possibleConstructorReturn(this, (_getPrototypeOf10 = getPrototypeOf(Xcols)).call.apply(_getPrototypeOf10, [this].concat(args)));
 
-      defineProperty(assertThisInitialized(assertThisInitialized(_this10)), "_xmlName", "cols");
+      defineProperty(assertThisInitialized(assertThisInitialized(_this10)), "__name", "cols");
 
       return _this10;
     }
@@ -2912,7 +2912,7 @@
       F: Xcol,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "col";
         }
@@ -2937,7 +2937,7 @@
 
       _this12 = possibleConstructorReturn(this, (_getPrototypeOf12 = getPrototypeOf(XsheetData)).call.apply(_getPrototypeOf12, [this].concat(args)));
 
-      defineProperty(assertThisInitialized(assertThisInitialized(_this12)), "_xmlName", "sheetData");
+      defineProperty(assertThisInitialized(assertThisInitialized(_this12)), "__name", "sheetData");
 
       return _this12;
     }
@@ -2975,7 +2975,7 @@
       F: Xrow,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "row";
         }
@@ -3009,7 +3009,7 @@
       F: Xc,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "c";
         }
@@ -3055,7 +3055,7 @@
       F: Xf,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "f";
         }
@@ -3093,7 +3093,7 @@
       F: XmergeCells,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "mergeCells";
         }
@@ -3131,7 +3131,7 @@
       F: XmergeCell,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "mergeCell";
         }
@@ -3169,7 +3169,7 @@
       F: XprintOptions,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "printOptions";
         }
@@ -3207,7 +3207,7 @@
       F: XpageMargins,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "pageMargins";
         }
@@ -3245,7 +3245,7 @@
       F: XpageSetup,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "pageSetup";
         }
@@ -3279,7 +3279,7 @@
       F: XheaderFooter,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "headerFooter";
         }
@@ -3875,7 +3875,7 @@
       F: Xsst,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "sst";
         }
@@ -3900,7 +3900,7 @@
 
       _this2 = possibleConstructorReturn(this, (_getPrototypeOf2 = getPrototypeOf(Xsi)).call.apply(_getPrototypeOf2, [this].concat(args)));
 
-      defineProperty(assertThisInitialized(assertThisInitialized(_this2)), "_xmlName", "si");
+      defineProperty(assertThisInitialized(assertThisInitialized(_this2)), "__name", "si");
 
       return _this2;
     }
@@ -3938,7 +3938,7 @@
       F: Xt,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "t";
         }
@@ -3963,7 +3963,7 @@
 
       _this4 = possibleConstructorReturn(this, (_getPrototypeOf4 = getPrototypeOf(Xr)).call.apply(_getPrototypeOf4, [this].concat(args)));
 
-      defineProperty(assertThisInitialized(assertThisInitialized(_this4)), "_xmlName", "r");
+      defineProperty(assertThisInitialized(assertThisInitialized(_this4)), "__name", "r");
 
       return _this4;
     }
@@ -4121,7 +4121,7 @@
       F: XRelationships,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "Relationships";
         }
@@ -4159,7 +4159,7 @@
       F: XRelationship,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "Relationship";
         }
@@ -4197,7 +4197,7 @@
       F: Xworkbook,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "workbook";
         }
@@ -4277,7 +4277,7 @@
       F: XfileVersion,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "fileVersion";
         }
@@ -4315,7 +4315,7 @@
       F: XworkbookPr,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "workbookPr";
         }
@@ -4340,7 +4340,7 @@
 
       _this6 = possibleConstructorReturn(this, (_getPrototypeOf5 = getPrototypeOf(XworkbookProtection)).call.apply(_getPrototypeOf5, [this].concat(args)));
 
-      defineProperty(assertThisInitialized(assertThisInitialized(_this6)), "_xmlName", "workbookProtection");
+      defineProperty(assertThisInitialized(assertThisInitialized(_this6)), "__name", "workbookProtection");
 
       return _this6;
     }
@@ -4365,7 +4365,7 @@
 
       _this7 = possibleConstructorReturn(this, (_getPrototypeOf6 = getPrototypeOf(XbookViews)).call.apply(_getPrototypeOf6, [this].concat(args)));
 
-      defineProperty(assertThisInitialized(assertThisInitialized(_this7)), "_xmlName", "bookViews");
+      defineProperty(assertThisInitialized(assertThisInitialized(_this7)), "__name", "bookViews");
 
       return _this7;
     }
@@ -4403,7 +4403,7 @@
       F: XworkbookView,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "workbookView";
         }
@@ -4428,7 +4428,7 @@
 
       _this9 = possibleConstructorReturn(this, (_getPrototypeOf8 = getPrototypeOf(Xsheets)).call.apply(_getPrototypeOf8, [this].concat(args)));
 
-      defineProperty(assertThisInitialized(assertThisInitialized(_this9)), "_xmlName", "sheets");
+      defineProperty(assertThisInitialized(assertThisInitialized(_this9)), "__name", "sheets");
 
       return _this9;
     }
@@ -4466,7 +4466,7 @@
       F: Xsheet,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "sheet";
         }
@@ -4504,7 +4504,7 @@
       F: XcalcPr,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "calcPr";
         }
@@ -4644,7 +4644,7 @@
       F: XTypes,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "Types";
         }
@@ -4682,7 +4682,7 @@
       F: XDefault,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "Default";
         }
@@ -4720,7 +4720,7 @@
       F: XOverride,
       d: [{
         kind: "field",
-        key: "_xmlName",
+        key: "__name",
         value: function value() {
           return "Override";
         }
