@@ -184,6 +184,6 @@ export function makeXworksheet (sheet = new Xworksheet()) {
   headerFooter.oddHeader = '&C&"Times New Roman,Regular"&12&A';
   headerFooter.oddFooter = '&C&"Times New Roman,Regular"&12Page &P';
 
-  sheet.headerFooter = headerFooter;
+  // sheet.headerFooter = headerFooter;
   return sheet;
 }
