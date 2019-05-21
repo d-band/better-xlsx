@@ -1,6 +1,6 @@
 {
   "name": "better-xlsx",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "A better xlsx lib for read / write / toTable / from Table",
   "main": "lib/index.js",
   "scripts": {
