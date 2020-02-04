@@ -142,9 +142,9 @@ class Xfont extends Node {
     if (this.family) str += `<family val="${this.family}"/>`;
     if (this.charset) str += `<charset val="${this.charset}"/>`;
     if (this.color) str += `<color rgb="${this.color}"/>`;
-    if (this.b) str += `<b/>`;
-    if (this.i) str += `<i/>`;
-    if (this.u) str += `<u/>`;
+    if (this.b) str += '<b/>';
+    if (this.i) str += '<i/>';
+    if (this.u) str += '<u/>';
     return str + '</font>';
   }
   equals (o) {

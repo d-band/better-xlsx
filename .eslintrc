@@ -10,4 +10,6 @@ rules:
   semi: [2, always]
   object-curly-spacing: [2, always]
   no-unused-expressions: 0
+  lines-between-class-members: 0
+  dot-notation: 0
   

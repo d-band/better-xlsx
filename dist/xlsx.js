@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('jszip')) :
   typeof define === 'function' && define.amd ? define(['jszip'], factory) :
   (global = global || self, global.xlsx = factory(global.JSZip));
-}(this, function (Zip) { 'use strict';
+}(this, (function (Zip) { 'use strict';
 
   Zip = Zip && Zip.hasOwnProperty('default') ? Zip['default'] : Zip;
 
@@ -22,27 +22,6 @@
   }
 
   var defineProperty = _defineProperty;
-
-  function _objectSpread(target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i] != null ? arguments[i] : {};
-      var ownKeys = Object.keys(source);
-
-      if (typeof Object.getOwnPropertySymbols === 'function') {
-        ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
-          return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-        }));
-      }
-
-      ownKeys.forEach(function (key) {
-        defineProperty(target, key, source[key]);
-      });
-    }
-
-    return target;
-  }
-
-  var objectSpread = _objectSpread;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -75,16 +54,16 @@
   }
 
   var _typeof_1 = createCommonjsModule(function (module) {
-  function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
   function _typeof(obj) {
-    if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
+    "@babel/helpers - typeof";
+
+    if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
       module.exports = _typeof = function _typeof(obj) {
-        return _typeof2(obj);
+        return typeof obj;
       };
     } else {
       module.exports = _typeof = function _typeof(obj) {
-        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
       };
     }
 
@@ -229,33 +208,52 @@
     }
 
     return function (target) {
-      var _loop = function _loop() {
-        var key = _keys[_i];
-        target.elements.push({
-          key: key,
-          kind: 'method',
-          placement: 'prototype',
-          descriptor: {
-            get: function get() {
-              if (this.attributes) {
-                return this.attributes[key];
-              }
-            },
-            set: function set(value) {
-              if (this.attributes === undefined) {
-                this.attributes = {};
-              }
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
 
-              this.attributes[key] = value;
-            },
-            configurable: true,
-            enumerable: true
+      try {
+        var _loop = function _loop() {
+          var key = _step.value;
+          target.elements.push({
+            key: key,
+            kind: 'method',
+            placement: 'prototype',
+            descriptor: {
+              get: function get() {
+                if (this.attributes) {
+                  return this.attributes[key];
+                }
+              },
+              set: function set(value) {
+                if (this.attributes === undefined) {
+                  this.attributes = {};
+                }
+
+                this.attributes[key] = value;
+              },
+              configurable: true,
+              enumerable: true
+            }
+          });
+        };
+
+        for (var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          _loop();
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
           }
-        });
-      };
-
-      for (var _i = 0, _keys = keys; _i < _keys.length; _i++) {
-        _loop();
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
       }
 
       return target;
@@ -271,8 +269,8 @@
 
       classCallCheck(this, Node);
 
-      for (var _i2 = 0, _Object$keys = Object.keys(attributes); _i2 < _Object$keys.length; _i2++) {
-        var key = _Object$keys[_i2];
+      for (var _i = 0, _Object$keys = Object.keys(attributes); _i < _Object$keys.length; _i++) {
+        var key = _Object$keys[_i];
         this[key] = attributes[key];
       }
 
@@ -295,8 +293,8 @@
 
           tokens.push("<".concat(name));
 
-          for (var _i3 = 0, _Object$keys2 = Object.keys(attributes || {}); _i3 < _Object$keys2.length; _i3++) {
-            var key = _Object$keys2[_i3];
+          for (var _i2 = 0, _Object$keys2 = Object.keys(attributes || {}); _i2 < _Object$keys2.length; _i2++) {
+            var key = _Object$keys2[_i2];
             var v = attributes[key];
             if (v === undefined) continue;
 
@@ -317,13 +315,13 @@
           }
 
           tokens.push('>');
-          var _iteratorNormalCompletion = true;
-          var _didIteratorError = false;
-          var _iteratorError = undefined;
+          var _iteratorNormalCompletion2 = true;
+          var _didIteratorError2 = false;
+          var _iteratorError2 = undefined;
 
           try {
-            for (var _iterator = children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-              var child = _step.value;
+            for (var _iterator2 = children[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+              var child = _step2.value;
 
               if (child instanceof Node) {
                 tokens.push(child.render());
@@ -334,16 +332,16 @@
               }
             }
           } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
           } finally {
             try {
-              if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-                _iterator["return"]();
+              if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+                _iterator2["return"]();
               }
             } finally {
-              if (_didIteratorError) {
-                throw _iteratorError;
+              if (_didIteratorError2) {
+                throw _iteratorError2;
               }
             }
           }
@@ -481,6 +479,7 @@
   }
 
   var lib = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     NumFmt: NumFmt,
     NumFmtInv: NumFmtInv,
     NumFmtsCount: NumFmtsCount,
@@ -489,6 +488,10 @@
     cid2coord: cid2coord,
     toExcelTime: toExcelTime
   });
+
+  function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+  function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
   function _decorate(decorators, factory, superClass, mixins) { var api = _getDecoratorsApi(); if (mixins) { for (var i = 0; i < mixins.length; i++) { api = mixins[i](api); } } var r = factory(function initialize(O) { api.initializeInstanceElements(O, decorated.elements); }, superClass); var decorated = api.decorateClass(_coalesceClassElements(r.d.map(_createElementDescriptor)), decorators); api.initializeClassElements(r.F, decorated.elements); return api.runClassFinishers(r.F, decorated.finishers); }
 
@@ -942,9 +945,9 @@
           if (this.family) str += "<family val=\"".concat(this.family, "\"/>");
           if (this.charset) str += "<charset val=\"".concat(this.charset, "\"/>");
           if (this.color) str += "<color rgb=\"".concat(this.color, "\"/>");
-          if (this.b) str += "<b/>";
-          if (this.i) str += "<i/>";
-          if (this.u) str += "<u/>";
+          if (this.b) str += '<b/>';
+          if (this.i) str += '<i/>';
+          if (this.u) str += '<u/>';
           return str + '</font>';
         }
       }, {
@@ -1419,7 +1422,7 @@
           fontId: 0,
           numFmtId: 0
         };
-        _this15 = possibleConstructorReturn(this, getPrototypeOf(Xxf).call(this, objectSpread({}, defaults, attrs), children));
+        _this15 = possibleConstructorReturn(this, getPrototypeOf(Xxf).call(this, _objectSpread({}, defaults, {}, attrs), children));
 
         _initialize15(assertThisInitialized(_this15));
 
@@ -1478,7 +1481,7 @@
           vertical: 'bottom',
           wrapText: false
         };
-        _this16 = possibleConstructorReturn(this, getPrototypeOf(Xalignment).call(this, objectSpread({}, defaults, attrs), children));
+        _this16 = possibleConstructorReturn(this, getPrototypeOf(Xalignment).call(this, _objectSpread({}, defaults, {}, attrs), children));
 
         _initialize16(assertThisInitialized(_this16));
 
@@ -1851,6 +1854,7 @@
   };
 
   var style = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     handleStyle: handleStyle,
     handleNumFmtId: handleNumFmtId,
     Style: Style,
@@ -1928,7 +1932,7 @@
   };
 
   function ctorName(val) {
-    return val.constructor ? val.constructor.name : null;
+    return typeof val.constructor === 'function' ? val.constructor.name : null;
   }
 
   function isArray(val) {
@@ -2221,6 +2225,7 @@
   }();
 
   var cell = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     CellType: CellType,
     Cell: Cell
   });
@@ -2291,6 +2296,7 @@
   }();
 
   var col = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     Col: Col
   });
 
@@ -2359,6 +2365,7 @@
   }();
 
   var row = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     Row: Row
   });
 
@@ -3727,6 +3734,7 @@
   }();
 
   var sheet = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     Sheet: Sheet
   });
 
@@ -4746,13 +4754,17 @@
   }();
 
   var file = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     File: File
   });
 
-  var index = objectSpread({}, cell, col, file, lib, row, sheet, style, {
+  function ownKeys$1(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+  function _objectSpread$1(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$1(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$1(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+  var index = _objectSpread$1({}, cell, {}, col, {}, file, {}, lib, {}, row, {}, sheet, {}, style, {
     Zip: Zip
   });
 
   return index;
 
-}));
+})));
