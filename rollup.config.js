@@ -24,7 +24,13 @@ export default {
         ['@babel/preset-env', { modules: false }]
       ],
       plugins: [
-        require('./constructor-name'),
+        ['class-properties', {
+          superClasses: ['Node'],
+          props: [{
+            key: 'name',
+            static: true
+          }]
+        }],
         ['@babel/plugin-proposal-decorators', { decoratorsBeforeExport: false }],
         '@babel/plugin-proposal-class-properties',
         '@babel/plugin-external-helpers',

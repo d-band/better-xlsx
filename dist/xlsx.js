@@ -543,9 +543,10 @@
       F: XstyleSheet,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "styleSheet";
+          return "XstyleSheet";
         }
       }, {
         kind: "field",
@@ -803,9 +804,10 @@
       F: XnumFmts,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "numFmts";
+          return "XnumFmts";
         }
       }, {
         kind: "method",
@@ -848,9 +850,10 @@
       F: XnumFmt,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "numFmt";
+          return "XnumFmt";
         }
       }]
     };
@@ -886,9 +889,10 @@
       F: Xfonts,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "fonts";
+          return "Xfonts";
         }
       }, {
         kind: "method",
@@ -931,9 +935,10 @@
       F: Xfont,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "font";
+          return "Xfont";
         }
       }, {
         kind: "method",
@@ -990,9 +995,10 @@
       F: Xfills,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "fills";
+          return "Xfills";
         }
       }, {
         kind: "method",
@@ -1035,9 +1041,10 @@
       F: Xfill,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "fill";
+          return "Xfill";
         }
       }, {
         kind: "method",
@@ -1092,9 +1099,10 @@
       F: XpatternFill,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "patternFill";
+          return "XpatternFill";
         }
       }, {
         kind: "method",
@@ -1139,9 +1147,10 @@
       F: Xborders,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "borders";
+          return "Xborders";
         }
       }, {
         kind: "method",
@@ -1184,9 +1193,10 @@
       F: Xborder,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "border";
+          return "Xborder";
         }
       }, {
         kind: "method",
@@ -1257,9 +1267,10 @@
       F: XcellStyles,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "cellStyles";
+          return "XcellStyles";
         }
       }, {
         kind: "method",
@@ -1302,9 +1313,10 @@
       F: XcellStyle,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "cellStyle";
+          return "XcellStyle";
         }
       }]
     };
@@ -1340,9 +1352,10 @@
       F: XcellStyleXfs,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "cellStyleXfs";
+          return "XcellStyleXfs";
         }
       }, {
         kind: "method",
@@ -1385,9 +1398,10 @@
       F: XcellXfs,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "cellXfs";
+          return "XcellXfs";
         }
       }, {
         kind: "method",
@@ -1437,9 +1451,10 @@
       F: Xxf,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "xf";
+          return "Xxf";
         }
       }, {
         kind: "method",
@@ -1495,9 +1510,10 @@
       F: Xalignment,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "alignment";
+          return "Xalignment";
         }
       }, {
         kind: "method",
@@ -2419,9 +2435,10 @@
       F: Xworksheet,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "worksheet";
+          return "Xworksheet";
         }
       }, {
         kind: "field",
@@ -2541,9 +2558,10 @@
       F: XsheetPr,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "sheetPr";
+          return "XsheetPr";
         }
       }]
     };
@@ -2579,9 +2597,10 @@
       F: XpageSetUpPr,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "pageSetUpPr";
+          return "XpageSetUpPr";
         }
       }]
     };
@@ -2617,9 +2636,10 @@
       F: Xdimension,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "dimension";
+          return "Xdimension";
         }
       }]
     };
@@ -2630,25 +2650,16 @@
     inherits(XsheetViews, _Node9);
 
     function XsheetViews() {
-      var _getPrototypeOf5;
-
-      var _this5;
-
       classCallCheck(this, XsheetViews);
 
-      for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-        args[_key4] = arguments[_key4];
-      }
-
-      _this5 = possibleConstructorReturn(this, (_getPrototypeOf5 = getPrototypeOf(XsheetViews)).call.apply(_getPrototypeOf5, [this].concat(args)));
-
-      defineProperty(assertThisInitialized(_this5), "__name", "sheetViews");
-
-      return _this5;
+      return possibleConstructorReturn(this, getPrototypeOf(XsheetViews).apply(this, arguments));
     }
 
     return XsheetViews;
   }(Node);
+
+  defineProperty(XsheetViews, "name", "XsheetViews");
+
   var XsheetView = _decorate$1([props('windowProtection', 'showFormulas', 'showGridLines', 'showRowColHeaders', 'showZeros', 'rightToLeft', 'tabSelected', 'showOutlineSymbols', 'defaultGridColor', 'view', 'topLeftCell', 'colorId', 'zoomScale', 'zoomScaleNormal', 'zoomScalePageLayoutView', 'workbookViewId')], function (_initialize5, _Node10) {
     var XsheetView =
     /*#__PURE__*/
@@ -2656,21 +2667,21 @@
       inherits(XsheetView, _Node11);
 
       function XsheetView() {
-        var _getPrototypeOf6;
+        var _getPrototypeOf5;
 
-        var _this6;
+        var _this5;
 
         classCallCheck(this, XsheetView);
 
-        for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-          args[_key5] = arguments[_key5];
+        for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          args[_key4] = arguments[_key4];
         }
 
-        _this6 = possibleConstructorReturn(this, (_getPrototypeOf6 = getPrototypeOf(XsheetView)).call.apply(_getPrototypeOf6, [this].concat(args)));
+        _this5 = possibleConstructorReturn(this, (_getPrototypeOf5 = getPrototypeOf(XsheetView)).call.apply(_getPrototypeOf5, [this].concat(args)));
 
-        _initialize5(assertThisInitialized(_this6));
+        _initialize5(assertThisInitialized(_this5));
 
-        return _this6;
+        return _this5;
       }
 
       return XsheetView;
@@ -2680,9 +2691,10 @@
       F: XsheetView,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "sheetView";
+          return "XsheetView";
         }
       }]
     };
@@ -2694,21 +2706,21 @@
       inherits(Xselection, _Node13);
 
       function Xselection() {
-        var _getPrototypeOf7;
+        var _getPrototypeOf6;
 
-        var _this7;
+        var _this6;
 
         classCallCheck(this, Xselection);
 
-        for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-          args[_key6] = arguments[_key6];
+        for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+          args[_key5] = arguments[_key5];
         }
 
-        _this7 = possibleConstructorReturn(this, (_getPrototypeOf7 = getPrototypeOf(Xselection)).call.apply(_getPrototypeOf7, [this].concat(args)));
+        _this6 = possibleConstructorReturn(this, (_getPrototypeOf6 = getPrototypeOf(Xselection)).call.apply(_getPrototypeOf6, [this].concat(args)));
 
-        _initialize6(assertThisInitialized(_this7));
+        _initialize6(assertThisInitialized(_this6));
 
-        return _this7;
+        return _this6;
       }
 
       return Xselection;
@@ -2718,9 +2730,10 @@
       F: Xselection,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "selection";
+          return "Xselection";
         }
       }]
     };
@@ -2732,21 +2745,21 @@
       inherits(Xpane, _Node15);
 
       function Xpane() {
-        var _getPrototypeOf8;
+        var _getPrototypeOf7;
 
-        var _this8;
+        var _this7;
 
         classCallCheck(this, Xpane);
 
-        for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
-          args[_key7] = arguments[_key7];
+        for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+          args[_key6] = arguments[_key6];
         }
 
-        _this8 = possibleConstructorReturn(this, (_getPrototypeOf8 = getPrototypeOf(Xpane)).call.apply(_getPrototypeOf8, [this].concat(args)));
+        _this7 = possibleConstructorReturn(this, (_getPrototypeOf7 = getPrototypeOf(Xpane)).call.apply(_getPrototypeOf7, [this].concat(args)));
 
-        _initialize7(assertThisInitialized(_this8));
+        _initialize7(assertThisInitialized(_this7));
 
-        return _this8;
+        return _this7;
       }
 
       return Xpane;
@@ -2756,9 +2769,10 @@
       F: Xpane,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "pane";
+          return "Xpane";
         }
       }]
     };
@@ -2770,21 +2784,21 @@
       inherits(XsheetFormatPr, _Node17);
 
       function XsheetFormatPr() {
-        var _getPrototypeOf9;
+        var _getPrototypeOf8;
 
-        var _this9;
+        var _this8;
 
         classCallCheck(this, XsheetFormatPr);
 
-        for (var _len8 = arguments.length, args = new Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
-          args[_key8] = arguments[_key8];
+        for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+          args[_key7] = arguments[_key7];
         }
 
-        _this9 = possibleConstructorReturn(this, (_getPrototypeOf9 = getPrototypeOf(XsheetFormatPr)).call.apply(_getPrototypeOf9, [this].concat(args)));
+        _this8 = possibleConstructorReturn(this, (_getPrototypeOf8 = getPrototypeOf(XsheetFormatPr)).call.apply(_getPrototypeOf8, [this].concat(args)));
 
-        _initialize8(assertThisInitialized(_this9));
+        _initialize8(assertThisInitialized(_this8));
 
-        return _this9;
+        return _this8;
       }
 
       return XsheetFormatPr;
@@ -2794,9 +2808,10 @@
       F: XsheetFormatPr,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "sheetFormatPr";
+          return "XsheetFormatPr";
         }
       }]
     };
@@ -2807,25 +2822,16 @@
     inherits(Xcols, _Node18);
 
     function Xcols() {
-      var _getPrototypeOf10;
-
-      var _this10;
-
       classCallCheck(this, Xcols);
 
-      for (var _len9 = arguments.length, args = new Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
-        args[_key9] = arguments[_key9];
-      }
-
-      _this10 = possibleConstructorReturn(this, (_getPrototypeOf10 = getPrototypeOf(Xcols)).call.apply(_getPrototypeOf10, [this].concat(args)));
-
-      defineProperty(assertThisInitialized(_this10), "__name", "cols");
-
-      return _this10;
+      return possibleConstructorReturn(this, getPrototypeOf(Xcols).apply(this, arguments));
     }
 
     return Xcols;
   }(Node);
+
+  defineProperty(Xcols, "name", "Xcols");
+
   var Xcol = _decorate$1([props('collapsed', 'hidden', 'max', 'min', 'style', 'width', 'customWidth', 'outlineLevel')], function (_initialize9, _Node19) {
     var Xcol =
     /*#__PURE__*/
@@ -2833,21 +2839,21 @@
       inherits(Xcol, _Node20);
 
       function Xcol() {
-        var _getPrototypeOf11;
+        var _getPrototypeOf9;
 
-        var _this11;
+        var _this9;
 
         classCallCheck(this, Xcol);
 
-        for (var _len10 = arguments.length, args = new Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
-          args[_key10] = arguments[_key10];
+        for (var _len8 = arguments.length, args = new Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
+          args[_key8] = arguments[_key8];
         }
 
-        _this11 = possibleConstructorReturn(this, (_getPrototypeOf11 = getPrototypeOf(Xcol)).call.apply(_getPrototypeOf11, [this].concat(args)));
+        _this9 = possibleConstructorReturn(this, (_getPrototypeOf9 = getPrototypeOf(Xcol)).call.apply(_getPrototypeOf9, [this].concat(args)));
 
-        _initialize9(assertThisInitialized(_this11));
+        _initialize9(assertThisInitialized(_this9));
 
-        return _this11;
+        return _this9;
       }
 
       return Xcol;
@@ -2857,9 +2863,10 @@
       F: Xcol,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "col";
+          return "Xcol";
         }
       }]
     };
@@ -2870,25 +2877,16 @@
     inherits(XsheetData, _Node21);
 
     function XsheetData() {
-      var _getPrototypeOf12;
-
-      var _this12;
-
       classCallCheck(this, XsheetData);
 
-      for (var _len11 = arguments.length, args = new Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
-        args[_key11] = arguments[_key11];
-      }
-
-      _this12 = possibleConstructorReturn(this, (_getPrototypeOf12 = getPrototypeOf(XsheetData)).call.apply(_getPrototypeOf12, [this].concat(args)));
-
-      defineProperty(assertThisInitialized(_this12), "__name", "sheetData");
-
-      return _this12;
+      return possibleConstructorReturn(this, getPrototypeOf(XsheetData).apply(this, arguments));
     }
 
     return XsheetData;
   }(Node);
+
+  defineProperty(XsheetData, "name", "XsheetData");
+
   var Xrow = _decorate$1([props('r', 'spans', 'hidden', 'ht', 'customHeight', 'outlineLevel')], function (_initialize10, _Node22) {
     var Xrow =
     /*#__PURE__*/
@@ -2896,21 +2894,21 @@
       inherits(Xrow, _Node23);
 
       function Xrow() {
-        var _getPrototypeOf13;
+        var _getPrototypeOf10;
 
-        var _this13;
+        var _this10;
 
         classCallCheck(this, Xrow);
 
-        for (var _len12 = arguments.length, args = new Array(_len12), _key12 = 0; _key12 < _len12; _key12++) {
-          args[_key12] = arguments[_key12];
+        for (var _len9 = arguments.length, args = new Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
+          args[_key9] = arguments[_key9];
         }
 
-        _this13 = possibleConstructorReturn(this, (_getPrototypeOf13 = getPrototypeOf(Xrow)).call.apply(_getPrototypeOf13, [this].concat(args)));
+        _this10 = possibleConstructorReturn(this, (_getPrototypeOf10 = getPrototypeOf(Xrow)).call.apply(_getPrototypeOf10, [this].concat(args)));
 
-        _initialize10(assertThisInitialized(_this13));
+        _initialize10(assertThisInitialized(_this10));
 
-        return _this13;
+        return _this10;
       }
 
       return Xrow;
@@ -2920,9 +2918,10 @@
       F: Xrow,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "row";
+          return "Xrow";
         }
       }]
     };
@@ -2934,17 +2933,17 @@
       inherits(Xc, _Node25);
 
       function Xc(attrs, children) {
-        var _this14;
+        var _this11;
 
         classCallCheck(this, Xc);
 
-        _this14 = possibleConstructorReturn(this, getPrototypeOf(Xc).call(this, attrs, children));
+        _this11 = possibleConstructorReturn(this, getPrototypeOf(Xc).call(this, attrs, children));
 
-        _initialize11(assertThisInitialized(_this14));
+        _initialize11(assertThisInitialized(_this11));
 
-        _this14.f = null;
-        _this14.v = null;
-        return _this14;
+        _this11.f = null;
+        _this11.v = null;
+        return _this11;
       }
 
       return Xc;
@@ -2954,9 +2953,10 @@
       F: Xc,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "c";
+          return "Xc";
         }
       }, {
         kind: "method",
@@ -2976,21 +2976,21 @@
       inherits(Xf, _Node27);
 
       function Xf() {
-        var _getPrototypeOf14;
+        var _getPrototypeOf11;
 
-        var _this15;
+        var _this12;
 
         classCallCheck(this, Xf);
 
-        for (var _len13 = arguments.length, args = new Array(_len13), _key13 = 0; _key13 < _len13; _key13++) {
-          args[_key13] = arguments[_key13];
+        for (var _len10 = arguments.length, args = new Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
+          args[_key10] = arguments[_key10];
         }
 
-        _this15 = possibleConstructorReturn(this, (_getPrototypeOf14 = getPrototypeOf(Xf)).call.apply(_getPrototypeOf14, [this].concat(args)));
+        _this12 = possibleConstructorReturn(this, (_getPrototypeOf11 = getPrototypeOf(Xf)).call.apply(_getPrototypeOf11, [this].concat(args)));
 
-        _initialize12(assertThisInitialized(_this15));
+        _initialize12(assertThisInitialized(_this12));
 
-        return _this15;
+        return _this12;
       }
 
       return Xf;
@@ -3000,9 +3000,10 @@
       F: Xf,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "f";
+          return "Xf";
         }
       }]
     };
@@ -3014,21 +3015,21 @@
       inherits(XmergeCells, _Node29);
 
       function XmergeCells() {
-        var _getPrototypeOf15;
+        var _getPrototypeOf12;
 
-        var _this16;
+        var _this13;
 
         classCallCheck(this, XmergeCells);
 
-        for (var _len14 = arguments.length, args = new Array(_len14), _key14 = 0; _key14 < _len14; _key14++) {
-          args[_key14] = arguments[_key14];
+        for (var _len11 = arguments.length, args = new Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
+          args[_key11] = arguments[_key11];
         }
 
-        _this16 = possibleConstructorReturn(this, (_getPrototypeOf15 = getPrototypeOf(XmergeCells)).call.apply(_getPrototypeOf15, [this].concat(args)));
+        _this13 = possibleConstructorReturn(this, (_getPrototypeOf12 = getPrototypeOf(XmergeCells)).call.apply(_getPrototypeOf12, [this].concat(args)));
 
-        _initialize13(assertThisInitialized(_this16));
+        _initialize13(assertThisInitialized(_this13));
 
-        return _this16;
+        return _this13;
       }
 
       return XmergeCells;
@@ -3038,9 +3039,10 @@
       F: XmergeCells,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "mergeCells";
+          return "XmergeCells";
         }
       }]
     };
@@ -3052,21 +3054,21 @@
       inherits(XmergeCell, _Node31);
 
       function XmergeCell() {
-        var _getPrototypeOf16;
+        var _getPrototypeOf13;
 
-        var _this17;
+        var _this14;
 
         classCallCheck(this, XmergeCell);
 
-        for (var _len15 = arguments.length, args = new Array(_len15), _key15 = 0; _key15 < _len15; _key15++) {
-          args[_key15] = arguments[_key15];
+        for (var _len12 = arguments.length, args = new Array(_len12), _key12 = 0; _key12 < _len12; _key12++) {
+          args[_key12] = arguments[_key12];
         }
 
-        _this17 = possibleConstructorReturn(this, (_getPrototypeOf16 = getPrototypeOf(XmergeCell)).call.apply(_getPrototypeOf16, [this].concat(args)));
+        _this14 = possibleConstructorReturn(this, (_getPrototypeOf13 = getPrototypeOf(XmergeCell)).call.apply(_getPrototypeOf13, [this].concat(args)));
 
-        _initialize14(assertThisInitialized(_this17));
+        _initialize14(assertThisInitialized(_this14));
 
-        return _this17;
+        return _this14;
       }
 
       return XmergeCell;
@@ -3076,9 +3078,10 @@
       F: XmergeCell,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "mergeCell";
+          return "XmergeCell";
         }
       }]
     };
@@ -3090,21 +3093,21 @@
       inherits(XprintOptions, _Node33);
 
       function XprintOptions() {
-        var _getPrototypeOf17;
+        var _getPrototypeOf14;
 
-        var _this18;
+        var _this15;
 
         classCallCheck(this, XprintOptions);
 
-        for (var _len16 = arguments.length, args = new Array(_len16), _key16 = 0; _key16 < _len16; _key16++) {
-          args[_key16] = arguments[_key16];
+        for (var _len13 = arguments.length, args = new Array(_len13), _key13 = 0; _key13 < _len13; _key13++) {
+          args[_key13] = arguments[_key13];
         }
 
-        _this18 = possibleConstructorReturn(this, (_getPrototypeOf17 = getPrototypeOf(XprintOptions)).call.apply(_getPrototypeOf17, [this].concat(args)));
+        _this15 = possibleConstructorReturn(this, (_getPrototypeOf14 = getPrototypeOf(XprintOptions)).call.apply(_getPrototypeOf14, [this].concat(args)));
 
-        _initialize15(assertThisInitialized(_this18));
+        _initialize15(assertThisInitialized(_this15));
 
-        return _this18;
+        return _this15;
       }
 
       return XprintOptions;
@@ -3114,9 +3117,10 @@
       F: XprintOptions,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "printOptions";
+          return "XprintOptions";
         }
       }]
     };
@@ -3128,21 +3132,21 @@
       inherits(XpageMargins, _Node35);
 
       function XpageMargins() {
-        var _getPrototypeOf18;
+        var _getPrototypeOf15;
 
-        var _this19;
+        var _this16;
 
         classCallCheck(this, XpageMargins);
 
-        for (var _len17 = arguments.length, args = new Array(_len17), _key17 = 0; _key17 < _len17; _key17++) {
-          args[_key17] = arguments[_key17];
+        for (var _len14 = arguments.length, args = new Array(_len14), _key14 = 0; _key14 < _len14; _key14++) {
+          args[_key14] = arguments[_key14];
         }
 
-        _this19 = possibleConstructorReturn(this, (_getPrototypeOf18 = getPrototypeOf(XpageMargins)).call.apply(_getPrototypeOf18, [this].concat(args)));
+        _this16 = possibleConstructorReturn(this, (_getPrototypeOf15 = getPrototypeOf(XpageMargins)).call.apply(_getPrototypeOf15, [this].concat(args)));
 
-        _initialize16(assertThisInitialized(_this19));
+        _initialize16(assertThisInitialized(_this16));
 
-        return _this19;
+        return _this16;
       }
 
       return XpageMargins;
@@ -3152,9 +3156,10 @@
       F: XpageMargins,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "pageMargins";
+          return "XpageMargins";
         }
       }]
     };
@@ -3166,21 +3171,21 @@
       inherits(XpageSetup, _Node37);
 
       function XpageSetup() {
-        var _getPrototypeOf19;
+        var _getPrototypeOf16;
 
-        var _this20;
+        var _this17;
 
         classCallCheck(this, XpageSetup);
 
-        for (var _len18 = arguments.length, args = new Array(_len18), _key18 = 0; _key18 < _len18; _key18++) {
-          args[_key18] = arguments[_key18];
+        for (var _len15 = arguments.length, args = new Array(_len15), _key15 = 0; _key15 < _len15; _key15++) {
+          args[_key15] = arguments[_key15];
         }
 
-        _this20 = possibleConstructorReturn(this, (_getPrototypeOf19 = getPrototypeOf(XpageSetup)).call.apply(_getPrototypeOf19, [this].concat(args)));
+        _this17 = possibleConstructorReturn(this, (_getPrototypeOf16 = getPrototypeOf(XpageSetup)).call.apply(_getPrototypeOf16, [this].concat(args)));
 
-        _initialize17(assertThisInitialized(_this20));
+        _initialize17(assertThisInitialized(_this17));
 
-        return _this20;
+        return _this17;
       }
 
       return XpageSetup;
@@ -3190,9 +3195,10 @@
       F: XpageSetup,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "pageSetup";
+          return "XpageSetup";
         }
       }]
     };
@@ -3204,17 +3210,17 @@
       inherits(XheaderFooter, _Node39);
 
       function XheaderFooter(attrs, children) {
-        var _this21;
+        var _this18;
 
         classCallCheck(this, XheaderFooter);
 
-        _this21 = possibleConstructorReturn(this, getPrototypeOf(XheaderFooter).call(this, attrs, children));
+        _this18 = possibleConstructorReturn(this, getPrototypeOf(XheaderFooter).call(this, attrs, children));
 
-        _initialize18(assertThisInitialized(_this21));
+        _initialize18(assertThisInitialized(_this18));
 
-        _this21.oddHeader = null;
-        _this21.oddFooter = null;
-        return _this21;
+        _this18.oddHeader = null;
+        _this18.oddFooter = null;
+        return _this18;
       }
 
       return XheaderFooter;
@@ -3224,9 +3230,10 @@
       F: XheaderFooter,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "headerFooter";
+          return "XheaderFooter";
         }
       }, {
         kind: "method",
@@ -3793,9 +3800,10 @@
       F: Xsst,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "sst";
+          return "Xsst";
         }
       }]
     };
@@ -3806,25 +3814,16 @@
     inherits(Xsi, _Node3);
 
     function Xsi() {
-      var _getPrototypeOf2;
-
-      var _this2;
-
       classCallCheck(this, Xsi);
 
-      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-
-      _this2 = possibleConstructorReturn(this, (_getPrototypeOf2 = getPrototypeOf(Xsi)).call.apply(_getPrototypeOf2, [this].concat(args)));
-
-      defineProperty(assertThisInitialized(_this2), "__name", "si");
-
-      return _this2;
+      return possibleConstructorReturn(this, getPrototypeOf(Xsi).apply(this, arguments));
     }
 
     return Xsi;
   }(Node);
+
+  defineProperty(Xsi, "name", "Xsi");
+
   var Xt = _decorate$2([props('xml:space')], function (_initialize2, _Node4) {
     var Xt =
     /*#__PURE__*/
@@ -3832,21 +3831,21 @@
       inherits(Xt, _Node5);
 
       function Xt() {
-        var _getPrototypeOf3;
+        var _getPrototypeOf2;
 
-        var _this3;
+        var _this2;
 
         classCallCheck(this, Xt);
 
-        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-          args[_key2] = arguments[_key2];
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
         }
 
-        _this3 = possibleConstructorReturn(this, (_getPrototypeOf3 = getPrototypeOf(Xt)).call.apply(_getPrototypeOf3, [this].concat(args)));
+        _this2 = possibleConstructorReturn(this, (_getPrototypeOf2 = getPrototypeOf(Xt)).call.apply(_getPrototypeOf2, [this].concat(args)));
 
-        _initialize2(assertThisInitialized(_this3));
+        _initialize2(assertThisInitialized(_this2));
 
-        return _this3;
+        return _this2;
       }
 
       return Xt;
@@ -3856,13 +3855,29 @@
       F: Xt,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "t";
+          return "Xt";
         }
       }]
     };
   }, Node);
+  var Xr =
+  /*#__PURE__*/
+  function (_Node6) {
+    inherits(Xr, _Node6);
+
+    function Xr() {
+      classCallCheck(this, Xr);
+
+      return possibleConstructorReturn(this, getPrototypeOf(Xr).apply(this, arguments));
+    }
+
+    return Xr;
+  }(Node);
+
+  defineProperty(Xr, "name", "Xr");
 
   var RefTable =
   /*#__PURE__*/
@@ -3986,9 +4001,10 @@
       F: XRelationships,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "Relationships";
+          return "XRelationships";
         }
       }]
     };
@@ -4024,9 +4040,10 @@
       F: XRelationship,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "Relationship";
+          return "XRelationship";
         }
       }]
     };
@@ -4062,9 +4079,10 @@
       F: Xworkbook,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "workbook";
+          return "Xworkbook";
         }
       }, {
         kind: "field",
@@ -4142,9 +4160,10 @@
       F: XfileVersion,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "fileVersion";
+          return "XfileVersion";
         }
       }]
     };
@@ -4180,38 +4199,46 @@
       F: XworkbookPr,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "workbookPr";
+          return "XworkbookPr";
         }
       }]
     };
   }, Node);
+  var XworkbookProtection =
+  /*#__PURE__*/
+  function (_Node11) {
+    inherits(XworkbookProtection, _Node11);
+
+    function XworkbookProtection() {
+      classCallCheck(this, XworkbookProtection);
+
+      return possibleConstructorReturn(this, getPrototypeOf(XworkbookProtection).apply(this, arguments));
+    }
+
+    return XworkbookProtection;
+  }(Node);
+
+  defineProperty(XworkbookProtection, "name", "XworkbookProtection");
+
   var XbookViews =
   /*#__PURE__*/
   function (_Node12) {
     inherits(XbookViews, _Node12);
 
     function XbookViews() {
-      var _getPrototypeOf6;
-
-      var _this7;
-
       classCallCheck(this, XbookViews);
 
-      for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-        args[_key5] = arguments[_key5];
-      }
-
-      _this7 = possibleConstructorReturn(this, (_getPrototypeOf6 = getPrototypeOf(XbookViews)).call.apply(_getPrototypeOf6, [this].concat(args)));
-
-      defineProperty(assertThisInitialized(_this7), "__name", "bookViews");
-
-      return _this7;
+      return possibleConstructorReturn(this, getPrototypeOf(XbookViews).apply(this, arguments));
     }
 
     return XbookViews;
   }(Node);
+
+  defineProperty(XbookViews, "name", "XbookViews");
+
   var XworkbookView = _decorate$3([props('activeTab', 'firstSheet', 'showHorizontalScroll', 'showVerticalScroll', 'showSheetTabs', 'tabRatio', 'windowHeight', 'windowWidth', 'xWindow', 'yWindow')], function (_initialize6, _Node13) {
     var XworkbookView =
     /*#__PURE__*/
@@ -4219,21 +4246,21 @@
       inherits(XworkbookView, _Node14);
 
       function XworkbookView() {
-        var _getPrototypeOf7;
+        var _getPrototypeOf5;
 
-        var _this8;
+        var _this6;
 
         classCallCheck(this, XworkbookView);
 
-        for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-          args[_key6] = arguments[_key6];
+        for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          args[_key4] = arguments[_key4];
         }
 
-        _this8 = possibleConstructorReturn(this, (_getPrototypeOf7 = getPrototypeOf(XworkbookView)).call.apply(_getPrototypeOf7, [this].concat(args)));
+        _this6 = possibleConstructorReturn(this, (_getPrototypeOf5 = getPrototypeOf(XworkbookView)).call.apply(_getPrototypeOf5, [this].concat(args)));
 
-        _initialize6(assertThisInitialized(_this8));
+        _initialize6(assertThisInitialized(_this6));
 
-        return _this8;
+        return _this6;
       }
 
       return XworkbookView;
@@ -4243,9 +4270,10 @@
       F: XworkbookView,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "workbookView";
+          return "XworkbookView";
         }
       }]
     };
@@ -4256,25 +4284,16 @@
     inherits(Xsheets, _Node15);
 
     function Xsheets() {
-      var _getPrototypeOf8;
-
-      var _this9;
-
       classCallCheck(this, Xsheets);
 
-      for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
-        args[_key7] = arguments[_key7];
-      }
-
-      _this9 = possibleConstructorReturn(this, (_getPrototypeOf8 = getPrototypeOf(Xsheets)).call.apply(_getPrototypeOf8, [this].concat(args)));
-
-      defineProperty(assertThisInitialized(_this9), "__name", "sheets");
-
-      return _this9;
+      return possibleConstructorReturn(this, getPrototypeOf(Xsheets).apply(this, arguments));
     }
 
     return Xsheets;
   }(Node);
+
+  defineProperty(Xsheets, "name", "Xsheets");
+
   var Xsheet = _decorate$3([props('name', 'sheetId', 'r:id', 'state')], function (_initialize7, _Node16) {
     var Xsheet =
     /*#__PURE__*/
@@ -4282,21 +4301,21 @@
       inherits(Xsheet, _Node17);
 
       function Xsheet() {
-        var _getPrototypeOf9;
+        var _getPrototypeOf6;
 
-        var _this10;
+        var _this7;
 
         classCallCheck(this, Xsheet);
 
-        for (var _len8 = arguments.length, args = new Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
-          args[_key8] = arguments[_key8];
+        for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+          args[_key5] = arguments[_key5];
         }
 
-        _this10 = possibleConstructorReturn(this, (_getPrototypeOf9 = getPrototypeOf(Xsheet)).call.apply(_getPrototypeOf9, [this].concat(args)));
+        _this7 = possibleConstructorReturn(this, (_getPrototypeOf6 = getPrototypeOf(Xsheet)).call.apply(_getPrototypeOf6, [this].concat(args)));
 
-        _initialize7(assertThisInitialized(_this10));
+        _initialize7(assertThisInitialized(_this7));
 
-        return _this10;
+        return _this7;
       }
 
       return Xsheet;
@@ -4306,9 +4325,10 @@
       F: Xsheet,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "sheet";
+          return "Xsheet";
         }
       }]
     };
@@ -4320,21 +4340,21 @@
       inherits(XcalcPr, _Node19);
 
       function XcalcPr() {
-        var _getPrototypeOf10;
+        var _getPrototypeOf7;
 
-        var _this11;
+        var _this8;
 
         classCallCheck(this, XcalcPr);
 
-        for (var _len9 = arguments.length, args = new Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
-          args[_key9] = arguments[_key9];
+        for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+          args[_key6] = arguments[_key6];
         }
 
-        _this11 = possibleConstructorReturn(this, (_getPrototypeOf10 = getPrototypeOf(XcalcPr)).call.apply(_getPrototypeOf10, [this].concat(args)));
+        _this8 = possibleConstructorReturn(this, (_getPrototypeOf7 = getPrototypeOf(XcalcPr)).call.apply(_getPrototypeOf7, [this].concat(args)));
 
-        _initialize8(assertThisInitialized(_this11));
+        _initialize8(assertThisInitialized(_this8));
 
-        return _this11;
+        return _this8;
       }
 
       return XcalcPr;
@@ -4344,9 +4364,10 @@
       F: XcalcPr,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "calcPr";
+          return "XcalcPr";
         }
       }]
     };
@@ -4456,9 +4477,10 @@
       F: XTypes,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "Types";
+          return "XTypes";
         }
       }]
     };
@@ -4494,9 +4516,10 @@
       F: XDefault,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "Default";
+          return "XDefault";
         }
       }]
     };
@@ -4532,9 +4555,10 @@
       F: XOverride,
       d: [{
         kind: "field",
-        key: "__name",
+        "static": true,
+        key: "name",
         value: function value() {
-          return "Override";
+          return "XOverride";
         }
       }]
     };
