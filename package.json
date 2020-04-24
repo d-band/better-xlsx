@@ -44,7 +44,7 @@
     "babel-plugin-class-properties": "^1.0.0",
     "babel-plugin-istanbul": "^6.0.0",
     "chai": "^4.2.0",
-    "coveralls": "^3.0.9",
+    "coveralls": "^3.1.0",
     "esdoc": "^1.1.0",
     "esdoc-ecmascript-proposal-plugin": "^1.0.0",
     "esdoc-inject-style-plugin": "^1.0.0",
