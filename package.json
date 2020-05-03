@@ -63,7 +63,7 @@
     "rollup": "^2.0.0",
     "rollup-plugin-babel": "^4.3.3",
     "stream-equal": "^1.0.0",
-    "uglify-js": "^3.7.7"
+    "uglify-js": "3.9.1"
   },
   "repository": {
     "type": "git",
