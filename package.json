@@ -86,7 +86,7 @@
   },
   "homepage": "https://github.com/d-band/better-xlsx#readme",
   "dependencies": {
-    "@babel/runtime": "^7.8.4",
+    "@babel/runtime": "^7.10.1",
     "jszip": "^3.2.2",
     "kind-of": "^6.0.3"
   },
