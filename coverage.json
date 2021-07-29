@@ -40,8 +40,8 @@
       "expectCount": 7,
       "actualCount": 1,
       "undocumentLines": [
-        79,
         1,
+        79,
         84,
         92,
         100,
@@ -107,7 +107,7 @@
         33,
         47,
         117,
-        159
+        161
       ]
     },
     "src/style.js": {

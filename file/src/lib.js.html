@@ -45,7 +45,7 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/lib.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">const NumFmtsCount = 163;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">export const NumFmtsCount = 163;
 /**
  * Number format table
  *
@@ -88,7 +88,7 @@
  *
  * @type {Object}
  */
-const NumFmt = {
+export const NumFmt = {
   0: &apos;general&apos;,
   1: &apos;0&apos;,
   2: &apos;0.00&apos;,
@@ -123,12 +123,12 @@ const NumFmt = {
   49: &apos;@&apos;
 };
 
-const NumFmtInv = {};
+export const NumFmtInv = {};
 for (const k of Object.keys(NumFmt)) {
   NumFmtInv[NumFmt[k]] = k;
 }
 // AA =&gt; 26
-function col2num (colstr) {
+export function col2num (colstr) {
   let d = 0;
   for (let i = 0; i !== colstr.length; ++i) {
     d = 26 * d + colstr.charCodeAt(i) - 64;
@@ -136,7 +136,7 @@ function col2num (colstr) {
   return d - 1;
 }
 // 26 =&gt; AA
-function num2col (col) {
+export function num2col (col) {
   let s = &apos;&apos;;
   for (++col; col; col = Math.floor((col - 1) / 26)) {
     s = String.fromCharCode(((col - 1) % 26) + 65) + s;
@@ -144,7 +144,7 @@ function num2col (col) {
   return s;
 }
 // B3 =&gt; {x: 1, y: 2}
-function cid2coord (cid) {
+export function cid2coord (cid) {
   const temp = cid.match(/([A-Z]+)(\d+)/);
   return {
     x: col2num(temp[1]),
@@ -152,12 +152,10 @@ function cid2coord (cid) {
   };
 }
 
-function toExcelTime (d) {
+export function toExcelTime (d) {
   const unix = d.getTime() / 1000;
   return unix / 86400.0 + 25569.0;
 }
-
-export { NumFmt, NumFmtInv, NumFmtsCount, col2num, num2col, cid2coord, toExcelTime };
 </code></pre>
 
 </div>

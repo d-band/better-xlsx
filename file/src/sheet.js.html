@@ -47,7 +47,7 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/sheet.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Row } from &apos;./row&apos;;
 import { Col } from &apos;./col&apos;;
-import { handleStyle, handleNumFmtId } from &apos;./style&apos;;
+import { handleStyle, handleNumFmtId, Border } from &apos;./style&apos;;
 import { num2col } from &apos;./lib&apos;;
 import { makeXworksheet, XsheetData, Xpane, Xcols, Xcol, Xrow, Xdimension, Xc, Xf, XmergeCells, XmergeCell } from &apos;./xmlWorksheet&apos;;
 
@@ -173,31 +173,33 @@ export class Sheet {
       }
     }
     for (const { r, c, cell } of merged) {
-      const left = cell.style.border.left;
-      const right = cell.style.border.right;
-      const top = cell.style.border.top;
-      const bottom = cell.style.border.bottom;
+      const { border } = cell.style;
 
-      cell.style.border.left = &apos;none&apos;;
-      cell.style.border.right = &apos;none&apos;;
-      cell.style.border.top = &apos;none&apos;;
-      cell.style.border.bottom = &apos;none&apos;;
+      cell.style.border = new Border({});
 
       for (let rownum = 0; rownum &lt;= cell.vMerge; rownum++) {
         for (let colnum = 0; colnum &lt;= cell.hMerge; colnum++) {
           const tmpcell = this.cell(r + rownum, c + colnum);
-          tmpcell.style.applyBorder = true;
+          const arr = [];
           if (rownum === 0) {
-            tmpcell.style.border.top = top;
+            arr.push(&apos;top&apos;);
           }
           if (rownum === cell.vMerge) {
-            tmpcell.style.border.bottom = bottom;
+            arr.push(&apos;bottom&apos;);
           }
           if (colnum === 0) {
-            tmpcell.style.border.left = left;
+            arr.push(&apos;left&apos;);
           }
           if (colnum === cell.hMerge) {
-            tmpcell.style.border.right = right;
+            arr.push(&apos;right&apos;);
+          }
+          if (arr.length) {
+            tmpcell.style.applyBorder = true;
+            arr.forEach(k =&gt; {
+              const ck = `${k}Color`;
+              tmpcell.style.border[k] = border[k];
+              tmpcell.style.border[ck] = border[ck];
+            });
           }
         }
       }
