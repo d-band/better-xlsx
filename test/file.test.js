@@ -65,8 +65,7 @@ describe('Test: file.js', () => {
       .on('finish', () => {
         const expectFile = fs.createReadStream(expfile);
         const actualFile = fs.createReadStream(tmpfile);
-        streamEqual(expectFile, actualFile, function (err, ok) {
-          expect(err).to.be.null;
+        streamEqual(expectFile, actualFile).then(ok => {
           expect(ok).to.be.true;
           done();
         });
@@ -89,8 +88,7 @@ describe('Test: file.js', () => {
       .on('finish', () => {
         const expectFile = fs.createReadStream(expfile);
         const actualFile = fs.createReadStream(tmpfile);
-        streamEqual(expectFile, actualFile, function (err, ok) {
-          expect(err).to.be.null;
+        streamEqual(expectFile, actualFile).then(ok => {
           expect(ok).to.be.true;
           done();
         });
@@ -135,8 +133,7 @@ describe('Test: file.js', () => {
       .on('finish', () => {
         const expectFile = fs.createReadStream(expfile);
         const actualFile = fs.createReadStream(tmpfile);
-        streamEqual(expectFile, actualFile, function (err, ok) {
-          expect(err).to.be.null;
+        streamEqual(expectFile, actualFile).then(ok => {
           expect(ok).to.be.true;
           done();
         });
@@ -162,8 +159,7 @@ describe('Test: file.js', () => {
       .on('finish', () => {
         const expectFile = fs.createReadStream(expfile);
         const actualFile = fs.createReadStream(tmpfile);
-        streamEqual(expectFile, actualFile, function (err, ok) {
-          expect(err).to.be.null;
+        streamEqual(expectFile, actualFile).then(ok => {
           expect(ok).to.be.true;
           done();
         });
@@ -196,8 +192,7 @@ describe('Test: file.js', () => {
       .on('finish', () => {
         const expectFile = fs.createReadStream(expfile);
         const actualFile = fs.createReadStream(tmpfile);
-        streamEqual(expectFile, actualFile, function (err, ok) {
-          expect(err).to.be.null;
+        streamEqual(expectFile, actualFile).then(ok => {
           expect(ok).to.be.true;
           done();
         });
@@ -304,8 +299,7 @@ describe('Test: file.js', () => {
       .on('finish', () => {
         const expectFile = fs.createReadStream(expfile);
         const actualFile = fs.createReadStream(tmpfile);
-        streamEqual(expectFile, actualFile, function (err, ok) {
-          expect(err).to.be.null;
+        streamEqual(expectFile, actualFile).then(ok => {
           expect(ok).to.be.true;
           done();
         });

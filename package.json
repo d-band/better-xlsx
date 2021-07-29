@@ -9,13 +9,14 @@
     "build:node": "rimraf lib && NODE_ENV=production babel --out-dir=lib src",
     "build:dist": "rimraf dist && NODE_ENV=production rollup -c && uglifyjs -m -o dist/xlsx.min.js dist/xlsx.js",
     "prepare": "npm run build",
-    "test": "NODE_ENV=test nyc mocha --no-timeouts",
+    "test": "NODE_ENV=test nyc mocha -t 0",
     "report": "nyc report --reporter=html",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "doc": "rimraf esdoc && esdoc",
     "pages": "npm run doc && gh-pages -d esdoc"
   },
   "nyc": {
+    "all": true,
     "include": [
       "src/**/*.js"
     ],
