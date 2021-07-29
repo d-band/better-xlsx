@@ -12,6 +12,28 @@ import Zip from 'jszip';
 const DATE = new Date(Date.UTC(2016, 10, 23, 0, 0, 0));
 Zip.defaults.date = DATE;
 
+function border (cell, top, left, bottom, right) {
+  const light = 'ffded9d4';
+  const dark = 'ff7e6a54';
+  cell.style.border.top = 'thin';
+  cell.style.border.topColor = top ? dark : light;
+  cell.style.border.left = 'thin';
+  cell.style.border.leftColor = left ? dark : light;
+  cell.style.border.bottom = 'thin';
+  cell.style.border.bottomColor = bottom ? dark : light;
+  cell.style.border.right = 'thin';
+  cell.style.border.rightColor = right ? dark : light;
+}
+
+function fill (cell, type) {
+  type = type || 0;
+  const colors = ['ffffffff', 'ffa2917d', 'ffe4e2de', 'fffff8df', 'fff1eeec'];
+  // 1: header, 2: first col, 3: second col, 4: gray, 0: white
+  cell.style.fill.patternType = 'solid';
+  cell.style.fill.fgColor = colors[type];
+  cell.style.fill.bgColor = 'ffffffff';
+}
+
 describe('Test: file.js', () => {
   it('should saveAs simple excel file', (done) => {
     const file = new File();
@@ -23,7 +45,7 @@ describe('Test: file.js', () => {
     const cell = row.addCell();
     cell.value = 'I am a cell!';
     cell.hMerge = 2;
-    cell.vMerge = 1;
+    cell.vMerge = 2;
 
     const style = new Style();
     style.fill.patternType = 'solid';
@@ -33,6 +55,7 @@ describe('Test: file.js', () => {
     style.align.v = 'center';
 
     cell.style = style;
+    border(cell, 1, 1, 1, 1);
 
     const tmpfile = join(tmpdir(), 'simple.xlsx');
     const expfile = join(__dirname, 'expect/simple.xlsx');
@@ -194,28 +217,6 @@ describe('Test: file.js', () => {
       ['Utilities', 200, 100, 'B9-C9'],
       ['Other', 50, 60, 'B10-C10']
     ];
-
-    function border (cell, top, left, bottom, right) {
-      const light = 'ffded9d4';
-      const dark = 'ff7e6a54';
-      cell.style.border.top = 'thin';
-      cell.style.border.topColor = top ? dark : light;
-      cell.style.border.left = 'thin';
-      cell.style.border.leftColor = left ? dark : light;
-      cell.style.border.bottom = 'thin';
-      cell.style.border.bottomColor = bottom ? dark : light;
-      cell.style.border.right = 'thin';
-      cell.style.border.rightColor = right ? dark : light;
-    }
-
-    function fill (cell, type) {
-      type = type || 0;
-      const colors = ['ffffffff', 'ffa2917d', 'ffe4e2de', 'fffff8df', 'fff1eeec'];
-      // 1: header, 2: first col, 3: second col, 4: gray, 0: white
-      cell.style.fill.patternType = 'solid';
-      cell.style.fill.fgColor = colors[type];
-      cell.style.fill.bgColor = 'ffffffff';
-    }
 
     const header = sheet.addRow();
     header.setHeightCM(0.8);

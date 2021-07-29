@@ -1,6 +1,6 @@
 import { Row } from './row';
 import { Col } from './col';
-import { handleStyle, handleNumFmtId } from './style';
+import { handleStyle, handleNumFmtId, Border } from './style';
 import { num2col } from './lib';
 import { makeXworksheet, XsheetData, Xpane, Xcols, Xcol, Xrow, Xdimension, Xc, Xf, XmergeCells, XmergeCell } from './xmlWorksheet';
 
@@ -126,31 +126,33 @@ export class Sheet {
       }
     }
     for (const { r, c, cell } of merged) {
-      const left = cell.style.border.left;
-      const right = cell.style.border.right;
-      const top = cell.style.border.top;
-      const bottom = cell.style.border.bottom;
+      const { border } = cell.style;
 
-      cell.style.border.left = 'none';
-      cell.style.border.right = 'none';
-      cell.style.border.top = 'none';
-      cell.style.border.bottom = 'none';
+      cell.style.border = new Border({});
 
       for (let rownum = 0; rownum <= cell.vMerge; rownum++) {
         for (let colnum = 0; colnum <= cell.hMerge; colnum++) {
           const tmpcell = this.cell(r + rownum, c + colnum);
-          tmpcell.style.applyBorder = true;
+          const arr = [];
           if (rownum === 0) {
-            tmpcell.style.border.top = top;
+            arr.push('top');
           }
           if (rownum === cell.vMerge) {
-            tmpcell.style.border.bottom = bottom;
+            arr.push('bottom');
           }
           if (colnum === 0) {
-            tmpcell.style.border.left = left;
+            arr.push('left');
           }
           if (colnum === cell.hMerge) {
-            tmpcell.style.border.right = right;
+            arr.push('right');
+          }
+          if (arr.length) {
+            tmpcell.style.applyBorder = true;
+            arr.forEach(k => {
+              const ck = `${k}Color`;
+              tmpcell.style.border[k] = border[k];
+              tmpcell.style.border[ck] = border[ck];
+            });
           }
         }
       }

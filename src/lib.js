@@ -1,4 +1,4 @@
-const NumFmtsCount = 163;
+export const NumFmtsCount = 163;
 /**
  * Number format table
  *
@@ -41,7 +41,7 @@ const NumFmtsCount = 163;
  *
  * @type {Object}
  */
-const NumFmt = {
+export const NumFmt = {
   0: 'general',
   1: '0',
   2: '0.00',
@@ -76,12 +76,12 @@ const NumFmt = {
   49: '@'
 };
 
-const NumFmtInv = {};
+export const NumFmtInv = {};
 for (const k of Object.keys(NumFmt)) {
   NumFmtInv[NumFmt[k]] = k;
 }
 // AA => 26
-function col2num (colstr) {
+export function col2num (colstr) {
   let d = 0;
   for (let i = 0; i !== colstr.length; ++i) {
     d = 26 * d + colstr.charCodeAt(i) - 64;
@@ -89,7 +89,7 @@ function col2num (colstr) {
   return d - 1;
 }
 // 26 => AA
-function num2col (col) {
+export function num2col (col) {
   let s = '';
   for (++col; col; col = Math.floor((col - 1) / 26)) {
     s = String.fromCharCode(((col - 1) % 26) + 65) + s;
@@ -97,7 +97,7 @@ function num2col (col) {
   return s;
 }
 // B3 => {x: 1, y: 2}
-function cid2coord (cid) {
+export function cid2coord (cid) {
   const temp = cid.match(/([A-Z]+)(\d+)/);
   return {
     x: col2num(temp[1]),
@@ -105,9 +105,7 @@ function cid2coord (cid) {
   };
 }
 
-function toExcelTime (d) {
+export function toExcelTime (d) {
   const unix = d.getTime() / 1000;
   return unix / 86400.0 + 25569.0;
 }
-
-export { NumFmt, NumFmtInv, NumFmtsCount, col2num, num2col, cid2coord, toExcelTime };
