@@ -4,6 +4,8 @@ node_js:
   - 8
   - 10
   - 12
+  - 14
+  - 16
 
 after_success:
   - npm run coveralls
